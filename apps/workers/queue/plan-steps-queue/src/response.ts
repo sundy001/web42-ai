@@ -1,3 +1,5 @@
+import type { QueueSuccessPayload } from './type';
+
 export function createErrorResponse(status: number, error: string, details?: unknown): Response {
 	return new Response(
 		JSON.stringify({
@@ -13,8 +15,8 @@ export function createErrorResponse(status: number, error: string, details?: unk
 	);
 }
 
-export function createSuccessResponse(data: { eventId?: string; message: string; [key: string]: unknown }): Response {
-	return new Response(JSON.stringify(data), {
+export function createSuccessResponse(payload: QueueSuccessPayload): Response {
+	return new Response(JSON.stringify(payload), {
 		status: 201,
 		headers: {
 			'Content-Type': 'application/json',

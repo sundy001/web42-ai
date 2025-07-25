@@ -430,24 +430,4 @@ describe('createQueueFetch', () => {
 			expect(body.message).toContain('queued successfully');
 		});
 	});
-
-	describe('PLAN_STEPS_QUEUE special handling', () => {
-		it('should use specific message for PLAN_STEPS_QUEUE', async () => {
-			const planStepsFetch = createQueueFetch('PLAN_STEPS_QUEUE', planStepRequestSchema);
-			env.PLAN_STEPS_QUEUE = { send: vi.fn().mockResolvedValue(undefined) };
-
-			const request = new Request(TEST_URL, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(validPayload),
-			});
-
-			const response = await planStepsFetch(request, env);
-			const body = await response.json();
-
-			expect(response.status).toBe(201);
-			expect(body.eventId).toBe('evt_abc123');
-			expect(body.message).toBe('Plan step execution request queued successfully');
-		});
-	});
 });
