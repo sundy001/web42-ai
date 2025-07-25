@@ -25,7 +25,7 @@ This is a Turborepo monorepo project named `web42-ai` that contains multiple Nex
 - **Language**: TypeScript 5.8
 - **Package Manager**: Bun 1.2.17
 - **UI**: React 19
-- **Code Quality**: ESLint, Prettier
+- **Code Quality**: ESLint (with plugins for security, promises, imports, code complexity), Prettier
 
 ## Common Commands
 
