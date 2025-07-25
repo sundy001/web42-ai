@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { WorkerError } from './WorkerError';
+import { WorkerError } from './workerError';
 import { createErrorResponse, createSuccessResponse } from './response';
 import { sanitizeError } from './zod-utils';
 
