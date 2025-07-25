@@ -1,6 +1,6 @@
 @theme {
   --color-border: #e2e8f0;
-  --color-input: #e2e8f0;
+  --color-input: #2f466b;
   --color-ring: #020617;
   --color-background: #ffffff;
   --color-foreground: #020617;
@@ -21,6 +21,7 @@
   --radius: 0.5rem;
 }
 
+/* TODO: fix this later @media can not be used with @theme*/
 @media (prefers-color-scheme: dark) {
   @theme {
     --color-background: #020617;
