@@ -13,7 +13,7 @@ export function createErrorResponse(status: number, error: string, details?: unk
 	);
 }
 
-export function createSuccessResponse(data: { eventId: string; message: string }): Response {
+export function createSuccessResponse(data: { eventId?: string; message: string; [key: string]: any }): Response {
 	return new Response(JSON.stringify(data), {
 		status: 201,
 		headers: {
