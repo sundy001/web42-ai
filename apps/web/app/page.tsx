@@ -67,6 +67,12 @@ export default function Home() {
         <Button appName="web" className={styles.secondary}>
           Open alert
         </Button>
+        
+        <div className="mt-8 p-4 bg-blue-100 border border-blue-300 rounded-lg">
+          <p className="text-blue-800 font-semibold">
+            🎉 Tailwind CSS is working!
+          </p>
+        </div>
       </main>
       <footer className={styles.footer}>
         <a
