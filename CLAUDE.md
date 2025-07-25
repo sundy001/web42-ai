@@ -33,8 +33,9 @@ This is a Turborepo monorepo project named `web42-ai` - an AI site generator pla
 ### Event-Driven Architecture
 
 The system uses Cloudflare Queues for asynchronous communication:
+
 - `plan-steps-queue` - AI worker code generation tasks
-- `project-builds-queue` - Build service triggers  
+- `project-builds-queue` - Build service triggers
 - `step-status-to-bff-queue` - Real-time step updates to UI
 - `step-status-to-db-queue` - Step status persistence
 - `build-status-to-bff-queue` - Real-time build updates to UI
@@ -119,6 +120,7 @@ bun generate:component
 ## UI System Architecture
 
 The `@web42-ai/ui` package uses:
+
 - **shadcn/ui** design system with Radix UI primitives
 - **Tailwind CSS** with CSS variables for theming
 - **Class Variance Authority (CVA)** for component variant management
@@ -128,6 +130,7 @@ The `@web42-ai/ui` package uses:
 ## Worker Architecture
 
 Cloudflare Workers in `apps/workers/` handle:
+
 - Queue message processing for the event-driven system
 - AI code generation tasks via `plan-steps-queue`
 - Build orchestration via `project-builds-queue`
