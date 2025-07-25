@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, beforeAll, afterAll } from 'vitest';
 import { z } from 'zod';
 import { createQueueFetch } from './createQueueFetch';
 import { planStepRequestSchema } from './request-schema';
@@ -7,8 +7,27 @@ describe('createQueueFetch', () => {
   let env: any;
   let ctx: ExecutionContext;
   let fetchHandler: ReturnType<typeof createQueueFetch>;
+  let originalConsoleLog: typeof console.log;
+  let originalConsoleError: typeof console.error;
+
+  beforeAll(() => {
+    // Mute console messages during tests
+    originalConsoleLog = console.log;
+    originalConsoleError = console.error;
+    console.log = vi.fn();
+    console.error = vi.fn();
+  });
+
+  afterAll(() => {
+    // Restore console messages after tests
+    console.log = originalConsoleLog;
+    console.error = originalConsoleError;
+  });
 
   beforeEach(() => {
+    // Reset the mocked console functions before each test
+    vi.clearAllMocks();
+    
     env = {
       TEST_QUEUE: {
         send: vi.fn().mockResolvedValue(undefined),
@@ -296,6 +315,8 @@ describe('createQueueFetch', () => {
         expect(response.status).toBe(503);
         expect(body.error).toBe('Service temporarily unavailable');
         expect(body.details.reason).toBe('Queue operation failed');
+        // Verify that console.error was called for the queue failure
+        expect(console.error).toHaveBeenCalledWith('Failed to send message to TEST_QUEUE:', expect.any(Error));
       });
 
       it('should skip queue send in test mode', async () => {
@@ -312,6 +333,8 @@ describe('createQueueFetch', () => {
 
         expect(response.status).toBe(201);
         expect(env.TEST_QUEUE.send).not.toHaveBeenCalled();
+        // Verify that console.log was called for test mode logging
+        expect(console.log).toHaveBeenCalledWith('Test mode: Skipping TEST_QUEUE send', validPayload);
       });
 
       it('should handle missing queue configuration', async () => {
