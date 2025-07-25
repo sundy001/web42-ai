@@ -1,109 +1,219 @@
+"use client";
+
+import { Bell, Heart, Mail, Settings, Star, User } from "lucide-react";
+import { useState } from "react";
+
+import { Badge } from "@web42-ai/ui/badge";
 import { Button } from "@web42-ai/ui/button";
-import Image, { type ImageProps } from "next/image";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@web42-ai/ui/card";
+import { Input } from "@web42-ai/ui/input";
 
-import styles from "./page.module.css";
+export default function DemoPage() {
+  const [email, setEmail] = useState("");
+  const [notification, setNotification] = useState("");
 
-type Props = Omit<ImageProps, "src"> & {
-  srcLight: string;
-  srcDark: string;
-};
-
-const ThemeImage = (props: Props) => {
-  const { srcLight, srcDark, ...rest } = props;
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setNotification(`Welcome ${email}! You've been subscribed.`);
+    setEmail("");
+  };
 
   return (
-    <>
-      <Image {...rest} src={srcLight} className="imgLight" />
-      <Image {...rest} src={srcDark} className="imgDark" />
-    </>
-  );
-};
-
-export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <ThemeImage
-          className={styles.logo}
-          srcLight="turborepo-dark.svg"
-          srcDark="turborepo-light.svg"
-          alt="Turborepo logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>apps/web/app/page.tsx</code>
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new/clone?demo-description=Learn+to+implement+a+monorepo+with+a+two+Next.js+sites+that+has+installed+three+local+packages.&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F4K8ZISWAzJ8X1504ca0zmC%2F0b21a1c6246add355e55816278ef54bc%2FBasic.png&demo-title=Monorepo+with+Turborepo&demo-url=https%3A%2F%2Fexamples-basic-web.vercel.sh%2F&from=templates&project-name=Monorepo+with+Turborepo&repository-name=monorepo-turborepo&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fturborepo%2Ftree%2Fmain%2Fexamples%2Fbasic&root-directory=apps%2Fdocs&skippable-integrations=1&teamSlug=vercel&utm_source=create-turbo"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://turborepo.com/docs?utm_source"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-        <Button appName="web" className={styles.secondary}>
-          Open alert
-        </Button>
-        
-        <div className="mt-8 p-4 bg-blue-100 border border-blue-300 rounded-lg">
-          <p className="text-blue-800 font-semibold">
-            🎉 Tailwind CSS is working!
+    <div className="min-h-screen bg-background p-8">
+      <div className="mx-auto max-w-6xl space-y-8">
+        {/* Header */}
+        <div className="text-center space-y-4">
+          <h1 className="text-4xl font-bold tracking-tight">shadcn/ui Demo</h1>
+          <p className="text-xl text-muted-foreground">
+            A showcase of beautifully designed components
           </p>
         </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com/templates?search=turborepo&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://turborepo.com?utm_source=create-turbo"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to turborepo.com →
-        </a>
-      </footer>
+
+        {/* Buttons Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Buttons</CardTitle>
+            <CardDescription>
+              Different button variants and sizes
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex flex-wrap gap-4">
+              <Button>Default</Button>
+              <Button variant="secondary">Secondary</Button>
+              <Button variant="outline">Outline</Button>
+              <Button variant="ghost">Ghost</Button>
+              <Button variant="link">Link</Button>
+              <Button variant="destructive">Destructive</Button>
+            </div>
+            <div className="flex flex-wrap gap-4">
+              <Button size="sm">Small</Button>
+              <Button size="default">Default</Button>
+              <Button size="lg">Large</Button>
+              <Button size="icon">
+                <Heart className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="flex flex-wrap gap-4">
+              <Button>
+                <Star className="mr-2 h-4 w-4" />
+                With Icon
+              </Button>
+              <Button disabled>Disabled</Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Cards and Badges Section */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>User Profile</CardTitle>
+                <Badge>Pro</Badge>
+              </div>
+              <CardDescription>
+                Manage your account settings and preferences
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center space-x-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary">
+                  <User className="h-6 w-6 text-primary-foreground" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">John Doe</p>
+                  <p className="text-sm text-muted-foreground">
+                    john@example.com
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button className="w-full">
+                <Settings className="mr-2 h-4 w-4" />
+                Settings
+              </Button>
+            </CardFooter>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Notifications</CardTitle>
+              <CardDescription>
+                Stay updated with the latest news
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="flex items-center space-x-3">
+                  <Bell className="h-4 w-4 text-blue-500" />
+                  <span className="text-sm">New message received</span>
+                  <Badge variant="secondary">New</Badge>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Star className="h-4 w-4 text-yellow-500" />
+                  <span className="text-sm">You have 5 new likes</span>
+                  <Badge variant="outline">5</Badge>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Newsletter</CardTitle>
+              <CardDescription>Subscribe to our weekly updates</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+                <Button type="submit" className="w-full">
+                  <Mail className="mr-2 h-4 w-4" />
+                  Subscribe
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Badges Showcase */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Badges</CardTitle>
+            <CardDescription>Various badge styles and variants</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-2">
+              <Badge>Default</Badge>
+              <Badge variant="secondary">Secondary</Badge>
+              <Badge variant="outline">Outline</Badge>
+              <Badge variant="destructive">Destructive</Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Form Demo */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Contact Form</CardTitle>
+            <CardDescription>
+              A sample form using Input components
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">First Name</label>
+                <Input placeholder="John" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Last Name</label>
+                <Input placeholder="Doe" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Email</label>
+              <Input type="email" placeholder="john@example.com" />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Message</label>
+              <Input placeholder="Your message here..." />
+            </div>
+          </CardContent>
+          <CardFooter className="justify-end space-x-2">
+            <Button variant="outline">Cancel</Button>
+            <Button>Send Message</Button>
+          </CardFooter>
+        </Card>
+
+        {/* Notification Display */}
+        {notification && (
+          <Card className="border-green-200 bg-green-50">
+            <CardContent className="pt-6">
+              <div className="flex items-center space-x-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
+                  <Mail className="h-4 w-4 text-green-600" />
+                </div>
+                <p className="text-green-800">{notification}</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 }
