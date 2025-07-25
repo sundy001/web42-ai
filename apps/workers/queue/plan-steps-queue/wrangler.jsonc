@@ -1,0 +1,21 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "plan-steps-queue",
+	"main": "src/index.ts",
+	"compatibility_date": "2025-07-25",
+	"observability": {
+		"enabled": true,
+	},
+	"queues": {
+		"producers": [
+			{
+				"queue": "plan-steps-queue",
+				"binding": "PLAN_STEPS_QUEUE",
+			},
+		],
+	},
+}

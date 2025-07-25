@@ -1,0 +1,8 @@
+| Queue Name                      | Producer        | Consumer        | Purpose & Message Type                                                                                                                 |
+| :------------------------------ | :-------------- | :-------------- | :------------------------------------------------------------------------------------------------------------------------------------- |
+| **`plan-steps-queue`**          | `MainBackend`   | `AIAppWorker`   | Holds the individual steps of a generation plan for the AI worker to execute. **Message Type:** `PlanStep`                             |
+| **`project-builds-queue`**      | `MainBackend`   | `Build Service` | Triggers a new build for a specific project version. **Message Type:** `ProjectBuildJob`                                               |
+| **`step-status-to-bff-queue`**  | `AIAppWorker`   | `BFF`           | Delivers real-time status of a _code generation step_ (e.g., "complete") to the client via SSE. **Message Type:** `StepStatusUpdate`   |
+| **`step-status-to-db-queue`**   | `AIAppWorker`   | `MainBackend`   | Delivers the status of a _code generation step_ to be persisted in the database. **Message Type:** `StepStatusUpdate`                  |
+| **`build-status-to-bff-queue`** | `Build Service` | `BFF`           | Delivers real-time status of the _build process_ (e.g., "compiling", "uploading") to the client. **Message Type:** `BuildStatusUpdate` |
+| **`build-status-to-db-queue`**  | `Build Service` | `MainBackend`   | Delivers the status of the _build process_ to be persisted in the database. **Message Type:** `BuildStatusUpdate`                      |

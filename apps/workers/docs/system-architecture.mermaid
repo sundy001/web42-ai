@@ -1,0 +1,30 @@
+flowchart TD
+ subgraph subGraph0["User Facing"]
+        BFF@{ label: "<div style=\"color:\"><span style=\"color:\">@web42-ai/web-app</span></div>" }
+  end
+ subgraph subGraph1["Core Logic"]
+        MainBackend["MainBackend"]
+  end
+ subgraph Workers["Workers"]
+        AIAppWorker["AIAppWorker"]
+        BuildService["BuildService"]
+  end
+ subgraph subGraph3["Message Queues"]
+        Q1["plan-steps-queue"]
+        Q2["project-builds-queue"]
+        Q3["step-status-to-bff-queue"]
+        Q4["step-status-to-db-queue"]
+        Q5["build-status-to-bff-queue"]
+        Q6["build-status-to-db-queue"]
+  end
+    MainBackend -- Publishes Steps --> Q1
+    Q1 -- Delivers Step --> AIAppWorker
+    AIAppWorker -- Publishes Step Status --> Q3 & Q4
+    Q3 -- Streams to UI --> BFF
+    Q4 -- Persists to DB --> MainBackend
+    MainBackend -- Detects Plan Complete --> Q2
+    Q2 -- Delivers Build Job --> BuildService
+    BuildService -- Publishes Build Status --> Q5 & Q6
+    Q5 -- Streams to UI --> BFF
+    Q6 -- Persists to DB --> MainBackend
+    BFF@{ shape: rect}
