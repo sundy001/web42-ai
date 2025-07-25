@@ -1,12 +1,12 @@
 {
-	"name": "queue-producer",
+	"name": "@web42-ai/workers",
 	"version": "0.0.0",
 	"type": "module",
 	"private": true,
 	"scripts": {
 		"deploy": "wrangler deploy",
-		"dev": "wrangler dev",
-		"start": "wrangler dev",
+		"dev": "#wrangler dev",
+		"start": "#wrangler dev",
 		"test": "vitest",
 		"lint": "eslint . --max-warnings 0",
 		"cf-typegen": "wrangler types",

@@ -13,9 +13,11 @@ import { useState } from "react";
 
 export default function ApiTestPage() {
   const [message, setMessage] = useState("");
+  const [webhookMessage, setWebhookMessage] = useState("");
   const [isConnected, setIsConnected] = useState(false);
   const [events, setEvents] = useState<string[]>([]);
   const [eventSource, setEventSource] = useState<EventSource | null>(null);
+  const [sending, setSending] = useState(false);
 
   const startStreaming = () => {
     if (!message.trim()) {
@@ -38,13 +40,14 @@ export default function ApiTestPage() {
         try {
           const parsed = JSON.parse(event.data);
           const timestamp = new Date().toLocaleTimeString();
+          const eventType = parsed.type === 'webhook-message' ? 'WEBHOOK' : parsed.type.toUpperCase();
           setEvents((prev) => [
             ...prev,
-            `[${timestamp}] ${parsed.type}: ${parsed.message}`,
+            `[${timestamp}] ${eventType}: ${parsed.message || 'Connection/Status message'}`,
           ]);
 
-          // Close connection if we receive an 'end' event
-          if (parsed.type === "end") {
+          // Close connection if we receive an 'end' or 'timeout' event
+          if (parsed.type === "end" || parsed.type === "timeout") {
             newEventSource.close();
             setEventSource(null);
             setIsConnected(false);
@@ -85,6 +88,35 @@ export default function ApiTestPage() {
     }
   };
 
+  const sendWebhookMessage = async () => {
+    if (!webhookMessage.trim()) return;
+
+    setSending(true);
+    try {
+      const response = await fetch('/api/webhook', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: webhookMessage,
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Webhook response:', result);
+        setWebhookMessage('');
+      } else {
+        console.error('Webhook failed:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Failed to send webhook:', error);
+    } finally {
+      setSending(false);
+    }
+  };
+
   const stopStreaming = () => {
     if (eventSource) {
       eventSource.close();
@@ -97,46 +129,79 @@ export default function ApiTestPage() {
     <div className="min-h-screen bg-background p-8">
       <div className="mx-auto max-w-4xl space-y-6">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold">API Test - See Demo Endpoint</h1>
+          <h1 className="text-3xl font-bold">API Test - EventBridge Integration</h1>
           <p className="text-muted-foreground">
-            Test the /api/see-demo endpoint with Server-Sent Events
+            Test the eventBridge integration between webhook and see-demo endpoints
           </p>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Send Message</CardTitle>
-            <CardDescription>
-              Enter a message to echo every 2 seconds via Server-Sent Events
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex gap-2">
-              <Input
-                placeholder="Enter your message..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                disabled={isConnected}
-                onKeyDown={(e) =>
-                  e.key === "Enter" && !isConnected && startStreaming()
-                }
-              />
-              <Button
-                onClick={isConnected ? stopStreaming : startStreaming}
-                variant={isConnected ? "destructive" : "default"}
-              >
-                {isConnected ? "Stop" : "Start"}
-              </Button>
-            </div>
-
-            {isConnected && (
-              <div className="flex items-center gap-2 text-sm text-green-600">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                Connected - Receiving events every 2 seconds
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>See-Demo SSE Connection</CardTitle>
+              <CardDescription>
+                Connect to see-demo endpoint to receive webhook messages
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Enter connection identifier..."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  disabled={isConnected}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && !isConnected && startStreaming()
+                  }
+                />
+                <Button
+                  onClick={isConnected ? stopStreaming : startStreaming}
+                  variant={isConnected ? "destructive" : "default"}
+                >
+                  {isConnected ? "Disconnect" : "Connect"}
+                </Button>
               </div>
-            )}
-          </CardContent>
-        </Card>
+
+              {isConnected && (
+                <div className="flex items-center gap-2 text-sm text-green-600">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  Connected - Listening for webhook messages
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Send Webhook Message</CardTitle>
+              <CardDescription>
+                Send messages via webhook that will appear in the SSE stream
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Enter webhook message..."
+                  value={webhookMessage}
+                  onChange={(e) => setWebhookMessage(e.target.value)}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && sendWebhookMessage()
+                  }
+                />
+                <Button
+                  onClick={sendWebhookMessage}
+                  disabled={sending || !webhookMessage.trim()}
+                >
+                  {sending ? "Sending..." : "Send"}
+                </Button>
+              </div>
+
+              <p className="text-sm text-muted-foreground">
+                Messages sent here will appear in the SSE stream if connected
+              </p>
+            </CardContent>
+          </Card>
+        </div>
 
         <Card>
           <CardHeader>
@@ -164,33 +229,44 @@ export default function ApiTestPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>API Documentation</CardTitle>
+            <CardTitle>EventBridge Integration</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
+          <CardContent className="space-y-4">
+            <div>
+              <strong>How it works:</strong>
+              <ol className="list-decimal list-inside ml-4 space-y-1">
+                <li>Connect to the see-demo SSE endpoint with an identifier</li>
+                <li>Send messages via the webhook endpoint</li>
+                <li>Messages are broadcast to all connected SSE clients via EventEmitter</li>
+                <li>See real-time message delivery across endpoints</li>
+              </ol>
+            </div>
             <div>
               <strong>Endpoints:</strong>
               <ul className="list-disc list-inside ml-4 space-y-1">
                 <li>
                   <code className="bg-muted px-2 py-1 rounded">
-                    GET /api/see-demo?message=your_message
+                    GET /api/see-demo?message=identifier
                   </code>{" "}
-                  (for EventSource)
+                  (SSE connection)
                 </li>
                 <li>
                   <code className="bg-muted px-2 py-1 rounded">
-                    POST /api/see-demo
+                    POST /api/webhook
                   </code>{" "}
-                  with JSON body
+                  (send messages)
+                </li>
+                <li>
+                  <code className="bg-muted px-2 py-1 rounded">
+                    GET /api/sse
+                  </code>{" "}
+                  (alternative SSE endpoint)
                 </li>
               </ul>
             </div>
             <div>
-              <strong>POST Request Body:</strong>{" "}
+              <strong>Webhook Body:</strong>{" "}
               <code className="bg-muted px-2 py-1 rounded">{`{"message": "your message here"}`}</code>
-            </div>
-            <div>
-              <strong>Response:</strong> Server-Sent Events stream that echoes
-              the message every 2 seconds
             </div>
             <div>
               <strong>Event Types:</strong>
@@ -199,10 +275,13 @@ export default function ApiTestPage() {
                   <code>connected</code> - Initial connection confirmation
                 </li>
                 <li>
-                  <code>echo</code> - Your message echoed every 2 seconds
+                  <code>webhook-message</code> - Messages from webhook endpoint
                 </li>
                 <li>
-                  <code>end</code> - Stream ends after 30 seconds
+                  <code>heartbeat</code> - Keep-alive messages every 30 seconds
+                </li>
+                <li>
+                  <code>timeout</code> - Connection timeout after 5 minutes
                 </li>
               </ul>
             </div>

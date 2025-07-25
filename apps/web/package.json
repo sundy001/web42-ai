@@ -22,13 +22,15 @@
     "next": "^15.4.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "tailwind-merge": "^3.3.1"
+    "tailwind-merge": "^3.3.1",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.11",
     "@types/node": "^22.15.3",
     "@types/react": "19.1.0",
     "@types/react-dom": "19.1.1",
+    "@types/uuid": "^10.0.0",
     "@vitest/ui": "^2.1.8",
     "@web42-ai/eslint-config": "*",
     "@web42-ai/typescript-config": "*",

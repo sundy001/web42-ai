@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { createQueueFetch } from '@/utils/createQueueFetch';
-import { planStepRequestSchema } from './request-schema';
+import { planStepRequestSchema } from '../../../utils/createQueueFetch/request-schema';
 
 export type PlanStepRequest = z.infer<typeof planStepRequestSchema>;
 

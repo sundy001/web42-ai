@@ -14,7 +14,7 @@ To build a scalable, resilient cloud platform that generates a static React site
 
 ## 3. Service Breakdown
 
-### **`MainBackend` (The Orchestrator):**
+### **`SiteDirector` (The Orchestrator):**
 
 The central state manager. It initiates workflows, interacts with the database, and publishes jobs to the queues.
 
@@ -63,12 +63,12 @@ The system relies on six queues to manage workflows:
 
 | Queue Name                  | Producer        | Consumer            | Purpose                                                |
 | :-------------------------- | :-------------- | :------------------ | :----------------------------------------------------- |
-| `plan-steps-queue`          | `MainBackend`   | `AIAppWorker`       | Holds the code generation tasks for the AI worker.     |
-| `project-builds-queue`      | `MainBackend`   | `Build Service`     | Triggers a new build job.                              |
+| `plan-steps-queue`          | `SiteDirector`  | `AIAppWorker`       | Holds the code generation tasks for the AI worker.     |
+| `project-builds-queue`      | `SiteDirector`  | `Build Service`     | Triggers a new build job.                              |
 | `step-status-to-bff-queue`  | `AIAppWorker`   | `@web42-ai/web-app` | Fans out real-time code generation progress to the UI. |
-| `step-status-to-db-queue`   | `AIAppWorker`   | `MainBackend`       | Fans out code generation progress for persistence.     |
+| `step-status-to-db-queue`   | `AIAppWorker`   | `SiteDirector`      | Fans out code generation progress for persistence.     |
 | `build-status-to-bff-queue` | `Build Service` | `@web42-ai/web-app` | Fans out real-time build progress to the UI.           |
-| `build-status-to-db-queue`  | `Build Service` | `MainBackend`       | Fans out build progress for persistence.               |
+| `build-status-to-db-queue`  | `Build Service` | `SiteDirector`      | Fans out build progress for persistence.               |
 
 ## 7. Development Environment
 
