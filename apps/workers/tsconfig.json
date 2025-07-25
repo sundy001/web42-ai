@@ -36,8 +36,13 @@
 
 		/* Skip type checking all .d.ts files. */
 		"skipLibCheck": true,
-		"types": ["./worker-configuration.d.ts"]
+		"types": ["./worker-configuration.d.ts"],
+
+		/* Enable aliases for imports */
+		"paths": {
+			"@/*": ["./*"]
+		}
 	},
 	"exclude": ["test"],
-	"include": ["worker-configuration.d.ts", "queue/**/*.ts"]
+	"include": ["worker-configuration.d.ts", "queue/**/*.ts", "utils/**/*.ts"]
 }

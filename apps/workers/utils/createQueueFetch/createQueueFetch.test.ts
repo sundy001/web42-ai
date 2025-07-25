@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, beforeAll, afterAll } from 'vitest';
 import { z } from 'zod';
 import { createQueueFetch } from './createQueueFetch';
-import { planStepRequestSchema } from './request-schema';
+import { planStepRequestSchema } from '../../queue/plan-steps-queue/src/request-schema';
 
 const TEST_URL = 'https://example.com';
 
