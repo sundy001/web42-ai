@@ -9,6 +9,7 @@ This is a Turborepo monorepo project named `web42-ai` that contains multiple Nex
 ## Architecture
 
 ### Monorepo Structure
+
 - **apps/** - Contains the main applications
   - `web/` - Main Next.js application (port 3000)
   - `docs/` - Documentation Next.js application (port 3001)
@@ -18,6 +19,7 @@ This is a Turborepo monorepo project named `web42-ai` that contains multiple Nex
   - `@web42-ai/typescript-config` - Shared TypeScript configurations
 
 ### Key Technologies
+
 - **Build System**: Turborepo with task orchestration
 - **Framework**: Next.js 15 with Turbopack
 - **Language**: TypeScript 5.8
@@ -28,6 +30,7 @@ This is a Turborepo monorepo project named `web42-ai` that contains multiple Nex
 ## Common Commands
 
 ### Development
+
 ```bash
 # Start all apps in development mode
 bun dev
@@ -38,6 +41,7 @@ bun dev --filter=docs
 ```
 
 ### Building
+
 ```bash
 # Build all apps and packages
 bun build
@@ -48,6 +52,7 @@ bun build --filter=docs
 ```
 
 ### Testing & Quality
+
 ```bash
 # Run linting across all packages
 bun lint
@@ -63,6 +68,7 @@ bun lint && bun check-types
 ```
 
 ### Working with Packages
+
 ```bash
 # Generate new UI component in @web42-ai/ui
 cd packages/ui
@@ -72,7 +78,7 @@ bun generate:component
 ## Development Workflow
 
 1. **Filtering Tasks**: Use Turborepo's `--filter` flag to work on specific apps or packages
-2. **Port Allocation**: 
+2. **Port Allocation**:
    - Web app: http://localhost:3000
    - Docs app: http://localhost:3001
 3. **Shared Dependencies**: Changes to packages in `packages/` will automatically be reflected in apps that depend on them
