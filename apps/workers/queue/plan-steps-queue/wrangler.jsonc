@@ -13,5 +13,14 @@
 				"binding": "PLAN_STEPS_QUEUE",
 			},
 		],
+		"consumers": [
+			{
+				"queue": "plan-steps-queue",
+				"type": "http_pull",
+				"visibility_timeout_ms": 5000,
+				"max_retries": 5,
+				// "dead_letter_queue": "SOME-OTHER-QUEUE",
+			},
+		],
 	},
 }
