@@ -1,17 +1,21 @@
 {
 	"name": "queue-producer",
 	"version": "0.0.0",
+	"type": "module",
 	"private": true,
 	"scripts": {
 		"deploy": "wrangler deploy",
 		"dev": "wrangler dev",
 		"start": "wrangler dev",
 		"test": "vitest",
+		"lint": "eslint . --max-warnings 0",
 		"cf-typegen": "wrangler types",
 		"deploy:plan-steps-queue": "wrangler deploy --config queue/plan-steps-queue/wrangler.jsonc"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "^0.8.19",
+		"@web42-ai/eslint-config": "workspace:*",
+		"eslint": "^9.31.0",
 		"typescript": "^5.5.2",
 		"vitest": "~3.2.0",
 		"wrangler": "^4.26.0"
