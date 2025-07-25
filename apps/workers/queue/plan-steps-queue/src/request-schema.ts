@@ -18,7 +18,7 @@ const contextSchema = z.object({
 export const planStepRequestSchema = z.object({
 	eventId: z.string().min(1).max(100),
 	eventType: z.literal('plan_step_execution'),
-	timestamp: z.string().datetime(),
+	timestamp: z.iso.datetime(),
 	projectId: z.string().min(1).max(100),
 	planId: z.string().min(1).max(100),
 	taskId: z.string().min(1).max(100),
