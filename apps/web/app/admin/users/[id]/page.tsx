@@ -2,20 +2,14 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { ArrowLeft, Trash2, RotateCcw } from "lucide-react";
 import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";
-import { Input } from "@web42-ai/ui/input";
+import { FormInput } from "@web42-ai/ui/input";
 import { Label } from "@web42-ai/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@web42-ai/ui/select";
+import { FormSelect } from "@web42-ai/ui/select";
 import {
   Form,
   FormField,
@@ -64,6 +58,17 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
       status: "",
     },
   });
+
+  const authProviderOptions = [
+    { value: "google", label: "Google" },
+    { value: "github", label: "GitHub" },
+    { value: "email", label: "Email" },
+  ];
+
+  const statusOptions = [
+    { value: "active", label: "Active" },
+    { value: "inactive", label: "Inactive" },
+  ];
 
   const fetchUser = useCallback(async () => {
     try {
@@ -239,7 +244,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                 <FormField>
                   <FormLabel htmlFor="name">Name</FormLabel>
                   <FormControl>
-                    <Controller
+                    <FormInput
                       name="name"
                       control={control}
                       rules={{
@@ -249,13 +254,8 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                           message: "Name must be at least 2 characters",
                         },
                       }}
-                      render={({ field }) => (
-                        <Input
-                          id="name"
-                          placeholder="Enter user's full name"
-                          {...field}
-                        />
-                      )}
+                      id="name"
+                      placeholder="Enter user's full name"
                     />
                   </FormControl>
                   <FormMessage>{errors.name?.message}</FormMessage>
@@ -264,7 +264,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                 <FormField>
                   <FormLabel htmlFor="email">Email</FormLabel>
                   <FormControl>
-                    <Controller
+                    <FormInput
                       name="email"
                       control={control}
                       rules={{
@@ -274,14 +274,9 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                           message: "Invalid email address",
                         },
                       }}
-                      render={({ field }) => (
-                        <Input
-                          id="email"
-                          type="email"
-                          placeholder="Enter user's email address"
-                          {...field}
-                        />
-                      )}
+                      id="email"
+                      type="email"
+                      placeholder="Enter user's email address"
                     />
                   </FormControl>
                   <FormMessage>{errors.email?.message}</FormMessage>
@@ -290,22 +285,12 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                 <FormField>
                   <FormLabel>Auth Provider</FormLabel>
                   <FormControl>
-                    <Controller
+                    <FormSelect
                       name="authProvider"
                       control={control}
                       rules={{ required: "Auth provider is required" }}
-                      render={({ field }) => (
-                        <Select value={field.value} onValueChange={field.onChange}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select auth provider" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="google">Google</SelectItem>
-                            <SelectItem value="github">GitHub</SelectItem>
-                            <SelectItem value="email">Email</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      )}
+                      options={authProviderOptions}
+                      placeholder="Select auth provider"
                     />
                   </FormControl>
                   <FormMessage>{errors.authProvider?.message}</FormMessage>
@@ -315,21 +300,12 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                   <FormField>
                     <FormLabel>Status</FormLabel>
                     <FormControl>
-                      <Controller
+                      <FormSelect
                         name="status"
                         control={control}
                         rules={{ required: "Status is required" }}
-                        render={({ field }) => (
-                          <Select value={field.value} onValueChange={field.onChange}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select status" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="active">Active</SelectItem>
-                              <SelectItem value="inactive">Inactive</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        )}
+                        options={statusOptions}
+                        placeholder="Select status"
                       />
                     </FormControl>
                     <FormMessage>{errors.status?.message}</FormMessage>
