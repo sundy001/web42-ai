@@ -1,11 +1,19 @@
 import { Control, Controller, FieldPath, FieldValues } from "react-hook-form";
 import {
-  Select,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../form";
+import {
+  Select as RawSelect,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./Select";
+} from "./RawSelect";
 
 interface SelectOption {
   value: string;
@@ -15,13 +23,15 @@ interface SelectOption {
 interface FormSelectProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> {
-  name: TName;
-  control: Control<TFieldValues>;
-  rules?: Parameters<typeof Controller<TFieldValues, TName>>[0]["rules"];
+> extends Omit<React.ComponentProps<typeof RawSelect>, "name"> {
   options: SelectOption[];
-  placeholder?: string;
-  disabled?: boolean;
+  placeholder: string;
+  name: TName;
+  control?: Control<TFieldValues>;
+  rules?: Parameters<typeof Controller<TFieldValues, TName>>[0]["rules"];
+  label?: string;
+  description?: string;
+  message?: string;
 }
 
 const FormSelect = <
@@ -31,32 +41,38 @@ const FormSelect = <
   name,
   control,
   rules,
+  label,
+  description,
+  message,
   options,
   placeholder,
-  disabled,
+  ...props
 }: FormSelectProps<TFieldValues, TName>) => {
   return (
-    <Controller
-      name={name}
+    <FormField
       control={control}
+      name={name}
       rules={rules}
       render={({ field }) => (
-        <Select
-          value={field.value}
-          onValueChange={field.onChange}
-          disabled={disabled}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder={placeholder} />
-          </SelectTrigger>
-          <SelectContent>
-            {options.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <FormItem>
+          {label && <FormLabel>{label}</FormLabel>}
+          <FormControl>
+            <RawSelect {...props} {...field}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder={placeholder} />
+              </SelectTrigger>
+              <SelectContent>
+                {options.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </RawSelect>
+          </FormControl>
+          {description && <FormDescription>{description}</FormDescription>}
+          {message && <FormMessage>{message}</FormMessage>}
+        </FormItem>
       )}
     />
   );

@@ -2,13 +2,7 @@
 
 import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormLabel,
-  FormMessage,
-} from "@web42-ai/ui/form";
+import { Form } from "@web42-ai/ui/form";
 import { FormInput } from "@web42-ai/ui/input";
 import { Label } from "@web42-ai/ui/label";
 import { FormSelect } from "@web42-ai/ui/select";
@@ -44,13 +38,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setError: setFormError,
-  } = useForm<UpdateUserForm>({
+  const methods = useForm<UpdateUserForm>({
     defaultValues: {
       name: "",
       email: "",
@@ -58,6 +46,12 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
       status: "",
     },
   });
+
+  const {
+    formState: { errors },
+    reset,
+    setError: setFormError,
+  } = methods;
 
   const authProviderOptions = [
     { value: "google", label: "Google" },
@@ -261,85 +255,60 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <Card className="p-6">
-            <Form onSubmit={handleSubmit(onSubmit)}>
-              <div className="space-y-6">
-                <FormField>
-                  <FormLabel htmlFor="name">Name</FormLabel>
-                  <FormControl>
-                    <FormInput
-                      name="name"
-                      control={control}
-                      rules={{
-                        required: "Name is required",
-                        minLength: {
-                          value: 2,
-                          message: "Name must be at least 2 characters",
-                        },
-                      }}
-                      id="name"
-                      placeholder="Enter user's full name"
-                    />
-                  </FormControl>
-                  <FormMessage>{errors.name?.message}</FormMessage>
-                </FormField>
-
-                <FormField>
-                  <FormLabel htmlFor="email">Email</FormLabel>
-                  <FormControl>
-                    <FormInput
-                      name="email"
-                      control={control}
-                      rules={{
-                        required: "Email is required",
-                        pattern: {
-                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                          message: "Invalid email address",
-                        },
-                      }}
-                      id="email"
-                      type="email"
-                      placeholder="Enter user's email address"
-                    />
-                  </FormControl>
-                  <FormMessage>{errors.email?.message}</FormMessage>
-                </FormField>
-
-                <FormField>
-                  <FormLabel>Auth Provider</FormLabel>
-                  <FormControl>
+            <Form {...methods}>
+              <form onSubmit={methods.handleSubmit(onSubmit)}>
+                <div className="space-y-6">
+                  <FormInput
+                    name="name"
+                    label="Name"
+                    rules={{
+                      required: "Name is required",
+                      minLength: {
+                        value: 2,
+                        message: "Name must be at least 2 characters",
+                      },
+                    }}
+                    id="name"
+                    placeholder="Enter user's full name"
+                    message={errors.name?.message}
+                  />
+                  <FormInput
+                    name="email"
+                    label="Email"
+                    rules={{
+                      required: "Email is required",
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: "Invalid email address",
+                      },
+                    }}
+                    id="email"
+                    placeholder="Enter user's email address"
+                    message={errors.email?.message}
+                  />
+                  <FormSelect
+                    name="authProvider"
+                    label="Auth Provider"
+                    options={authProviderOptions}
+                    placeholder="Select auth provider"
+                    message={errors.authProvider?.message}
+                  />
+                  {user.status !== "deleted" && (
                     <FormSelect
-                      name="authProvider"
-                      control={control}
-                      rules={{ required: "Auth provider is required" }}
-                      options={authProviderOptions}
-                      placeholder="Select auth provider"
+                      name="status"
+                      label="Status"
+                      options={statusOptions}
+                      placeholder="Select status"
+                      message={errors.status?.message}
                     />
-                  </FormControl>
-                  <FormMessage>{errors.authProvider?.message}</FormMessage>
-                </FormField>
-
-                {user.status !== "deleted" && (
-                  <FormField>
-                    <FormLabel>Status</FormLabel>
-                    <FormControl>
-                      <FormSelect
-                        name="status"
-                        control={control}
-                        rules={{ required: "Status is required" }}
-                        options={statusOptions}
-                        placeholder="Select status"
-                      />
-                    </FormControl>
-                    <FormMessage>{errors.status?.message}</FormMessage>
-                  </FormField>
-                )}
-
-                <div className="flex justify-end">
-                  <Button type="submit" disabled={saving}>
-                    {saving ? "Saving..." : "Save Changes"}
-                  </Button>
+                  )}
+                  <div className="flex justify-end">
+                    <Button type="submit" disabled={saving}>
+                      {saving ? "Saving..." : "Save Changes"}
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              </form>
             </Form>
           </Card>
         </div>
