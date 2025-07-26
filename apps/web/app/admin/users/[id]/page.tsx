@@ -1,22 +1,22 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import Link from "next/link";
-import { ArrowLeft, Trash2, RotateCcw } from "lucide-react";
 import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormLabel,
+  FormMessage,
+} from "@web42-ai/ui/form";
 import { FormInput } from "@web42-ai/ui/input";
 import { Label } from "@web42-ai/ui/label";
 import { FormSelect } from "@web42-ai/ui/select";
-import {
-  Form,
-  FormField,
-  FormLabel,
-  FormControl,
-  FormMessage,
-} from "@web42-ai/ui/form";
+import { ArrowLeft, RotateCcw, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 
 interface User {
   _id: string;
@@ -43,7 +43,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const {
     control,
     handleSubmit,
@@ -74,11 +74,11 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
     try {
       setLoading(true);
       const response = await fetch(`${API_BASE_URL}/api/v1/users/${params.id}`);
-      
+
       if (!response.ok) {
         throw new Error("Failed to fetch user");
       }
-      
+
       const userData: User = await response.json();
       setUser(userData);
       reset({
@@ -97,27 +97,32 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
   const onSubmit = async (data: UpdateUserForm) => {
     try {
       setSaving(true);
-      const response = await fetch(`${API_BASE_URL}/api/v1/users/${params.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${API_BASE_URL}/api/v1/users/${params.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
         },
-        body: JSON.stringify(data),
-      });
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
-        
+
         // Handle validation errors
         if (response.status === 400 && errorData.details) {
-          errorData.details.forEach((detail: { field: string; message: string }) => {
-            setFormError(detail.field as keyof UpdateUserForm, {
-              message: detail.message,
-            });
-          });
+          errorData.details.forEach(
+            (detail: { field: string; message: string }) => {
+              setFormError(detail.field as keyof UpdateUserForm, {
+                message: detail.message,
+              });
+            },
+          );
           return;
         }
-        
+
         throw new Error(errorData.message || "Failed to update user");
       }
 
@@ -125,7 +130,10 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
       setUser(updatedUser);
       alert("User updated successfully!");
     } catch (err) {
-      alert("Failed to update user: " + (err instanceof Error ? err.message : "Unknown error"));
+      alert(
+        "Failed to update user: " +
+          (err instanceof Error ? err.message : "Unknown error"),
+      );
     } finally {
       setSaving(false);
     }
@@ -137,9 +145,12 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/users/${params.id}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `${API_BASE_URL}/api/v1/users/${params.id}`,
+        {
+          method: "DELETE",
+        },
+      );
 
       if (!response.ok) {
         throw new Error("Failed to delete user");
@@ -148,7 +159,10 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
       alert("User deleted successfully!");
       router.push("/admin/users");
     } catch (err) {
-      alert("Failed to delete user: " + (err instanceof Error ? err.message : "Unknown error"));
+      alert(
+        "Failed to delete user: " +
+          (err instanceof Error ? err.message : "Unknown error"),
+      );
     }
   };
 
@@ -158,9 +172,12 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/users/${params.id}/restore`, {
-        method: "POST",
-      });
+      const response = await fetch(
+        `${API_BASE_URL}/api/v1/users/${params.id}/restore`,
+        {
+          method: "POST",
+        },
+      );
 
       if (!response.ok) {
         throw new Error("Failed to restore user");
@@ -169,7 +186,10 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
       alert("User restored successfully!");
       fetchUser(); // Refresh user data
     } catch (err) {
-      alert("Failed to restore user: " + (err instanceof Error ? err.message : "Unknown error"));
+      alert(
+        "Failed to restore user: " +
+          (err instanceof Error ? err.message : "Unknown error"),
+      );
     }
   };
 
@@ -191,7 +211,9 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
     return (
       <div className="p-8">
         <div className="flex justify-center items-center h-64">
-          <div className="text-lg text-red-600">Error: {error || "User not found"}</div>
+          <div className="text-lg text-red-600">
+            Error: {error || "User not found"}
+          </div>
         </div>
       </div>
     );

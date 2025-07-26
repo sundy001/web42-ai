@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Control, Controller, FieldPath, FieldValues } from "react-hook-form";
 import {
   Select,
@@ -15,7 +14,7 @@ interface SelectOption {
 
 interface FormSelectProps<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > {
   name: TName;
   control: Control<TFieldValues>;
@@ -27,7 +26,7 @@ interface FormSelectProps<
 
 const FormSelect = <
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({
   name,
   control,
@@ -42,7 +41,11 @@ const FormSelect = <
       control={control}
       rules={rules}
       render={({ field }) => (
-        <Select value={field.value} onValueChange={field.onChange} disabled={disabled}>
+        <Select
+          value={field.value}
+          onValueChange={field.onChange}
+          disabled={disabled}
+        >
           <SelectTrigger>
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
