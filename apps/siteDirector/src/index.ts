@@ -6,6 +6,7 @@ import swaggerUi from "swagger-ui-express";
 import { openApiDocument } from "./openapi/openApiConfig.js";
 import { databaseStore, getHealthStatus } from "./stores/index.js";
 import { userRoutes } from "./users/index.js";
+import { errorHandler } from "./users/middleware.js";
 
 const app = express();
 const PORT = 3002; // Default port for Site Director
@@ -76,17 +77,7 @@ app.use("*", (req, res) => {
 });
 
 // Error handler
-app.use((err: Error, req: express.Request, res: express.Response) => {
-  console.error("Error:", err.message);
-  console.error("Stack:", err.stack);
-
-  const isDevelopment = false; // Disable detailed error messages in production
-  res.status(500).json({
-    error: "Internal Server Error",
-    message: isDevelopment ? err.message : "Something went wrong",
-    timestamp: new Date().toISOString(),
-  });
-});
+app.use(errorHandler);
 
 // Graceful shutdown handler
 process.on("SIGINT", async () => {

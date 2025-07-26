@@ -1,88 +1,53 @@
 import type { Request, Response } from "express";
 import express from "express";
-import { ZodError, type ZodIssue } from "zod";
+import {
+  asyncHandler,
+  validateBody,
+  validateObjectId,
+  validateQuery,
+} from "./middleware.js";
 import {
   CreateUserSchema,
   ListUsersQuerySchema,
-  ObjectIdSchema,
   UpdateUserSchema,
+  type ListUsersQueryInput,
 } from "./schemas.js";
 import type { CreateUserRequest, UpdateUserRequest } from "./types.js";
 import * as userService from "./userService.js";
 
 const router = express.Router();
 
-const INTERNAL_SERVER_ERROR = "Internal server error";
-const VALIDATION_FAILED = "Validation failed";
-
-// Helper function to handle Zod validation errors
-function handleZodError(error: ZodError, res: Response): void {
-  const details = error.issues.map((err: ZodIssue) => ({
-    field: err.path.join("."),
-    message: err.message,
-  }));
-
-  res.status(400).json({
-    error: VALIDATION_FAILED,
-    details,
-  });
-}
-
 // GET /users - List users with optional filtering and pagination
-router.get("/", async (req: Request, res: Response) => {
-  try {
-    const validationResult = ListUsersQuerySchema.safeParse(req.query);
-
-    if (!validationResult.success) {
-      handleZodError(validationResult.error, res);
-      return;
-    }
-
+router.get(
+  "/",
+  validateQuery(ListUsersQuerySchema),
+  asyncHandler(async (req: Request, res: Response) => {
     const { page, limit, email, name, authProvider, status, includeDeleted } =
-      validationResult.data;
+      res.locals.validatedQuery as ListUsersQueryInput;
 
     const filters = { email, name, authProvider, status, includeDeleted };
     const pagination = { page, limit };
 
     const result = await userService.listUsers(filters, pagination);
     res.json(result);
-  } catch (error) {
-    console.error("Error listing users:", error);
-    res.status(500).json({
-      error: INTERNAL_SERVER_ERROR,
-      message: "Failed to list users",
-    });
-  }
-});
+  }),
+);
 
 // GET /users/stats - Get user statistics
-router.get("/stats", async (req: Request, res: Response) => {
-  try {
+router.get(
+  "/stats",
+  asyncHandler(async (req: Request, res: Response) => {
     const stats = await userService.getUserStats();
     res.json(stats);
-  } catch (error) {
-    console.error("Error getting user stats:", error);
-    res.status(500).json({
-      error: INTERNAL_SERVER_ERROR,
-      message: "Failed to get user statistics",
-    });
-  }
-});
+  }),
+);
 
 // GET /users/:id - Get user by ID
-router.get("/:id", async (req: Request, res: Response) => {
-  try {
-    const validationResult = ObjectIdSchema.safeParse(req.params.id);
-
-    if (!validationResult.success) {
-      res.status(400).json({
-        error: VALIDATION_FAILED,
-        message: "Invalid ObjectId format",
-      });
-      return;
-    }
-
-    const user = await userService.getUserById(validationResult.data);
+router.get(
+  "/:id",
+  validateObjectId(),
+  asyncHandler(async (req: Request, res: Response) => {
+    const user = await userService.getUserById(res.locals.validatedId);
 
     if (!user) {
       res.status(404).json({
@@ -93,26 +58,15 @@ router.get("/:id", async (req: Request, res: Response) => {
     }
 
     res.json(user);
-  } catch (error) {
-    console.error("Error getting user:", error);
-    res.status(500).json({
-      error: INTERNAL_SERVER_ERROR,
-      message: "Failed to get user",
-    });
-  }
-});
+  }),
+);
 
 // POST /users - Create new user
-router.post("/", async (req: Request, res: Response) => {
-  try {
-    const validationResult = CreateUserSchema.safeParse(req.body);
-
-    if (!validationResult.success) {
-      handleZodError(validationResult.error, res);
-      return;
-    }
-
-    const userData: CreateUserRequest = validationResult.data;
+router.post(
+  "/",
+  validateBody(CreateUserSchema),
+  asyncHandler(async (req: Request, res: Response) => {
+    const userData: CreateUserRequest = res.locals.validatedBody;
 
     // Check if user already exists
     const existingUser = await userService.userExists(userData.email);
@@ -126,37 +80,17 @@ router.post("/", async (req: Request, res: Response) => {
 
     const user = await userService.createUser(userData);
     res.status(201).json(user);
-  } catch (error) {
-    console.error("Error creating user:", error);
-    res.status(500).json({
-      error: INTERNAL_SERVER_ERROR,
-      message: "Failed to create user",
-    });
-  }
-});
+  }),
+);
 
 // PUT /users/:id - Update user
-router.put("/:id", async (req: Request, res: Response) => {
-  try {
-    const idValidation = ObjectIdSchema.safeParse(req.params.id);
-
-    if (!idValidation.success) {
-      res.status(400).json({
-        error: VALIDATION_FAILED,
-        message: "Invalid ObjectId format",
-      });
-      return;
-    }
-
-    const bodyValidation = UpdateUserSchema.safeParse(req.body);
-
-    if (!bodyValidation.success) {
-      handleZodError(bodyValidation.error, res);
-      return;
-    }
-
-    const id = idValidation.data;
-    const updateData: UpdateUserRequest = bodyValidation.data;
+router.put(
+  "/:id",
+  validateObjectId(),
+  validateBody(UpdateUserSchema),
+  asyncHandler(async (req: Request, res: Response) => {
+    const id = res.locals.validatedId;
+    const updateData: UpdateUserRequest = res.locals.validatedBody;
 
     // If email is being updated, check for conflicts
     if (updateData.email) {
@@ -181,29 +115,15 @@ router.put("/:id", async (req: Request, res: Response) => {
     }
 
     res.json(user);
-  } catch (error) {
-    console.error("Error updating user:", error);
-    res.status(500).json({
-      error: INTERNAL_SERVER_ERROR,
-      message: "Failed to update user",
-    });
-  }
-});
+  }),
+);
 
 // DELETE /users/:id - Soft delete user
-router.delete("/:id", async (req: Request, res: Response) => {
-  try {
-    const validationResult = ObjectIdSchema.safeParse(req.params.id);
-
-    if (!validationResult.success) {
-      res.status(400).json({
-        error: VALIDATION_FAILED,
-        message: "Invalid ObjectId format",
-      });
-      return;
-    }
-
-    const deleted = await userService.deleteUser(validationResult.data);
+router.delete(
+  "/:id",
+  validateObjectId(),
+  asyncHandler(async (req: Request, res: Response) => {
+    const deleted = await userService.deleteUser(res.locals.validatedId);
 
     if (!deleted) {
       res.status(404).json({
@@ -214,29 +134,15 @@ router.delete("/:id", async (req: Request, res: Response) => {
     }
 
     res.status(204).send();
-  } catch (error) {
-    console.error("Error deleting user:", error);
-    res.status(500).json({
-      error: INTERNAL_SERVER_ERROR,
-      message: "Failed to delete user",
-    });
-  }
-});
+  }),
+);
 
 // POST /users/:id/restore - Restore deleted user
-router.post("/:id/restore", async (req: Request, res: Response) => {
-  try {
-    const validationResult = ObjectIdSchema.safeParse(req.params.id);
-
-    if (!validationResult.success) {
-      res.status(400).json({
-        error: VALIDATION_FAILED,
-        message: "Invalid ObjectId format",
-      });
-      return;
-    }
-
-    const user = await userService.restoreUser(validationResult.data);
+router.post(
+  "/:id/restore",
+  validateObjectId(),
+  asyncHandler(async (req: Request, res: Response) => {
+    const user = await userService.restoreUser(res.locals.validatedId);
 
     if (!user) {
       res.status(404).json({
@@ -247,13 +153,7 @@ router.post("/:id/restore", async (req: Request, res: Response) => {
     }
 
     res.json(user);
-  } catch (error) {
-    console.error("Error restoring user:", error);
-    res.status(500).json({
-      error: INTERNAL_SERVER_ERROR,
-      message: "Failed to restore user",
-    });
-  }
-});
+  }),
+);
 
 export default router;
