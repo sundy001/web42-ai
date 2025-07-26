@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from "events";
 
 export interface WebhookMessage {
   id: string;
@@ -25,22 +25,22 @@ class EventBridge extends EventEmitter {
 
   // Method for webhook to send messages
   sendMessage(message: WebhookMessage): void {
-    this.emit('webhook-message', message);
+    this.emit("webhook-message", message);
   }
 
   // Method for SSE to listen for messages
   onMessage(callback: (message: WebhookMessage) => void): () => void {
-    this.on('webhook-message', callback);
-    
+    this.on("webhook-message", callback);
+
     // Return cleanup function
     return () => {
-      this.off('webhook-message', callback);
+      this.off("webhook-message", callback);
     };
   }
 
   // Get current listener count for debugging
   getListenerCount(): number {
-    return this.listenerCount('webhook-message');
+    return this.listenerCount("webhook-message");
   }
 }
 

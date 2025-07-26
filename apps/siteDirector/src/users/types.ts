@@ -1,11 +1,11 @@
-import type { ObjectId } from 'mongodb';
+import type { ObjectId } from "mongodb";
 
 export interface User {
   _id?: ObjectId;
   email: string;
   name: string;
   authProvider: string;
-  status: 'active' | 'inactive' | 'deleted';
+  status: "active" | "inactive" | "deleted";
   createdAt?: string;
   updatedAt?: string;
 }
@@ -20,14 +20,14 @@ export interface UpdateUserRequest {
   email?: string;
   name?: string;
   authProvider?: string;
-  status?: 'active' | 'inactive';
+  status?: "active" | "inactive";
 }
 
 export interface UserFilters {
   email?: string;
   name?: string;
   authProvider?: string;
-  status?: 'active' | 'inactive';
+  status?: "active" | "inactive";
   includeDeleted?: boolean;
 }
 

@@ -1,40 +1,42 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from "react";
 
 export default function WebhookTestPage() {
-  const [messages, setMessages] = useState<Array<{
-    type: string;
-    message?: string;
-    id?: string;
-    timestamp: string;
-  }>>([]);
+  const [messages, setMessages] = useState<
+    Array<{
+      type: string;
+      message?: string;
+      id?: string;
+      timestamp: string;
+    }>
+  >([]);
   const [connected, setConnected] = useState(false);
-  const [webhookMessage, setWebhookMessage] = useState('');
+  const [webhookMessage, setWebhookMessage] = useState("");
   const [sending, setSending] = useState(false);
   const eventSourceRef = useRef<EventSource | null>(null);
 
   // Connect to SSE endpoint
   useEffect(() => {
-    const eventSource = new EventSource('/api/sse');
+    const eventSource = new EventSource("/api/sse");
     eventSourceRef.current = eventSource;
 
     eventSource.onopen = () => {
       setConnected(true);
-      console.log('SSE connection opened');
+      console.log("SSE connection opened");
     };
 
     eventSource.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        setMessages(prev => [...prev, data]);
+        setMessages((prev) => [...prev, data]);
       } catch (error) {
-        console.error('Failed to parse SSE message:', error);
+        console.error("Failed to parse SSE message:", error);
       }
     };
 
     eventSource.onerror = (error) => {
-      console.error('SSE error:', error);
+      console.error("SSE error:", error);
       setConnected(false);
     };
 
@@ -50,10 +52,10 @@ export default function WebhookTestPage() {
 
     setSending(true);
     try {
-      const response = await fetch('/api/webhook', {
-        method: 'POST',
+      const response = await fetch("/api/webhook", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           message: webhookMessage,
@@ -62,13 +64,13 @@ export default function WebhookTestPage() {
 
       if (response.ok) {
         const result = await response.json();
-        console.log('Webhook response:', result);
-        setWebhookMessage('');
+        console.log("Webhook response:", result);
+        setWebhookMessage("");
       } else {
-        console.error('Webhook failed:', response.statusText);
+        console.error("Webhook failed:", response.statusText);
       }
     } catch (error) {
-      console.error('Failed to send webhook:', error);
+      console.error("Failed to send webhook:", error);
     } finally {
       setSending(false);
     }
@@ -90,11 +92,11 @@ export default function WebhookTestPage() {
           <div className="flex items-center space-x-2">
             <div
               className={`w-3 h-3 rounded-full ${
-                connected ? 'bg-green-500' : 'bg-red-500'
+                connected ? "bg-green-500" : "bg-red-500"
               }`}
             />
             <span className="font-medium">
-              SSE Connection: {connected ? 'Connected' : 'Disconnected'}
+              SSE Connection: {connected ? "Connected" : "Disconnected"}
             </span>
           </div>
         </div>
@@ -109,14 +111,14 @@ export default function WebhookTestPage() {
               onChange={(e) => setWebhookMessage(e.target.value)}
               placeholder="Enter message to send via webhook..."
               className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onKeyPress={(e) => e.key === 'Enter' && sendWebhookMessage()}
+              onKeyPress={(e) => e.key === "Enter" && sendWebhookMessage()}
             />
             <button
               onClick={sendWebhookMessage}
               disabled={sending || !webhookMessage.trim()}
               className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {sending ? 'Sending...' : 'Send'}
+              {sending ? "Sending..." : "Send"}
             </button>
           </div>
         </div>
@@ -145,13 +147,13 @@ export default function WebhookTestPage() {
                 <div
                   key={index}
                   className={`p-3 rounded border-l-4 ${
-                    msg.type === 'webhook-message'
-                      ? 'bg-green-50 border-l-green-500'
-                      : msg.type === 'connected'
-                      ? 'bg-blue-50 border-l-blue-500'
-                      : msg.type === 'heartbeat'
-                      ? 'bg-gray-50 border-l-gray-400'
-                      : 'bg-yellow-50 border-l-yellow-500'
+                    msg.type === "webhook-message"
+                      ? "bg-green-50 border-l-green-500"
+                      : msg.type === "connected"
+                        ? "bg-blue-50 border-l-blue-500"
+                        : msg.type === "heartbeat"
+                          ? "bg-gray-50 border-l-gray-400"
+                          : "bg-yellow-50 border-l-yellow-500"
                   }`}
                 >
                   <div className="flex justify-between items-start">
@@ -182,7 +184,9 @@ export default function WebhookTestPage() {
         <div className="mt-6 p-4 rounded-lg bg-blue-50 border border-blue-200">
           <h3 className="font-semibold text-blue-900 mb-2">How to test:</h3>
           <ol className="text-sm text-blue-800 space-y-1">
-            <li>1. Verify the SSE connection is established (green dot above)</li>
+            <li>
+              1. Verify the SSE connection is established (green dot above)
+            </li>
             <li>2. Type a message in the input field</li>
             <li>3. Click &quot;Send&quot; or press Enter</li>
             <li>4. Watch the message appear in real-time via SSE</li>

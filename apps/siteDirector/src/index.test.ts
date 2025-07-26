@@ -1,11 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from "vitest";
 
-describe('Site Director', () => {
-  it('should be defined', () => {
+describe("Site Director", () => {
+  it("should be defined", () => {
     expect(true).toBe(true);
   });
 
-  it('should have correct port default', () => {
+  it("should have correct port default", () => {
     const defaultPort = 3002;
     expect(defaultPort).toBe(3002);
   });

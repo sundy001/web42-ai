@@ -1,15 +1,15 @@
-import { ObjectId } from 'mongodb';
-import { databaseStore } from '../stores/index.js';
+import { ObjectId } from "mongodb";
+import { databaseStore } from "../stores/index.js";
 import type {
-  User,
   CreateUserRequest,
-  UpdateUserRequest,
-  UserFilters,
   PaginationOptions,
+  UpdateUserRequest,
+  User,
+  UserFilters,
   UserListResponse,
-} from './types.js';
+} from "./types.js";
 
-const COLLECTION_NAME = 'users';
+const COLLECTION_NAME = "users";
 
 function getCollection() {
   const db = databaseStore.getDatabase();
@@ -19,45 +19,51 @@ function getCollection() {
 export async function createUser(userData: CreateUserRequest): Promise<User> {
   const collection = getCollection();
   const now = new Date().toISOString();
-  
-  const user: Omit<User, '_id'> = {
+
+  const user: Omit<User, "_id"> = {
     ...userData,
-    status: 'active',
+    status: "active",
     createdAt: now,
     updatedAt: now,
   };
 
   const result = await collection.insertOne(user);
-  
+
   return {
     _id: result.insertedId,
     ...user,
   };
 }
 
-export async function getUserById(id: string, includeDeleted = false): Promise<User | null> {
+export async function getUserById(
+  id: string,
+  includeDeleted = false,
+): Promise<User | null> {
   const collection = getCollection();
-  
+
   if (!ObjectId.isValid(id)) {
     return null;
   }
 
   const filter: Record<string, unknown> = { _id: new ObjectId(id) };
-  
+
   if (!includeDeleted) {
-    filter.status = { $ne: 'deleted' };
+    filter.status = { $ne: "deleted" };
   }
 
   return await collection.findOne(filter);
 }
 
-export async function getUserByEmail(email: string, includeDeleted = false): Promise<User | null> {
+export async function getUserByEmail(
+  email: string,
+  includeDeleted = false,
+): Promise<User | null> {
   const collection = getCollection();
-  
+
   const filter: Record<string, unknown> = { email };
-  
+
   if (!includeDeleted) {
-    filter.status = { $ne: 'deleted' };
+    filter.status = { $ne: "deleted" };
   }
 
   return await collection.findOne(filter);
@@ -65,10 +71,10 @@ export async function getUserByEmail(email: string, includeDeleted = false): Pro
 
 export async function updateUser(
   id: string,
-  updateData: UpdateUserRequest
+  updateData: UpdateUserRequest,
 ): Promise<User | null> {
   const collection = getCollection();
-  
+
   if (!ObjectId.isValid(id)) {
     return null;
   }
@@ -79,12 +85,12 @@ export async function updateUser(
   };
 
   const result = await collection.findOneAndUpdate(
-    { 
+    {
       _id: new ObjectId(id),
-      status: { $ne: 'deleted' }
+      status: { $ne: "deleted" },
     },
     { $set: updateDoc },
-    { returnDocument: 'after' }
+    { returnDocument: "after" },
   );
 
   return result || null;
@@ -92,23 +98,23 @@ export async function updateUser(
 
 export async function deleteUser(id: string): Promise<boolean> {
   const collection = getCollection();
-  
+
   if (!ObjectId.isValid(id)) {
     return false;
   }
 
   // Soft delete by updating status to 'deleted'
   const result = await collection.updateOne(
-    { 
+    {
       _id: new ObjectId(id),
-      status: { $ne: 'deleted' }
+      status: { $ne: "deleted" },
     },
-    { 
-      $set: { 
-        status: 'deleted',
-        updatedAt: new Date().toISOString()
-      }
-    }
+    {
+      $set: {
+        status: "deleted",
+        updatedAt: new Date().toISOString(),
+      },
+    },
   );
 
   return result.modifiedCount > 0;
@@ -116,7 +122,7 @@ export async function deleteUser(id: string): Promise<boolean> {
 
 export async function permanentlyDeleteUser(id: string): Promise<boolean> {
   const collection = getCollection();
-  
+
   if (!ObjectId.isValid(id)) {
     return false;
   }
@@ -127,23 +133,23 @@ export async function permanentlyDeleteUser(id: string): Promise<boolean> {
 
 export async function restoreUser(id: string): Promise<User | null> {
   const collection = getCollection();
-  
+
   if (!ObjectId.isValid(id)) {
     return null;
   }
 
   const result = await collection.findOneAndUpdate(
-    { 
+    {
       _id: new ObjectId(id),
-      status: 'deleted'
+      status: "deleted",
     },
-    { 
-      $set: { 
-        status: 'active',
-        updatedAt: new Date().toISOString()
-      }
+    {
+      $set: {
+        status: "active",
+        updatedAt: new Date().toISOString(),
+      },
     },
-    { returnDocument: 'after' }
+    { returnDocument: "after" },
   );
 
   return result || null;
@@ -151,7 +157,7 @@ export async function restoreUser(id: string): Promise<User | null> {
 
 export async function listUsers(
   filters: UserFilters = {},
-  pagination: PaginationOptions = {}
+  pagination: PaginationOptions = {},
 ): Promise<UserListResponse> {
   const collection = getCollection();
   const { page = 1, limit = 10 } = pagination;
@@ -159,12 +165,12 @@ export async function listUsers(
 
   // Build filter query
   const query: Record<string, unknown> = {};
-  
+
   if (filters.email) {
-    query.email = { $regex: filters.email, $options: 'i' };
+    query.email = { $regex: filters.email, $options: "i" };
   }
   if (filters.name) {
-    query.name = { $regex: filters.name, $options: 'i' };
+    query.name = { $regex: filters.name, $options: "i" };
   }
   if (filters.authProvider) {
     query.authProvider = filters.authProvider;
@@ -172,10 +178,12 @@ export async function listUsers(
   if (filters.status) {
     query.status = filters.status;
   }
-  
+
   // Include deleted users only if explicitly requested
   if (!filters.includeDeleted) {
-    query.status = query.status ? { $in: [query.status, 'active', 'inactive'] } : { $ne: 'deleted' };
+    query.status = query.status
+      ? { $in: [query.status, "active", "inactive"] }
+      : { $ne: "deleted" };
   }
 
   // Get total count and users in parallel
@@ -198,15 +206,18 @@ export async function listUsers(
   };
 }
 
-export async function userExists(email: string, excludeDeleted = true): Promise<boolean> {
+export async function userExists(
+  email: string,
+  excludeDeleted = true,
+): Promise<boolean> {
   const collection = getCollection();
-  
+
   const filter: Record<string, unknown> = { email };
-  
+
   if (excludeDeleted) {
-    filter.status = { $ne: 'deleted' };
+    filter.status = { $ne: "deleted" };
   }
-  
+
   const count = await collection.countDocuments(filter);
   return count > 0;
 }
@@ -219,27 +230,24 @@ export async function getUserStats(): Promise<{
   byAuthProvider: Record<string, number>;
 }> {
   const collection = getCollection();
-  
-  const [
-    total,
-    active,
-    inactive,
-    deleted,
-    byAuthProvider
-  ] = await Promise.all([
+
+  const [total, active, inactive, deleted, byAuthProvider] = await Promise.all([
     collection.countDocuments({}),
-    collection.countDocuments({ status: 'active' }),
-    collection.countDocuments({ status: 'inactive' }),
-    collection.countDocuments({ status: 'deleted' }),
-    collection.aggregate([
-      { $group: { _id: '$authProvider', count: { $sum: 1 } } }
-    ]).toArray()
+    collection.countDocuments({ status: "active" }),
+    collection.countDocuments({ status: "inactive" }),
+    collection.countDocuments({ status: "deleted" }),
+    collection
+      .aggregate([{ $group: { _id: "$authProvider", count: { $sum: 1 } } }])
+      .toArray(),
   ]);
 
-  const authProviderStats = byAuthProvider.reduce((acc, item) => {
-    acc[item._id] = item.count;
-    return acc;
-  }, {} as Record<string, number>);
+  const authProviderStats = byAuthProvider.reduce(
+    (acc, item) => {
+      acc[item._id] = item.count;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   return {
     total,

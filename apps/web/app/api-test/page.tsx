@@ -40,10 +40,13 @@ export default function ApiTestPage() {
         try {
           const parsed = JSON.parse(event.data);
           const timestamp = new Date().toLocaleTimeString();
-          const eventType = parsed.type === 'webhook-message' ? 'WEBHOOK' : parsed.type.toUpperCase();
+          const eventType =
+            parsed.type === "webhook-message"
+              ? "WEBHOOK"
+              : parsed.type.toUpperCase();
           setEvents((prev) => [
             ...prev,
-            `[${timestamp}] ${eventType}: ${parsed.message || 'Connection/Status message'}`,
+            `[${timestamp}] ${eventType}: ${parsed.message || "Connection/Status message"}`,
           ]);
 
           // Close connection if we receive an 'end' or 'timeout' event
@@ -93,10 +96,10 @@ export default function ApiTestPage() {
 
     setSending(true);
     try {
-      const response = await fetch('/api/webhook', {
-        method: 'POST',
+      const response = await fetch("/api/webhook", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           message: webhookMessage,
@@ -105,13 +108,13 @@ export default function ApiTestPage() {
 
       if (response.ok) {
         const result = await response.json();
-        console.log('Webhook response:', result);
-        setWebhookMessage('');
+        console.log("Webhook response:", result);
+        setWebhookMessage("");
       } else {
-        console.error('Webhook failed:', response.statusText);
+        console.error("Webhook failed:", response.statusText);
       }
     } catch (error) {
-      console.error('Failed to send webhook:', error);
+      console.error("Failed to send webhook:", error);
     } finally {
       setSending(false);
     }
@@ -129,9 +132,12 @@ export default function ApiTestPage() {
     <div className="min-h-screen bg-background p-8">
       <div className="mx-auto max-w-4xl space-y-6">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold">API Test - EventBridge Integration</h1>
+          <h1 className="text-3xl font-bold">
+            API Test - EventBridge Integration
+          </h1>
           <p className="text-muted-foreground">
-            Test the eventBridge integration between webhook and see-demo endpoints
+            Test the eventBridge integration between webhook and see-demo
+            endpoints
           </p>
         </div>
 
@@ -184,9 +190,7 @@ export default function ApiTestPage() {
                   placeholder="Enter webhook message..."
                   value={webhookMessage}
                   onChange={(e) => setWebhookMessage(e.target.value)}
-                  onKeyDown={(e) =>
-                    e.key === "Enter" && sendWebhookMessage()
-                  }
+                  onKeyDown={(e) => e.key === "Enter" && sendWebhookMessage()}
                 />
                 <Button
                   onClick={sendWebhookMessage}
@@ -237,7 +241,10 @@ export default function ApiTestPage() {
               <ol className="list-decimal list-inside ml-4 space-y-1">
                 <li>Connect to the see-demo SSE endpoint with an identifier</li>
                 <li>Send messages via the webhook endpoint</li>
-                <li>Messages are broadcast to all connected SSE clients via EventEmitter</li>
+                <li>
+                  Messages are broadcast to all connected SSE clients via
+                  EventEmitter
+                </li>
                 <li>See real-time message delivery across endpoints</li>
               </ol>
             </div>

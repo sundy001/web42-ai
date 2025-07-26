@@ -1,17 +1,17 @@
 export interface HealthStatus {
-  status: 'ok' | 'error';
+  status: "ok" | "error";
   service: string;
   timestamp: string;
   uptime: number;
   database: {
-    status: 'connected' | 'disconnected';
+    status: "connected" | "disconnected";
     name?: string;
     error?: string;
   };
 }
 
 export interface BasicHealthStatus {
-  status: 'ok';
+  status: "ok";
   service: string;
   timestamp: string;
   uptime: number;

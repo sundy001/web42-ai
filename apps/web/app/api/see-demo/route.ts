@@ -1,5 +1,5 @@
-import { NextRequest } from "next/server";
 import { eventBridge, WebhookMessage } from "@/server/eventBridge";
+import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     const headers = new Headers({
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache",
-      "Connection": "keep-alive",
+      Connection: "keep-alive",
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET",
       "Access-Control-Allow-Headers": "Content-Type",
@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
             message: `Connected to see-demo endpoint. Listening for messages related to: "${userMessage}"`,
             userMessage: userMessage,
             timestamp: new Date().toISOString(),
-          })}\n\n`
+          })}\n\n`,
         );
 
         // Set up heartbeat to keep connection alive
@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
               type: "heartbeat",
               userMessage: userMessage,
               timestamp: new Date().toISOString(),
-            })}\n\n`
+            })}\n\n`,
           );
         }, 30000); // Send heartbeat every 30 seconds
 
@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
               message: message.message,
               userMessage: userMessage,
               timestamp: message.timestamp,
-            })}\n\n`
+            })}\n\n`,
           );
         };
 
@@ -119,19 +119,22 @@ export async function GET(request: NextRequest) {
         request.signal.addEventListener("abort", cleanup);
 
         // Clean up after 5 minutes to prevent memory leaks
-        setTimeout(() => {
-          if (isClosed) return;
+        setTimeout(
+          () => {
+            if (isClosed) return;
 
-          safeEnqueue(
-            `data: ${JSON.stringify({
-              type: "timeout",
-              message: "See-demo SSE connection timed out after 5 minutes",
-              userMessage: userMessage,
-              timestamp: new Date().toISOString(),
-            })}\n\n`
-          );
-          cleanup();
-        }, 5 * 60 * 1000); // 5 minutes
+            safeEnqueue(
+              `data: ${JSON.stringify({
+                type: "timeout",
+                message: "See-demo SSE connection timed out after 5 minutes",
+                userMessage: userMessage,
+                timestamp: new Date().toISOString(),
+              })}\n\n`,
+            );
+            cleanup();
+          },
+          5 * 60 * 1000,
+        ); // 5 minutes
       },
     });
 

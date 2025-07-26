@@ -1,4 +1,4 @@
-import { MongoClient, Db } from 'mongodb';
+import { Db, MongoClient } from "mongodb";
 
 export interface DatabaseConfig {
   uri: string;
@@ -12,8 +12,10 @@ class DatabaseStore {
 
   constructor(config?: Partial<DatabaseConfig>) {
     this.config = {
-      uri: config?.uri || process.env.MONGODB_URI || 'mongodb://localhost:27017',
-      databaseName: config?.databaseName || process.env.DATABASE_NAME || 'web42-ai',
+      uri:
+        config?.uri || process.env.MONGODB_URI || "mongodb://localhost:27017",
+      databaseName:
+        config?.databaseName || process.env.DATABASE_NAME || "web42-ai",
     };
   }
 
@@ -24,7 +26,7 @@ class DatabaseStore {
       this.database = this.client.db(this.config.databaseName);
       console.log(`✅ Connected to MongoDB: ${this.config.databaseName}`);
     } catch (error) {
-      console.error('❌ Failed to connect to MongoDB:', error);
+      console.error("❌ Failed to connect to MongoDB:", error);
       throw error;
     }
   }
@@ -35,24 +37,28 @@ class DatabaseStore {
         await this.client.close();
         this.client = null;
         this.database = null;
-        console.log('✅ MongoDB connection closed');
+        console.log("✅ MongoDB connection closed");
       }
     } catch (error) {
-      console.error('❌ Error closing MongoDB connection:', error);
+      console.error("❌ Error closing MongoDB connection:", error);
       throw error;
     }
   }
 
   getDatabase(): Db {
     if (!this.database) {
-      throw new Error('Database not initialized. Make sure to call connect() first.');
+      throw new Error(
+        "Database not initialized. Make sure to call connect() first.",
+      );
     }
     return this.database;
   }
 
   getClient(): MongoClient {
     if (!this.client) {
-      throw new Error('MongoDB client not initialized. Make sure to call connect() first.');
+      throw new Error(
+        "MongoDB client not initialized. Make sure to call connect() first.",
+      );
     }
     return this.client;
   }
@@ -73,7 +79,7 @@ class DatabaseStore {
       await this.database.admin().ping();
       return true;
     } catch (error) {
-      console.error('❌ Database ping failed:', error);
+      console.error("❌ Database ping failed:", error);
       return false;
     }
   }

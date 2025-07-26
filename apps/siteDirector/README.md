@@ -56,21 +56,27 @@ bun check-types
 ## API Endpoints
 
 ### Health Check
+
 ```
 GET /health
 ```
+
 Returns server health status and uptime information.
 
 ### API Status
+
 ```
 GET /api/v1/status
 ```
+
 Returns API status and version information.
 
 ### Welcome
+
 ```
 GET /
 ```
+
 Returns welcome message and available endpoints.
 
 ## Project Structure
@@ -99,12 +105,14 @@ apps/siteDirector/
 ## Dependencies
 
 ### Production
+
 - `express` - Web framework
 - `cors` - CORS middleware
 - `helmet` - Security middleware
 - `morgan` - HTTP request logger
 
 ### Development
+
 - `tsx` - TypeScript execution
 - `typescript` - TypeScript compiler
 - `vitest` - Testing framework

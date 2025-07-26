@@ -1,11 +1,11 @@
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import morgan from 'morgan';
-import swaggerUi from 'swagger-ui-express';
-import { databaseStore, getHealthStatus } from './stores/index.js';
-import { userRoutes } from './users/index.js';
-import { openApiDocument } from './openapi/openApiConfig.js';
+import cors from "cors";
+import express from "express";
+import helmet from "helmet";
+import morgan from "morgan";
+import swaggerUi from "swagger-ui-express";
+import { openApiDocument } from "./openapi/openApiConfig.js";
+import { databaseStore, getHealthStatus } from "./stores/index.js";
+import { userRoutes } from "./users/index.js";
 
 const app = express();
 const PORT = 3002; // Default port for Site Director
@@ -13,59 +13,63 @@ const PORT = 3002; // Default port for Site Director
 // Middleware
 app.use(helmet());
 app.use(cors());
-app.use(morgan('combined'));
+app.use(morgan("combined"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Health check endpoint
-app.get('/health', async (req, res) => {
+app.get("/health", async (req, res) => {
   const healthStatus = await getHealthStatus();
-  const statusCode = healthStatus.status === 'ok' ? 200 : 503;
+  const statusCode = healthStatus.status === "ok" ? 200 : 503;
   res.status(statusCode).json(healthStatus);
 });
 
 // Swagger documentation
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument, {
-  customCss: '.swagger-ui .topbar { display: none }',
-  customSiteTitle: 'Site Director API Documentation',
-}));
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(openApiDocument, {
+    customCss: ".swagger-ui .topbar { display: none }",
+    customSiteTitle: "Site Director API Documentation",
+  }),
+);
 
 // API documentation JSON
-app.get('/api-docs.json', (req, res) => {
-  res.setHeader('Content-Type', 'application/json');
+app.get("/api-docs.json", (req, res) => {
+  res.setHeader("Content-Type", "application/json");
   res.send(openApiDocument);
 });
 
 // API routes
-app.get('/api/v1/status', (req, res) => {
+app.get("/api/v1/status", (req, res) => {
   res.json({
-    message: 'Site Director API is running',
-    version: '1.0.0',
+    message: "Site Director API is running",
+    version: "1.0.0",
     timestamp: new Date().toISOString(),
   });
 });
 
 // User routes
-app.use('/api/v1/users', userRoutes);
+app.use("/api/v1/users", userRoutes);
 
 // Welcome endpoint
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   res.json({
-    message: 'Welcome to Site Director',
-    description: 'Express server for web42-ai platform',
+    message: "Welcome to Site Director",
+    description: "Express server for web42-ai platform",
     endpoints: {
-      health: '/health',
-      api: '/api/v1/status',
-      users: '/api/v1/users',
-      documentation: '/api-docs',
+      health: "/health",
+      api: "/api/v1/status",
+      users: "/api/v1/users",
+      documentation: "/api-docs",
     },
   });
 });
 
 // 404 handler
-app.use('*', (req, res) => {
+app.use("*", (req, res) => {
   res.status(404).json({
-    error: 'Not Found',
+    error: "Not Found",
     message: `Route ${req.originalUrl} not found`,
     timestamp: new Date().toISOString(),
   });
@@ -73,25 +77,25 @@ app.use('*', (req, res) => {
 
 // Error handler
 app.use((err: Error, req: express.Request, res: express.Response) => {
-  console.error('Error:', err.message);
-  console.error('Stack:', err.stack);
-  
+  console.error("Error:", err.message);
+  console.error("Stack:", err.stack);
+
   const isDevelopment = false; // Disable detailed error messages in production
   res.status(500).json({
-    error: 'Internal Server Error',
-    message: isDevelopment ? err.message : 'Something went wrong',
+    error: "Internal Server Error",
+    message: isDevelopment ? err.message : "Something went wrong",
     timestamp: new Date().toISOString(),
   });
 });
 
 // Graceful shutdown handler
-process.on('SIGINT', async () => {
-  console.log('\n🛑 Shutting down Site Director server...');
+process.on("SIGINT", async () => {
+  console.log("\n🛑 Shutting down Site Director server...");
   try {
     await databaseStore.disconnect();
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error during shutdown:', error);
+    console.error("❌ Error during shutdown:", error);
     process.exit(1);
   }
 });
@@ -100,7 +104,7 @@ process.on('SIGINT', async () => {
 async function startServer() {
   try {
     await databaseStore.connect();
-    
+
     app.listen(PORT, () => {
       const config = databaseStore.getConfig();
       console.log(`🚀 Site Director server running on port ${PORT}`);
@@ -109,7 +113,7 @@ async function startServer() {
       console.log(`💾 Database: ${config.databaseName} on ${config.uri}`);
     });
   } catch (error) {
-    console.error('❌ Failed to start server:', error);
+    console.error("❌ Failed to start server:", error);
     process.exit(1);
   }
 }
