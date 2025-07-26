@@ -22,7 +22,7 @@
 }
 
 /* TODO: fix this later @media can not be used with @theme*/
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   @theme {
     --color-background: #020617;
     --color-foreground: #f8fafc;
@@ -44,4 +44,4 @@
     --color-input: #1e293b;
     --color-ring: #cbd5e1;
   }
-}
+} */

@@ -86,6 +86,9 @@ export const config = [
 
       // Disable import order rule
       "import/order": "off",
+
+      // Disable prop-types validation since we use TypeScript
+      "react/prop-types": "off",
     },
   },
   {

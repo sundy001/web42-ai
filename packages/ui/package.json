@@ -7,6 +7,11 @@
     "./button": "./src/button.tsx",
     "./card": "./src/card.tsx",
     "./input": "./src/input.tsx",
+    "./table": "./src/table.tsx",
+    "./label": "./src/label.tsx",
+    "./select": "./src/select.tsx",
+    "./form": "./src/form.tsx",
+    "./sheet": "./src/sheet.tsx",
     "./utils": "./src/utils.ts",
     "./styles.css": "./src/styles.css"
   },
@@ -25,6 +30,9 @@
     "typescript": "5.8.2"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.14",
+    "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-slot": "^1.2.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
