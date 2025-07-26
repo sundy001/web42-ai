@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import { databaseStore, getHealthStatus } from './stores/index.js';
 
 const app = express();
 const PORT = 3002; // Default port for Site Director
@@ -14,13 +15,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    service: 'site-director',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-  });
+app.get('/health', async (req, res) => {
+  const healthStatus = await getHealthStatus();
+  const statusCode = healthStatus.status === 'ok' ? 200 : 503;
+  res.status(statusCode).json(healthStatus);
 });
 
 // API routes
@@ -66,11 +64,41 @@ app.use((err: Error, req: express.Request, res: express.Response) => {
   });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Site Director server running on port ${PORT}`);
-  console.log(`📍 Health check: http://localhost:${PORT}/health`);
-  console.log(`🔗 API status: http://localhost:${PORT}/api/v1/status`);
+// Graceful shutdown handler
+process.on('SIGINT', async () => {
+  console.log('\n🛑 Shutting down Site Director server...');
+  try {
+    await databaseStore.disconnect();
+    process.exit(0);
+  } catch (error) {
+    console.error('❌ Error during shutdown:', error);
+    process.exit(1);
+  }
 });
+
+// Start server with database initialization
+async function startServer() {
+  try {
+    await databaseStore.connect();
+    
+    app.listen(PORT, () => {
+      const config = databaseStore.getConfig();
+      console.log(`🚀 Site Director server running on port ${PORT}`);
+      console.log(`📍 Health check: http://localhost:${PORT}/health`);
+      console.log(`🔗 API status: http://localhost:${PORT}/api/v1/status`);
+      console.log(`💾 Database: ${config.databaseName} on ${config.uri}`);
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+startServer();
+
+// Export database access for other modules
+export function getDatabase() {
+  return databaseStore.getDatabase();
+}
 
 export default app;

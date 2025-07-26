@@ -135,3 +135,38 @@ Cloudflare Workers in `apps/workers/` handle:
 - AI code generation tasks via `plan-steps-queue`
 - Build orchestration via `project-builds-queue`
 - Real-time status updates to UI and database persistence
+
+## Programming Paradigm
+
+### Functional Programming First
+
+- **Prefer functional programming** over Object-Oriented Programming (OOP)
+- Use pure functions whenever possible
+- Favor immutability and avoid side effects
+- Leverage function composition and higher-order functions
+
+### When to Use Classes
+
+Classes are acceptable in specific scenarios:
+
+- **Extending built-in classes**: `class CustomError extends Error`
+- **Framework requirements**: When libraries/frameworks expect class-based patterns
+
+## File Organization
+
+### One Function Per File Rule (Flexible)
+
+- Guideline: Prefer one function per file for modularity, but be pragmatic
+- Small functions: Can be inlined if they lack strong semantic meaning
+- Related functions: Group highly related functions in the same file
+- File size limit: Single file should not exceed 200 lines
+- Breaking point: If a file grows beyond 200 lines, split it into smaller modules
+
+## Module Structure
+
+### Directory-Based Modules
+
+- Group related functionality into a single directory
+- Use `index.ts` to expose public APIs
+- Keep internal implementation private within the module
+- Clear separation between public interface and internal details
