@@ -2,7 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import swaggerUi from 'swagger-ui-express';
 import { databaseStore, getHealthStatus } from './stores/index.js';
+import { userRoutes } from './users/index.js';
+import swaggerSpec from './swagger/swaggerConfig.js';
 
 const app = express();
 const PORT = 3002; // Default port for Site Director
@@ -21,6 +24,18 @@ app.get('/health', async (req, res) => {
   res.status(statusCode).json(healthStatus);
 });
 
+// Swagger documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'Site Director API Documentation',
+}));
+
+// API documentation JSON
+app.get('/api-docs.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
+
 // API routes
 app.get('/api/v1/status', (req, res) => {
   res.json({
@@ -30,6 +45,9 @@ app.get('/api/v1/status', (req, res) => {
   });
 });
 
+// User routes
+app.use('/api/v1/users', userRoutes);
+
 // Welcome endpoint
 app.get('/', (req, res) => {
   res.json({
@@ -38,6 +56,8 @@ app.get('/', (req, res) => {
     endpoints: {
       health: '/health',
       api: '/api/v1/status',
+      users: '/api/v1/users',
+      documentation: '/api-docs',
     },
   });
 });

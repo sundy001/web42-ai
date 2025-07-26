@@ -1,5 +1,5 @@
 import databaseStore from "./database.js";
-import type { BasicHealthStatus, HealthStatus } from "./health/types.js";
+import type { BasicHealthStatus, HealthStatus } from "./types.js";
 
 function getBaseHealthInfo() {
   return {
