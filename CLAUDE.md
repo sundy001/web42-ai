@@ -170,3 +170,11 @@ Classes are acceptable in specific scenarios:
 - Use `index.ts` to expose public APIs
 - Keep internal implementation private within the module
 - Clear separation between public interface and internal details
+- Import folder with `index.ts`, should directly import the folder name. For example:
+
+```typescript
+import { userRoute } from "users/index"; // this is not correct
+import { userRoute } from "user";
+```
+
+- Should avoid import \* from 'package'. Instead use named imports
