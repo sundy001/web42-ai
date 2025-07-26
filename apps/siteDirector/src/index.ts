@@ -5,7 +5,7 @@ import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import { databaseStore, getHealthStatus } from './stores/index.js';
 import { userRoutes } from './users/index.js';
-import swaggerSpec from './swagger/swaggerConfig.js';
+import { openApiDocument } from './openapi/openApiConfig.js';
 
 const app = express();
 const PORT = 3002; // Default port for Site Director
@@ -25,7 +25,7 @@ app.get('/health', async (req, res) => {
 });
 
 // Swagger documentation
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument, {
   customCss: '.swagger-ui .topbar { display: none }',
   customSiteTitle: 'Site Director API Documentation',
 }));
@@ -33,7 +33,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
 // API documentation JSON
 app.get('/api-docs.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
-  res.send(swaggerSpec);
+  res.send(openApiDocument);
 });
 
 // API routes

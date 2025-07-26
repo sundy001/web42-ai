@@ -18,7 +18,7 @@ function getCollection() {
 
 export async function createUser(userData: CreateUserRequest): Promise<User> {
   const collection = getCollection();
-  const now = new Date();
+  const now = new Date().toISOString();
   
   const user: Omit<User, '_id'> = {
     ...userData,
@@ -75,7 +75,7 @@ export async function updateUser(
 
   const updateDoc = {
     ...updateData,
-    updatedAt: new Date(),
+    updatedAt: new Date().toISOString(),
   };
 
   const result = await collection.findOneAndUpdate(
@@ -106,7 +106,7 @@ export async function deleteUser(id: string): Promise<boolean> {
     { 
       $set: { 
         status: 'deleted',
-        updatedAt: new Date()
+        updatedAt: new Date().toISOString()
       }
     }
   );
@@ -140,7 +140,7 @@ export async function restoreUser(id: string): Promise<User | null> {
     { 
       $set: { 
         status: 'active',
-        updatedAt: new Date()
+        updatedAt: new Date().toISOString()
       }
     },
     { returnDocument: 'after' }

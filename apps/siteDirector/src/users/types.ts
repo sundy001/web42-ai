@@ -6,8 +6,8 @@ export interface User {
   name: string;
   authProvider: string;
   status: 'active' | 'inactive' | 'deleted';
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface CreateUserRequest {
