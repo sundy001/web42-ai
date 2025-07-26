@@ -1,5 +1,4 @@
 import { ObjectId } from "mongodb";
-import { databaseStore } from "../stores/index.js";
 import type {
   CreateUserRequest,
   PaginationOptions,
@@ -7,7 +6,8 @@ import type {
   User,
   UserFilters,
   UserListResponse,
-} from "./types.js";
+} from "../users/types.js";
+import { databaseStore } from "./database";
 
 const COLLECTION_NAME = "users";
 

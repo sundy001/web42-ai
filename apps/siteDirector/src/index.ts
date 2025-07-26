@@ -4,8 +4,8 @@ import helmet from "helmet";
 import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
 import { openApiDocument } from "./openapi/openApiConfig.js";
-import { databaseStore, getHealthStatus } from "./stores/index.js";
-import { userRoutes } from "./users/index.js";
+import { databaseStore, getHealthStatus } from "./stores";
+import { userRoutes } from "./users";
 import { errorHandler } from "./users/middleware.js";
 
 const app = express();

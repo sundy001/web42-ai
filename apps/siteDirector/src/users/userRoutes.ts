@@ -1,6 +1,17 @@
 import type { Request, Response } from "express";
 import express from "express";
 import {
+  createUser,
+  deleteUser,
+  getUserByEmail,
+  getUserById,
+  getUserStats,
+  listUsers,
+  restoreUser,
+  updateUser,
+  userExists,
+} from "../stores/userStore";
+import {
   asyncHandler,
   validateBody,
   validateObjectId,
@@ -13,7 +24,6 @@ import {
   type ListUsersQueryInput,
 } from "./schemas.js";
 import type { CreateUserRequest, UpdateUserRequest } from "./types.js";
-import * as userService from "./userService.js";
 
 const router = express.Router();
 
@@ -28,7 +38,7 @@ router.get(
     const filters = { email, name, authProvider, status, includeDeleted };
     const pagination = { page, limit };
 
-    const result = await userService.listUsers(filters, pagination);
+    const result = await listUsers(filters, pagination);
     res.json(result);
   }),
 );
@@ -37,7 +47,7 @@ router.get(
 router.get(
   "/stats",
   asyncHandler(async (req: Request, res: Response) => {
-    const stats = await userService.getUserStats();
+    const stats = await getUserStats();
     res.json(stats);
   }),
 );
@@ -47,7 +57,7 @@ router.get(
   "/:id",
   validateObjectId(),
   asyncHandler(async (req: Request, res: Response) => {
-    const user = await userService.getUserById(res.locals.validatedId);
+    const user = await getUserById(res.locals.validatedId);
 
     if (!user) {
       res.status(404).json({
@@ -69,7 +79,7 @@ router.post(
     const userData: CreateUserRequest = res.locals.validatedBody;
 
     // Check if user already exists
-    const existingUser = await userService.userExists(userData.email);
+    const existingUser = await userExists(userData.email);
     if (existingUser) {
       res.status(409).json({
         error: "Conflict",
@@ -78,7 +88,7 @@ router.post(
       return;
     }
 
-    const user = await userService.createUser(userData);
+    const user = await createUser(userData);
     res.status(201).json(user);
   }),
 );
@@ -94,7 +104,7 @@ router.put(
 
     // If email is being updated, check for conflicts
     if (updateData.email) {
-      const existingUser = await userService.getUserByEmail(updateData.email);
+      const existingUser = await getUserByEmail(updateData.email);
       if (existingUser && existingUser._id?.toString() !== id) {
         res.status(409).json({
           error: "Conflict",
@@ -104,7 +114,7 @@ router.put(
       }
     }
 
-    const user = await userService.updateUser(id, updateData);
+    const user = await updateUser(id, updateData);
 
     if (!user) {
       res.status(404).json({
@@ -123,7 +133,7 @@ router.delete(
   "/:id",
   validateObjectId(),
   asyncHandler(async (req: Request, res: Response) => {
-    const deleted = await userService.deleteUser(res.locals.validatedId);
+    const deleted = await deleteUser(res.locals.validatedId);
 
     if (!deleted) {
       res.status(404).json({
@@ -142,7 +152,7 @@ router.post(
   "/:id/restore",
   validateObjectId(),
   asyncHandler(async (req: Request, res: Response) => {
-    const user = await userService.restoreUser(res.locals.validatedId);
+    const user = await restoreUser(res.locals.validatedId);
 
     if (!user) {
       res.status(404).json({
