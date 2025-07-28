@@ -8,6 +8,7 @@ import {
   restoreUser,
   updateUser,
 } from "@/lib/api/users";
+import { formatDateTime } from "@/lib/utils/dateUtils";
 import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";
 import { Form } from "@web42-ai/ui/form";
@@ -22,7 +23,11 @@ import { useForm } from "react-hook-form";
 
 type UpdateUserForm = UpdateUserData;
 
-export default function UserDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default function UserDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = use(params);
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
@@ -272,7 +277,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                 Created At
               </Label>
               <p className="text-sm text-gray-900">
-                {new Date(user.createdAt).toLocaleString()}
+                {formatDateTime(user.createdAt)}
               </p>
             </div>
             <div>
@@ -280,7 +285,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                 Last Updated
               </Label>
               <p className="text-sm text-gray-900">
-                {new Date(user.updatedAt).toLocaleString()}
+                {formatDateTime(user.updatedAt)}
               </p>
             </div>
             <div>

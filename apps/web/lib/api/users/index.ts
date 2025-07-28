@@ -1,1 +1,8 @@
-export { createUser, deleteUser, fetchUser, fetchUsers, restoreUser, updateUser } from "./users";
+export {
+  createUser,
+  deleteUser,
+  fetchUser,
+  fetchUsers,
+  restoreUser,
+  updateUser,
+} from "./users";

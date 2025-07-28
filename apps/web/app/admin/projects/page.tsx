@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDate } from "@/lib/utils/dateUtils";
 import { Badge } from "@web42-ai/ui/badge";
 import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";
@@ -183,12 +184,10 @@ export default function ProjectsPage() {
                 </TableCell>
                 <TableCell>{project.owner}</TableCell>
                 <TableCell>{getStatusBadge(project.status)}</TableCell>
-                <TableCell>
-                  {new Date(project.createdAt).toLocaleDateString()}
-                </TableCell>
+                <TableCell>{formatDate(project.createdAt)}</TableCell>
                 <TableCell>
                   {project.lastDeployment
-                    ? new Date(project.lastDeployment).toLocaleDateString()
+                    ? formatDate(project.lastDeployment)
                     : "Never"}
                 </TableCell>
                 <TableCell className="text-right">

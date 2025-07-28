@@ -2,6 +2,7 @@
 
 import type { User } from "@/lib/api/types";
 import { deleteUser, fetchUsers } from "@/lib/api/users";
+import { formatDate } from "@/lib/utils/dateUtils";
 import { Badge } from "@web42-ai/ui/badge";
 import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";
@@ -140,9 +141,7 @@ export default function UsersPage() {
                   {user.authProvider}
                 </TableCell>
                 <TableCell>{getStatusBadge(user.status)}</TableCell>
-                <TableCell>
-                  {new Date(user.createdAt).toLocaleDateString()}
-                </TableCell>
+                <TableCell>{formatDate(user.createdAt)}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
                     <Link href={`/admin/users/${user._id}`}>

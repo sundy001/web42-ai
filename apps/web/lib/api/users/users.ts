@@ -1,6 +1,11 @@
 import { API_BASE_URL, API_ENDPOINTS } from "../config";
 import { handleApiResponse } from "../errors";
-import type { CreateUserData, UpdateUserData, User, UserListResponse } from "../types";
+import type {
+  CreateUserData,
+  UpdateUserData,
+  User,
+  UserListResponse,
+} from "../types";
 
 export const fetchUsers = async (
   page = 1,
