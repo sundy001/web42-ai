@@ -1,7 +1,6 @@
 import type { JSX } from "react";
 import type {
-  Control,
-  Controller,
+  ControllerProps,
   ControllerRenderProps,
   FieldPath,
   FieldValues,
@@ -36,26 +35,27 @@ type ControlledFormItemProps<
   TComponentProps,
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = OmitFormItemProps<TComponentProps> & {
-  // properties from react-hook-form Controller
-  name: TName;
-  control?: Control<TFieldValues>;
-  rules?: Parameters<typeof Controller<TFieldValues, TName>>[0]["rules"];
-  shouldUnregister?: boolean;
-  disabled?: boolean;
-  defaultValue?: TFieldValues[TName];
+> = OmitFormItemProps<TComponentProps> &
+  Pick<
+    ControllerProps<TFieldValues, TName>,
+    | "name"
+    | "control"
+    | "rules"
+    | "shouldUnregister"
+    | "disabled"
+    | "defaultValue"
+  > & {
+    // properties from shadcn/ui FormItem
+    id?: string;
+    label?: string;
+    description?: string;
+    message?: string;
 
-  // properties from shadcn/ui FormItem
-  id?: string;
-  label?: string;
-  description?: string;
-  message?: string;
-
-  render: (params: {
-    field: ControllerRenderProps<TFieldValues, TName>;
-    props: OmitFormItemProps<TComponentProps>;
-  }) => JSX.Element;
-};
+    render: (params: {
+      field: ControllerRenderProps<TFieldValues, TName>;
+      props: OmitFormItemProps<TComponentProps>;
+    }) => JSX.Element;
+  };
 
 type FormItemProps<
   TComponentProps,
