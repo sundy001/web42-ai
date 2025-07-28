@@ -1,9 +1,9 @@
 {
-  "name": "@web42-ai/site-director",
+  "name": "@web42-ai/core-api",
   "version": "0.1.0",
   "type": "module",
   "private": true,
-  "description": "Site Director Express server for web42-ai platform",
+  "description": "Core API Express server for web42-ai platform",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",

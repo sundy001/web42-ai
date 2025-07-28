@@ -13,7 +13,7 @@ This is a Turborepo monorepo project named `web42-ai` - an AI site generator pla
 - **apps/** - Contains the main applications
   - `admin-web/` - Admin Next.js application (port 3000) with server-side utilities
   - `consumer-web/` - Consumer-facing Next.js application (port 3001)
-  - `site-director/` - Express.js server (port 3002) for API endpoints and site operations
+  - `core-api/` - Express.js server (port 3002) for API endpoints and site operations
   - `workers/` - Cloudflare Workers for queue processing and event handling
 - **packages/** - Shared packages across apps
   - `@web42-ai/ui` - Shared React component library using Radix UI, CVA, and Tailwind
@@ -53,7 +53,7 @@ bun dev
 # Start specific app
 bun dev --filter=@web42-ai/admin-web
 bun dev --filter=@web42-ai/consumer-web
-bun dev --filter=@web42-ai/site-director
+bun dev --filter=@web42-ai/core-api
 ```
 
 ### Building
@@ -65,7 +65,7 @@ bun build
 # Build specific app
 bun build --filter=@web42-ai/admin-web
 bun build --filter=@web42-ai/consumer-web
-bun build --filter=@web42-ai/site-director
+bun build --filter=@web42-ai/core-api
 ```
 
 ### Testing & Quality
@@ -107,7 +107,7 @@ bun generate:component
 2. **Port Allocation**:
    - Admin web app: http://localhost:3000
    - Consumer web app: http://localhost:3001
-   - Site Director server: http://localhost:3002
+   - Core API server: http://localhost:3002
 3. **Shared Dependencies**: Changes to packages in `packages/` will automatically be reflected in apps that depend on them
 4. **Type Safety**: All packages use strict TypeScript configuration with no unchecked indexed access
 5. **Testing**: Use Vitest for all testing needs - tests are located in `__tests__` directories or `.test.ts` files

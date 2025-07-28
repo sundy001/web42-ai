@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-describe("Site Director", () => {
+describe("Core API", () => {
   it("should be defined", () => {
     expect(true).toBe(true);
   });

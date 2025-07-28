@@ -107,11 +107,11 @@ export function generateOpenApiDocument() {
   const baseDocument = {
     openapi: "3.0.0",
     info: {
-      title: "Site Director API",
+      title: "Core API",
       version: "1.0.0",
-      description: "REST API for web42-ai Site Director service",
+      description: "REST API for web42-ai Core API service",
       contact: {
-        name: "Site Director Team",
+        name: "Core API Team",
       },
     },
     servers: [

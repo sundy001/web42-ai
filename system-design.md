@@ -14,7 +14,7 @@ To build a scalable, resilient cloud platform that generates a static React site
 
 ## 3. Service Breakdown
 
-### **`@web42-ai/site-director` (The Orchestrator):**
+### **`@web42-ai/core-api` (The Orchestrator):**
 
 The central state manager. It initiates workflows, interacts with the database, and publishes jobs to the queues.
 
@@ -61,14 +61,14 @@ A lightweight service that manages the Server-Sent Events (SSE) connection to th
 
 The system relies on six queues to manage workflows:
 
-| Queue Name                  | Producer                  | Consumer                  | Purpose                                                |
-| :-------------------------- | :------------------------ | :------------------------ | :----------------------------------------------------- |
-| `plan-steps-queue`          | `@web42-ai/site-director` | `AIAppWorker`             | Holds the code generation tasks for the AI worker.     |
-| `project-builds-queue`      | `@web42-ai/site-director` | `Build Service`           | Triggers a new build job.                              |
-| `step-status-to-bff-queue`  | `AIAppWorker`             | `@web42-ai/admin-web`     | Fans out real-time code generation progress to the UI. |
-| `step-status-to-db-queue`   | `AIAppWorker`             | `@web42-ai/site-director` | Fans out code generation progress for persistence.     |
-| `build-status-to-bff-queue` | `Build Service`           | `@web42-ai/admin-web`     | Fans out real-time build progress to the UI.           |
-| `build-status-to-db-queue`  | `Build Service`           | `@web42-ai/site-director` | Fans out build progress for persistence.               |
+| Queue Name                  | Producer             | Consumer              | Purpose                                                |
+| :-------------------------- | :------------------- | :-------------------- | :----------------------------------------------------- |
+| `plan-steps-queue`          | `@web42-ai/core-api` | `AIAppWorker`         | Holds the code generation tasks for the AI worker.     |
+| `project-builds-queue`      | `@web42-ai/core-api` | `Build Service`       | Triggers a new build job.                              |
+| `step-status-to-bff-queue`  | `AIAppWorker`        | `@web42-ai/admin-web` | Fans out real-time code generation progress to the UI. |
+| `step-status-to-db-queue`   | `AIAppWorker`        | `@web42-ai/core-api`  | Fans out code generation progress for persistence.     |
+| `build-status-to-bff-queue` | `Build Service`      | `@web42-ai/admin-web` | Fans out real-time build progress to the UI.           |
+| `build-status-to-db-queue`  | `Build Service`      | `@web42-ai/core-api`  | Fans out build progress for persistence.               |
 
 ## 7. Development Environment
 

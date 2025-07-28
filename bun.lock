@@ -80,7 +80,7 @@
       },
     },
     "apps/site-director": {
-      "name": "@web42-ai/site-director",
+      "name": "@web42-ai/core-api",
       "version": "0.1.0",
       "dependencies": {
         "@anatine/zod-openapi": "^2.2.8",
@@ -609,9 +609,9 @@
 
     "@web42-ai/consumer-web": ["@web42-ai/consumer-web@workspace:apps/consumer-web"],
 
-    "@web42-ai/eslint-config": ["@web42-ai/eslint-config@workspace:packages/eslint-config"],
+    "@web42-ai/core-api": ["@web42-ai/core-api@workspace:apps/site-director"],
 
-    "@web42-ai/site-director": ["@web42-ai/site-director@workspace:apps/site-director"],
+    "@web42-ai/eslint-config": ["@web42-ai/eslint-config@workspace:packages/eslint-config"],
 
     "@web42-ai/typescript-config": ["@web42-ai/typescript-config@workspace:packages/typescript-config"],
 
@@ -1533,7 +1533,7 @@
 
     "@web42-ai/consumer-web/typescript": ["typescript@5.8.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="],
 
-    "@web42-ai/site-director/typescript": ["typescript@5.8.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="],
+    "@web42-ai/core-api/typescript": ["typescript@5.8.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="],
 
     "@web42-ai/ui/typescript": ["typescript@5.8.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="],
 

@@ -9,7 +9,7 @@ import { userRoutes } from "./users/index.js";
 import { errorHandler } from "./users/middleware.js";
 
 const app = express();
-const PORT = 3002; // Default port for Site Director
+const PORT = 3002; // Default port for Core API
 
 // Middleware
 app.use(helmet());
@@ -31,7 +31,7 @@ app.use(
   swaggerUi.serve,
   swaggerUi.setup(openApiDocument, {
     customCss: ".swagger-ui .topbar { display: none }",
-    customSiteTitle: "Site Director API Documentation",
+    customSiteTitle: "Core API Documentation",
   }),
 );
 
@@ -44,7 +44,7 @@ app.get("/api-docs.json", (req, res) => {
 // API routes
 app.get("/api/v1/status", (req, res) => {
   res.json({
-    message: "Site Director API is running",
+    message: "Core API is running",
     version: "1.0.0",
     timestamp: new Date().toISOString(),
   });
@@ -56,7 +56,7 @@ app.use("/api/v1/users", userRoutes);
 // Welcome endpoint
 app.get("/", (req, res) => {
   res.json({
-    message: "Welcome to Site Director",
+    message: "Welcome to Core API",
     description: "Express server for web42-ai platform",
     endpoints: {
       health: "/health",
@@ -81,7 +81,7 @@ app.use(errorHandler);
 
 // Graceful shutdown handler
 process.on("SIGINT", async () => {
-  console.log("\n🛑 Shutting down Site Director server...");
+  console.log("\n🛑 Shutting down Core API server...");
   try {
     await databaseStore.disconnect();
     process.exit(0);
@@ -98,7 +98,7 @@ async function startServer() {
 
     app.listen(PORT, () => {
       const config = databaseStore.getConfig();
-      console.log(`🚀 Site Director server running on port ${PORT}`);
+      console.log(`🚀 Core API server running on port ${PORT}`);
       console.log(`📍 Health check: http://localhost:${PORT}/health`);
       console.log(`🔗 API status: http://localhost:${PORT}/api/v1/status`);
       console.log(`💾 Database: ${config.databaseName} on ${config.uri}`);

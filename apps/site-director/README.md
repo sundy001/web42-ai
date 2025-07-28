@@ -1,10 +1,10 @@
-# Site Director
+# Core API
 
 Express server for the web42-ai platform.
 
 ## Overview
 
-Site Director is a Node.js Express server that serves as part of the web42-ai ecosystem. It provides API endpoints and manages site-related operations.
+Core API is a Node.js Express server that serves as part of the web42-ai ecosystem. It provides API endpoints and manages site-related operations.
 
 ## Features
 
@@ -51,7 +51,7 @@ bun check-types
 ### Server Information
 
 - **Port**: 3002 (default)
-- **Package**: `@web42-ai/site-director`
+- **Package**: `@web42-ai/core-api`
 
 ## API Endpoints
 
@@ -82,7 +82,7 @@ Returns welcome message and available endpoints.
 ## Project Structure
 
 ```
-apps/site-director/
+apps/core-api/
 ├── src/
 │   ├── index.ts        # Main server file
 │   └── index.test.ts   # Tests

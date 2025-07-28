@@ -3,7 +3,7 @@ import type { BasicHealthStatus, HealthStatus } from "./types.js";
 
 function getBaseHealthInfo() {
   return {
-    service: "site-director" as const,
+    service: "core-api" as const,
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
   };
