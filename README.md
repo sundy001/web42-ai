@@ -16,7 +16,6 @@ This Turborepo includes the following packages/apps:
 
 ### Apps and Packages
 
-- `docs`: a [Next.js](https://nextjs.org/) app
 - `@web42-ai/admin-web`: admin [Next.js](https://nextjs.org/) app
 - `@web42-ai/consumer-web`: consumer-facing [Next.js](https://nextjs.org/) app
 - `@web42-ai/ui`: a stub React component library shared by applications
@@ -53,12 +52,12 @@ You can build a specific package by using a [filter](https://turborepo.com/docs/
 
 ```
 # With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+turbo build --filter=@web42-ai/admin-web
 
 # Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+npx turbo build --filter=@web42-ai/admin-web
+yarn exec turbo build --filter=@web42-ai/admin-web
+pnpm exec turbo build --filter=@web42-ai/admin-web
 ```
 
 ### Develop
