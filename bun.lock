@@ -44,6 +44,40 @@
         "vitest": "^2.1.8",
       },
     },
+    "apps/consumer-web": {
+      "name": "@web42-ai/consumer-web",
+      "version": "0.1.0",
+      "dependencies": {
+        "@radix-ui/react-slot": "^1.2.3",
+        "@web42-ai/ui": "*",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "lucide-react": "^0.525.0",
+        "next": "^15.4.2",
+        "react": "^19.1.0",
+        "react-dom": "^19.1.0",
+        "react-hook-form": "^7.61.1",
+        "react-toastify": "^11.0.5",
+        "tailwind-merge": "^3.3.1",
+        "uuid": "^10.0.0",
+      },
+      "devDependencies": {
+        "@tailwindcss/postcss": "^4.1.11",
+        "@types/node": "^22.15.3",
+        "@types/react": "19.1.0",
+        "@types/react-dom": "19.1.1",
+        "@types/uuid": "^10.0.0",
+        "@vitest/ui": "^2.1.8",
+        "@web42-ai/eslint-config": "*",
+        "@web42-ai/typescript-config": "*",
+        "autoprefixer": "^10.4.21",
+        "eslint": "^9.31.0",
+        "postcss": "^8.5.6",
+        "tailwindcss": "^4.1.11",
+        "typescript": "5.8.2",
+        "vitest": "^2.1.8",
+      },
+    },
     "apps/docs": {
       "name": "docs",
       "version": "0.1.0",
@@ -590,6 +624,8 @@
     "@vitest/utils": ["@vitest/utils@2.1.9", "", { "dependencies": { "@vitest/pretty-format": "2.1.9", "loupe": "^3.1.2", "tinyrainbow": "^1.2.0" } }, "sha512-v0psaMSkNJ3A2NMrUEHFRzJtDPFn+/VWZ5WxImB21T9fjucJRmS7xCS3ppEnARb9y11OAzaD+P2Ps+b+BGX5iQ=="],
 
     "@web42-ai/admin-web": ["@web42-ai/admin-web@workspace:apps/admin-web"],
+
+    "@web42-ai/consumer-web": ["@web42-ai/consumer-web@workspace:apps/consumer-web"],
 
     "@web42-ai/eslint-config": ["@web42-ai/eslint-config@workspace:packages/eslint-config"],
 
@@ -1510,6 +1546,8 @@
     "@typescript-eslint/typescript-estree/semver": ["semver@7.7.2", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-RF0Fw+rO5AMf9MAyaRXI4AV0Ulj5lMHqVxxdSgiVbixSCXoEmmX/jk0CuJw4+3SqroYO9VoUh+HcuJivvtJemA=="],
 
     "@web42-ai/admin-web/typescript": ["typescript@5.8.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="],
+
+    "@web42-ai/consumer-web/typescript": ["typescript@5.8.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="],
 
     "@web42-ai/site-director/typescript": ["typescript@5.8.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="],
 

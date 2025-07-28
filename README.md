@@ -17,8 +17,9 @@ This Turborepo includes the following packages/apps:
 ### Apps and Packages
 
 - `docs`: a [Next.js](https://nextjs.org/) app
-- `@web42-ai/admin-web`: another [Next.js](https://nextjs.org/) app
-- `@web42-ai/ui`: a stub React component library shared by both `admin-web` and `docs` applications
+- `@web42-ai/admin-web`: admin [Next.js](https://nextjs.org/) app
+- `@web42-ai/consumer-web`: consumer-facing [Next.js](https://nextjs.org/) app
+- `@web42-ai/ui`: a stub React component library shared by applications
 - `@web42-ai/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
 - `@web42-ai/typescript-config`: `tsconfig.json`s used throughout the monorepo
 

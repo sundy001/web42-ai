@@ -1,0 +1,46 @@
+{
+  "name": "@web42-ai/consumer-web",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack --port 3001",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:ui": "vitest --ui"
+  },
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.2.3",
+    "@web42-ai/ui": "*",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.525.0",
+    "next": "^15.4.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-hook-form": "^7.61.1",
+    "react-toastify": "^11.0.5",
+    "tailwind-merge": "^3.3.1",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.11",
+    "@types/node": "^22.15.3",
+    "@types/react": "19.1.0",
+    "@types/react-dom": "19.1.1",
+    "@types/uuid": "^10.0.0",
+    "@vitest/ui": "^2.1.8",
+    "@web42-ai/eslint-config": "*",
+    "@web42-ai/typescript-config": "*",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9.31.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.11",
+    "typescript": "5.8.2",
+    "vitest": "^2.1.8"
+  }
+}
