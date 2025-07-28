@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils/cn";
 import {
   Children,
   ReactNode,
@@ -10,6 +11,7 @@ import {
 } from "react";
 
 interface ResizablePanelsProps {
+  className?: string;
   children: ReactNode;
   defaultLeftWidth?: number; // percentage
   minLeftWidth?: number; // pixels
@@ -18,6 +20,7 @@ interface ResizablePanelsProps {
 }
 
 export default function ResizablePanels({
+  className,
   children,
   defaultLeftWidth = 50,
   minLeftWidth = 250,
@@ -83,7 +86,7 @@ export default function ResizablePanels({
     <div className="flex h-full w-full" ref={containerRef}>
       {/* Left Panel */}
       <div
-        className="flex flex-col"
+        className={cn("flex flex-col", className)}
         style={{
           width: `${leftPanelWidth}%`,
           minWidth: `${minLeftWidth}px`,

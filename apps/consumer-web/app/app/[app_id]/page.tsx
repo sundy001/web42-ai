@@ -11,7 +11,7 @@ export default async function AIBuilderPage({ params }: AIBuilderPageProps) {
   return (
     <div className="h-screen flex flex-col bg-background">
       <AIBuilderHeader appId={app_id} />
-      <AIBuilderClient />
+      <AIBuilderClient className="flex-1 overflow-hidden" />
     </div>
   );
 }
