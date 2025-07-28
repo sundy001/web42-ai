@@ -13,9 +13,7 @@ interface MessageData {
   timestamp: Date;
 }
 
-interface ChatPanelProps {}
-
-export default function ChatPanel({}: ChatPanelProps) {
+export default function ChatPanel() {
   const [messages, setMessages] = useState<MessageData[]>([
     {
       id: "1",

@@ -2,7 +2,6 @@
 
 import {
   Children,
-  ReactElement,
   ReactNode,
   useCallback,
   useEffect,
@@ -10,28 +9,12 @@ import {
   useState,
 } from "react";
 
-interface LeftPanelProps {
-  children: ReactNode;
-}
-
-interface RightPanelProps {
-  children: ReactNode;
-}
-
 interface ResizablePanelsProps {
   children: ReactNode;
   defaultLeftWidth?: number; // percentage
   minLeftWidth?: number; // pixels
   maxLeftWidth?: number; // pixels
   separatorClassName?: string;
-}
-
-export function LeftPanel({ children }: LeftPanelProps) {
-  return children;
-}
-
-export function RightPanel({ children }: RightPanelProps) {
-  return children;
 }
 
 export default function ResizablePanels({
@@ -87,16 +70,16 @@ export default function ResizablePanels({
     };
   }, [isResizing, handleMouseMove, handleMouseUp]);
 
-  // Extract left and right panels from children
-  const childrenArray = Children.toArray(children) as ReactElement[];
-  const leftPanel = childrenArray.find((child) => child.type === LeftPanel);
-  const rightPanel = childrenArray.find((child) => child.type === RightPanel);
-
-  if (!leftPanel || !rightPanel) {
+  // Extract exactly two children
+  const childrenArray = Children.toArray(children);
+  
+  if (childrenArray.length !== 2) {
     throw new Error(
-      "ResizablePanels must contain exactly one LeftPanel and one RightPanel",
+      "ResizablePanels must contain exactly two children",
     );
   }
+
+  const [leftPanel, rightPanel] = childrenArray;
 
   return (
     <div className="flex h-full w-full" ref={containerRef}>
