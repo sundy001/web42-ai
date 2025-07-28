@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@web42-ai/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@web42-ai/ui/card';
 import { Send, Eye, Sparkles, Menu } from 'lucide-react';
@@ -29,6 +29,9 @@ export default function AIBuilderClient({ appId }: AIBuilderClientProps) {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [chatPanelWidth, setChatPanelWidth] = useState(50); // percentage
+  const [isResizing, setIsResizing] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
@@ -64,6 +67,44 @@ export default function AIBuilderClient({ appId }: AIBuilderClientProps) {
     }
   };
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsResizing(true);
+  };
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!isResizing || !containerRef.current) return;
+
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+    
+    // Calculate min and max percentages based on container width
+    const minPercent = (250 / containerRect.width) * 100;
+    const maxPercent = (690 / containerRect.width) * 100;
+    
+    setChatPanelWidth(Math.min(Math.max(newWidth, minPercent), maxPercent));
+  }, [isResizing]);
+
+  const handleMouseUp = () => {
+    setIsResizing(false);
+  };
+
+  useEffect(() => {
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+  }, [isResizing, handleMouseMove]);
+
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Header */}
@@ -92,9 +133,16 @@ export default function AIBuilderClient({ appId }: AIBuilderClientProps) {
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden" ref={containerRef}>
         {/* Chat Panel */}
-        <div className="w-1/2 border-r flex flex-col">
+        <div 
+          className="flex flex-col" 
+          style={{ 
+            width: `${chatPanelWidth}%`,
+            minWidth: '250px',
+            maxWidth: '690px'
+          }}
+        >
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((message) => (
@@ -157,6 +205,14 @@ export default function AIBuilderClient({ appId }: AIBuilderClientProps) {
               </Button>
             </div>
           </div>
+        </div>
+
+        {/* Resizer */}
+        <div
+          className="w-1 bg-border hover:bg-primary/20 cursor-col-resize transition-colors relative group"
+          onMouseDown={handleMouseDown}
+        >
+          <div className="absolute inset-y-0 -left-1 -right-1 group-hover:bg-primary/10" />
         </div>
 
         {/* Preview Panel */}
