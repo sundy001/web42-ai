@@ -1,7 +1,5 @@
-"use client";
-
 import type { User } from "@/lib/api/types";
-import { deleteUser, fetchUsers } from "@/lib/api/users";
+import { fetchUsers } from "@/lib/api/users";
 import { formatDate } from "@/lib/utils/dateUtils";
 import { Badge } from "@web42-ai/ui/badge";
 import { Button } from "@web42-ai/ui/button";
@@ -14,59 +12,39 @@ import {
   TableHeader,
   TableRow,
 } from "@web42-ai/ui/table";
-import { Eye, Plus, Trash2 } from "lucide-react";
+import { Eye, Plus } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { DeleteUserButton } from "./_components/DeleteUserButton";
+import { Pagination } from "./_components/Pagination";
 
-export default function UsersPage() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState({
+interface UsersPageProps {
+  searchParams: { page?: string };
+}
+
+export default async function UsersPage({ searchParams }: UsersPageProps) {
+  const page = Number(searchParams.page) || 1;
+
+  let users: User[] = [];
+  let pagination = {
     page: 1,
     limit: 10,
     total: 0,
     totalPages: 0,
-  });
-
-  const loadUsers = async (page = 1) => {
-    try {
-      setLoading(true);
-      const data = await fetchUsers(page, 10);
-      setUsers(data.users);
-      setPagination({
-        page: data.page,
-        limit: data.limit,
-        total: data.total,
-        totalPages: data.totalPages,
-      });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setLoading(false);
-    }
   };
+  let error: string | null = null;
 
-  const handleDelete = async (userId: string) => {
-    if (!confirm("Are you sure you want to delete this user?")) {
-      return;
-    }
-
-    try {
-      await deleteUser(userId);
-      // Refresh the users list
-      loadUsers(pagination.page);
-    } catch (err) {
-      alert(
-        "Failed to delete user: " +
-          (err instanceof Error ? err.message : "Unknown error"),
-      );
-    }
-  };
-
-  useEffect(() => {
-    loadUsers();
-  }, []);
+  try {
+    const data = await fetchUsers(page, 10);
+    users = data.users;
+    pagination = {
+      page: data.page,
+      limit: data.limit,
+      total: data.total,
+      totalPages: data.totalPages,
+    };
+  } catch (err) {
+    error = err instanceof Error ? err.message : "An error occurred";
+  }
 
   const getStatusBadge = (status: User["status"]) => {
     switch (status) {
@@ -82,16 +60,6 @@ export default function UsersPage() {
         return <Badge>{status}</Badge>;
     }
   };
-
-  if (loading) {
-    return (
-      <div className="p-8">
-        <div className="flex justify-center items-center h-64">
-          <div className="text-lg">Loading users...</div>
-        </div>
-      </div>
-    );
-  }
 
   if (error) {
     return (
@@ -150,14 +118,7 @@ export default function UsersPage() {
                       </Button>
                     </Link>
                     {user.status !== "deleted" && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDelete(user._id)}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <DeleteUserButton userId={user._id} />
                     )}
                   </div>
                 </TableCell>
@@ -171,28 +132,7 @@ export default function UsersPage() {
         )}
       </Card>
 
-      {/* Pagination */}
-      {pagination.totalPages > 1 && (
-        <div className="flex justify-center mt-6 gap-2">
-          <Button
-            variant="outline"
-            onClick={() => loadUsers(pagination.page - 1)}
-            disabled={pagination.page <= 1}
-          >
-            Previous
-          </Button>
-          <span className="px-4 py-2 text-sm text-gray-600">
-            Page {pagination.page} of {pagination.totalPages}
-          </span>
-          <Button
-            variant="outline"
-            onClick={() => loadUsers(pagination.page + 1)}
-            disabled={pagination.page >= pagination.totalPages}
-          >
-            Next
-          </Button>
-        </div>
-      )}
+      <Pagination page={pagination.page} totalPages={pagination.totalPages} />
     </div>
   );
 }
