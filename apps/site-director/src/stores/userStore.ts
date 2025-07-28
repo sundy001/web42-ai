@@ -7,7 +7,7 @@ import type {
   UserFilters,
   UserListResponse,
 } from "../users/types.js";
-import { databaseStore } from "./database";
+import { databaseStore } from "./database.js";
 
 const COLLECTION_NAME = "users";
 

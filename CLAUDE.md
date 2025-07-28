@@ -13,7 +13,7 @@ This is a Turborepo monorepo project named `web42-ai` - an AI site generator pla
 - **apps/** - Contains the main applications
   - `admin-web/` - Admin Next.js application (port 3000) with server-side utilities
   - `consumer-web/` - Consumer-facing Next.js application (port 3001)
-  - `siteDirector/` - Express.js server (port 3002) for API endpoints and site operations
+  - `site-director/` - Express.js server (port 3002) for API endpoints and site operations
   - `workers/` - Cloudflare Workers for queue processing and event handling
 - **packages/** - Shared packages across apps
   - `@web42-ai/ui` - Shared React component library using Radix UI, CVA, and Tailwind

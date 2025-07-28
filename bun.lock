@@ -79,7 +79,7 @@
         "vitest": "^2.1.8",
       },
     },
-    "apps/siteDirector": {
+    "apps/site-director": {
       "name": "@web42-ai/site-director",
       "version": "0.1.0",
       "dependencies": {
@@ -611,7 +611,7 @@
 
     "@web42-ai/eslint-config": ["@web42-ai/eslint-config@workspace:packages/eslint-config"],
 
-    "@web42-ai/site-director": ["@web42-ai/site-director@workspace:apps/siteDirector"],
+    "@web42-ai/site-director": ["@web42-ai/site-director@workspace:apps/site-director"],
 
     "@web42-ai/typescript-config": ["@web42-ai/typescript-config@workspace:packages/typescript-config"],
 

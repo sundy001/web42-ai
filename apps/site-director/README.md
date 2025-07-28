@@ -82,7 +82,7 @@ Returns welcome message and available endpoints.
 ## Project Structure
 
 ```
-apps/siteDirector/
+apps/site-director/
 ├── src/
 │   ├── index.ts        # Main server file
 │   └── index.test.ts   # Tests

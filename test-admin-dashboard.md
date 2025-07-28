@@ -60,7 +60,7 @@
 1. Start the Site Director API:
 
    ```bash
-   cd apps/siteDirector
+   cd apps/site-director
    bun dev
    ```
 
