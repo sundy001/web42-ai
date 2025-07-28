@@ -61,14 +61,14 @@ A lightweight service that manages the Server-Sent Events (SSE) connection to th
 
 The system relies on six queues to manage workflows:
 
-| Queue Name                  | Producer        | Consumer            | Purpose                                                |
-| :-------------------------- | :-------------- | :------------------ | :----------------------------------------------------- |
-| `plan-steps-queue`          | `SiteDirector`  | `AIAppWorker`       | Holds the code generation tasks for the AI worker.     |
-| `project-builds-queue`      | `SiteDirector`  | `Build Service`     | Triggers a new build job.                              |
+| Queue Name                  | Producer        | Consumer              | Purpose                                                |
+| :-------------------------- | :-------------- | :-------------------- | :----------------------------------------------------- |
+| `plan-steps-queue`          | `SiteDirector`  | `AIAppWorker`         | Holds the code generation tasks for the AI worker.     |
+| `project-builds-queue`      | `SiteDirector`  | `Build Service`       | Triggers a new build job.                              |
 | `step-status-to-bff-queue`  | `AIAppWorker`   | `@web42-ai/admin-web` | Fans out real-time code generation progress to the UI. |
-| `step-status-to-db-queue`   | `AIAppWorker`   | `SiteDirector`      | Fans out code generation progress for persistence.     |
+| `step-status-to-db-queue`   | `AIAppWorker`   | `SiteDirector`        | Fans out code generation progress for persistence.     |
 | `build-status-to-bff-queue` | `Build Service` | `@web42-ai/admin-web` | Fans out real-time build progress to the UI.           |
-| `build-status-to-db-queue`  | `Build Service` | `SiteDirector`      | Fans out build progress for persistence.               |
+| `build-status-to-db-queue`  | `Build Service` | `SiteDirector`        | Fans out build progress for persistence.               |
 
 ## 7. Development Environment
 
