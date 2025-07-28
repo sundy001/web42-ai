@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@web42-ai/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@web42-ai/ui/card';
-import { Send, MessageSquare, Eye, Sparkles, Menu } from 'lucide-react';
+import { Send, Eye, Sparkles, Menu } from 'lucide-react';
 import AIMessage from './AIMessage';
 import UserMessage from './UserMessage';
 
@@ -95,13 +95,6 @@ export default function AIBuilderClient({ appId }: AIBuilderClientProps) {
       <div className="flex-1 flex overflow-hidden">
         {/* Chat Panel */}
         <div className="w-1/2 border-r flex flex-col">
-          <div className="p-4 border-b">
-            <div className="flex items-center gap-2">
-              <MessageSquare className="h-5 w-5 text-primary" />
-              <h2 className="font-medium">AI Assistant</h2>
-            </div>
-          </div>
-          
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((message) => (
@@ -168,13 +161,6 @@ export default function AIBuilderClient({ appId }: AIBuilderClientProps) {
 
         {/* Preview Panel */}
         <div className="flex-1 flex flex-col">
-          <div className="p-4 border-b">
-            <div className="flex items-center gap-2">
-              <Eye className="h-5 w-5 text-primary" />
-              <h2 className="font-medium">Live Preview</h2>
-            </div>
-          </div>
-          
           <div className="flex-1 bg-muted/30 p-4">
             <Card className="h-full">
               <CardHeader>
