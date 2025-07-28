@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@web42-ai/ui/button";
 import { Eye, Menu, Sparkles } from "lucide-react";
 
@@ -17,9 +15,7 @@ export default function AIBuilderHeader({ appId }: AIBuilderHeaderProps) {
           </div>
           <div>
             <h1 className="text-lg font-semibold">AI Site Builder</h1>
-            <p className="text-sm text-muted-foreground">
-              Project ID: {appId}
-            </p>
+            <p className="text-sm text-muted-foreground">Project ID: {appId}</p>
           </div>
         </div>
         <div className="ml-auto flex items-center gap-2">

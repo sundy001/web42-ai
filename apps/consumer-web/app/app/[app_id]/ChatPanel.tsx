@@ -2,6 +2,7 @@
 
 import { Button } from "@web42-ai/ui/button";
 import { Send, Sparkles } from "lucide-react";
+import { useState } from "react";
 import AIMessage from "./AIMessage";
 import UserMessage from "./UserMessage";
 
@@ -12,23 +13,56 @@ interface MessageData {
   timestamp: Date;
 }
 
-interface ChatPanelProps {
-  messages: MessageData[];
-  inputMessage: string;
-  isGenerating: boolean;
-  onInputChange: (value: string) => void;
-  onSendMessage: () => void;
-  onKeyPress: (e: React.KeyboardEvent) => void;
-}
+interface ChatPanelProps {}
 
-export default function ChatPanel({
-  messages,
-  inputMessage,
-  isGenerating,
-  onInputChange,
-  onSendMessage,
-  onKeyPress,
-}: ChatPanelProps) {
+export default function ChatPanel({}: ChatPanelProps) {
+  const [messages, setMessages] = useState<MessageData[]>([
+    {
+      id: "1",
+      content:
+        "Hi! I'm your AI assistant. Describe the site you'd like to build and I'll help you create it.",
+      isUser: false,
+      timestamp: new Date(),
+    },
+  ]);
+  const [inputMessage, setInputMessage] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleSendMessage = async () => {
+    if (!inputMessage.trim()) return;
+
+    const newMessage: MessageData = {
+      id: Date.now().toString(),
+      content: inputMessage,
+      isUser: true,
+      timestamp: new Date(),
+    };
+
+    setMessages((prev) => [...prev, newMessage]);
+    setInputMessage("");
+    setIsGenerating(true);
+
+    // Simulate AI response
+    setTimeout(() => {
+      const aiResponse: MessageData = {
+        id: (Date.now() + 1).toString(),
+        content:
+          "Great idea! I'm working on creating that for you. Let me generate the code and preview...",
+        isUser: false,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, aiResponse]);
+      setIsGenerating(false);
+    }, 1500);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   return (
     <>
       {/* Messages */}
@@ -85,14 +119,14 @@ export default function ChatPanel({
         <div className="flex gap-2">
           <textarea
             value={inputMessage}
-            onChange={(e) => onInputChange(e.target.value)}
-            onKeyPress={onKeyPress}
+            onChange={(e) => setInputMessage(e.target.value)}
+            onKeyPress={handleKeyPress}
             placeholder="Describe the site you want to build..."
             className="flex-1 min-h-[80px] resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             disabled={isGenerating}
           />
           <Button
-            onClick={onSendMessage}
+            onClick={handleSendMessage}
             disabled={!inputMessage.trim() || isGenerating}
             size="icon"
             className="self-end"
