@@ -1,19 +1,41 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback, ReactNode } from "react";
+import {
+  Children,
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
+interface LeftPanelProps {
+  children: ReactNode;
+}
+
+interface RightPanelProps {
+  children: ReactNode;
+}
 
 interface ResizablePanelsProps {
-  leftPanel: ReactNode;
-  rightPanel: ReactNode;
+  children: ReactNode;
   defaultLeftWidth?: number; // percentage
   minLeftWidth?: number; // pixels
   maxLeftWidth?: number; // pixels
   separatorClassName?: string;
 }
 
+export function LeftPanel({ children }: LeftPanelProps) {
+  return children;
+}
+
+export function RightPanel({ children }: RightPanelProps) {
+  return children;
+}
+
 export default function ResizablePanels({
-  leftPanel,
-  rightPanel,
+  children,
   defaultLeftWidth = 50,
   minLeftWidth = 250,
   maxLeftWidth = 690,
@@ -42,7 +64,7 @@ export default function ResizablePanels({
 
       setLeftPanelWidth(Math.min(Math.max(newWidth, minPercent), maxPercent));
     },
-    [isResizing, minLeftWidth, maxLeftWidth]
+    [isResizing, minLeftWidth, maxLeftWidth],
   );
 
   const handleMouseUp = useCallback(() => {
@@ -64,6 +86,17 @@ export default function ResizablePanels({
       document.body.style.userSelect = "";
     };
   }, [isResizing, handleMouseMove, handleMouseUp]);
+
+  // Extract left and right panels from children
+  const childrenArray = Children.toArray(children) as ReactElement[];
+  const leftPanel = childrenArray.find((child) => child.type === LeftPanel);
+  const rightPanel = childrenArray.find((child) => child.type === RightPanel);
+
+  if (!leftPanel || !rightPanel) {
+    throw new Error(
+      "ResizablePanels must contain exactly one LeftPanel and one RightPanel",
+    );
+  }
 
   return (
     <div className="flex h-full w-full" ref={containerRef}>

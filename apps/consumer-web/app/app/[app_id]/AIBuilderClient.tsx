@@ -1,12 +1,15 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@web42-ai/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@web42-ai/ui/card';
-import { Send, Eye, Sparkles, Menu } from 'lucide-react';
-import AIMessage from './AIMessage';
-import UserMessage from './UserMessage';
-import ResizablePanels from '@/components/ResizablePanels';
+import ResizablePanels, {
+  LeftPanel,
+  RightPanel,
+} from "@/components/ResizablePanels";
+import { Button } from "@web42-ai/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@web42-ai/ui/card";
+import { Eye, Menu, Send, Sparkles } from "lucide-react";
+import { useState } from "react";
+import AIMessage from "./AIMessage";
+import UserMessage from "./UserMessage";
 
 interface MessageData {
   id: string;
@@ -22,13 +25,14 @@ interface AIBuilderClientProps {
 export default function AIBuilderClient({ appId }: AIBuilderClientProps) {
   const [messages, setMessages] = useState<MessageData[]>([
     {
-      id: '1',
-      content: 'Hi! I\'m your AI assistant. Describe the site you\'d like to build and I\'ll help you create it.',
+      id: "1",
+      content:
+        "Hi! I'm your AI assistant. Describe the site you'd like to build and I'll help you create it.",
       isUser: false,
       timestamp: new Date(),
     },
   ]);
-  const [inputMessage, setInputMessage] = useState('');
+  const [inputMessage, setInputMessage] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
 
   const handleSendMessage = async () => {
@@ -41,25 +45,26 @@ export default function AIBuilderClient({ appId }: AIBuilderClientProps) {
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, newMessage]);
-    setInputMessage('');
+    setMessages((prev) => [...prev, newMessage]);
+    setInputMessage("");
     setIsGenerating(true);
 
     // Simulate AI response
     setTimeout(() => {
       const aiResponse: MessageData = {
         id: (Date.now() + 1).toString(),
-        content: 'Great idea! I\'m working on creating that for you. Let me generate the code and preview...',
+        content:
+          "Great idea! I'm working on creating that for you. Let me generate the code and preview...",
         isUser: false,
         timestamp: new Date(),
       };
-      setMessages(prev => [...prev, aiResponse]);
+      setMessages((prev) => [...prev, aiResponse]);
       setIsGenerating(false);
     }, 1500);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
@@ -76,7 +81,9 @@ export default function AIBuilderClient({ appId }: AIBuilderClientProps) {
             </div>
             <div>
               <h1 className="text-lg font-semibold">AI Site Builder</h1>
-              <p className="text-sm text-muted-foreground">Project ID: {appId}</p>
+              <p className="text-sm text-muted-foreground">
+                Project ID: {appId}
+              </p>
             </div>
           </div>
           <div className="ml-auto flex items-center gap-2">
@@ -95,98 +102,106 @@ export default function AIBuilderClient({ appId }: AIBuilderClientProps) {
       {/* Main Content */}
       <div className="flex-1 overflow-hidden">
         <ResizablePanels
-          leftPanel={
-            <>
-              {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {messages.map((message) => (
-              message.isUser ? (
-                <UserMessage
-                  key={message.id}
-                  content={message.content}
-                  timestamp={message.timestamp}
-                />
-              ) : (
-                <AIMessage
-                  key={message.id}
-                  content={message.content}
-                  timestamp={message.timestamp}
-                />
-              )
-            ))}
-            {isGenerating && (
-              <div className="w-full">
-                <div className="flex items-start gap-3">
-                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Sparkles className="h-4 w-4 text-primary" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-medium">Web42</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="animate-pulse flex gap-1">
-                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                      </div>
-                      <span className="text-sm text-muted-foreground">AI is thinking...</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-              </div>
-
-              {/* Input */}
-              <div className="p-4 border-t">
-            <div className="flex gap-2">
-              <textarea
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Describe the site you want to build..."
-                className="flex-1 min-h-[80px] resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                disabled={isGenerating}
-              />
-              <Button
-                onClick={handleSendMessage}
-                disabled={!inputMessage.trim() || isGenerating}
-                size="icon"
-                className="self-end"
-              >
-                <Send className="h-4 w-4" />
-              </Button>
-            </div>
-              </div>
-            </>
-          }
-          rightPanel={
-          <div className="flex-1 bg-muted/30 p-4">
-            <Card className="h-full">
-              <CardHeader>
-                <CardTitle>Site Preview</CardTitle>
-              </CardHeader>
-              <CardContent className="flex-1 flex items-center justify-center">
-                <div className="text-center space-y-4">
-                  <div className="w-16 h-16 mx-auto rounded-full bg-muted flex items-center justify-center">
-                    <Sparkles className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-lg">Ready to Build</h3>
-                    <p className="text-muted-foreground text-sm">
-                      Start chatting with the AI to see your site come to life
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            </div>
-          }
           defaultLeftWidth={50}
           minLeftWidth={250}
           maxLeftWidth={690}
-        />
+        >
+          <LeftPanel>
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {messages.map((message) =>
+                message.isUser ? (
+                  <UserMessage
+                    key={message.id}
+                    content={message.content}
+                    timestamp={message.timestamp}
+                  />
+                ) : (
+                  <AIMessage
+                    key={message.id}
+                    content={message.content}
+                    timestamp={message.timestamp}
+                  />
+                ),
+              )}
+              {isGenerating && (
+                <div className="w-full">
+                  <div className="flex items-start gap-3">
+                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Sparkles className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-sm font-medium">Web42</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="animate-pulse flex gap-1">
+                          <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+                          <div
+                            className="w-2 h-2 bg-primary rounded-full animate-bounce"
+                            style={{ animationDelay: "0.1s" }}
+                          ></div>
+                          <div
+                            className="w-2 h-2 bg-primary rounded-full animate-bounce"
+                            style={{ animationDelay: "0.2s" }}
+                          ></div>
+                        </div>
+                        <span className="text-sm text-muted-foreground">
+                          AI is thinking...
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Input */}
+            <div className="p-4 border-t">
+              <div className="flex gap-2">
+                <textarea
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Describe the site you want to build..."
+                  className="flex-1 min-h-[80px] resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled={isGenerating}
+                />
+                <Button
+                  onClick={handleSendMessage}
+                  disabled={!inputMessage.trim() || isGenerating}
+                  size="icon"
+                  className="self-end"
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </LeftPanel>
+
+          <RightPanel>
+            <div className="flex-1 bg-muted/30 p-4">
+              <Card className="h-full">
+                <CardHeader>
+                  <CardTitle>Site Preview</CardTitle>
+                </CardHeader>
+                <CardContent className="flex-1 flex items-center justify-center">
+                  <div className="text-center space-y-4">
+                    <div className="w-16 h-16 mx-auto rounded-full bg-muted flex items-center justify-center">
+                      <Sparkles className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-lg">Ready to Build</h3>
+                      <p className="text-muted-foreground text-sm">
+                        Start chatting with the AI to see your site come to life
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </RightPanel>
+        </ResizablePanels>
       </div>
     </div>
   );

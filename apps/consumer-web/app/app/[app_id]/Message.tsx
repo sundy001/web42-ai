@@ -30,7 +30,9 @@ export default function Message({ content, isUser, timestamp }: MessageProps) {
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-sm font-medium">Web42</span>
-            <span className="text-xs text-muted-foreground">{getTimeAgo(timestamp)}</span>
+            <span className="text-xs text-muted-foreground">
+              {getTimeAgo(timestamp)}
+            </span>
           </div>
           <div className="text-sm text-foreground">{content}</div>
         </div>
