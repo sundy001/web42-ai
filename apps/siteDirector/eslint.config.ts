@@ -1,6 +1,6 @@
 import { config } from "@web42-ai/eslint-config/base";
+import type { Linter } from "eslint";
 
-/** @type {import("eslint").Linter.Config} */
 export default [
   ...config,
   {
@@ -23,4 +23,4 @@ export default [
       },
     },
   },
-];
+] satisfies Linter.Config[];

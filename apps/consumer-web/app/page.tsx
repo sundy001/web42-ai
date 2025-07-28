@@ -58,7 +58,7 @@ export default function HomePage() {
             <CardContent>
               <p className="text-sm text-muted-foreground">
                 See changes in real-time as our AI builds your site, with the
-                ability to iterate and refine until it's perfect.
+                ability to iterate and refine until it&apos;s perfect.
               </p>
             </CardContent>
           </Card>
