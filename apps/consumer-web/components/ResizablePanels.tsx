@@ -72,11 +72,9 @@ export default function ResizablePanels({
 
   // Extract exactly two children
   const childrenArray = Children.toArray(children);
-  
+
   if (childrenArray.length !== 2) {
-    throw new Error(
-      "ResizablePanels must contain exactly two children",
-    );
+    throw new Error("ResizablePanels must contain exactly two children");
   }
 
   const [leftPanel, rightPanel] = childrenArray;

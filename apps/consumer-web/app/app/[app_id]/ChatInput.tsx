@@ -2,25 +2,20 @@
 
 import { Button } from "@web42-ai/ui/button";
 import { Send } from "lucide-react";
-import { useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface ChatInputProps {
-  inputMessage: string;
   isGenerating: boolean;
-  onInputChange: (value: string) => void;
-  onSendMessage: () => void;
-  onKeyPress: (e: React.KeyboardEvent) => void;
+  onSendMessage: (message: string) => void;
   autoFocus?: boolean;
 }
 
 export default function ChatInput({
-  inputMessage,
   isGenerating,
-  onInputChange,
   onSendMessage,
-  onKeyPress,
   autoFocus = false,
 }: ChatInputProps) {
+  const [inputMessage, setInputMessage] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -29,27 +24,41 @@ export default function ChatInput({
     }
   }, [autoFocus]);
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputMessage.trim()) return;
+    onSendMessage(inputMessage);
+    setInputMessage("");
+  };
+
   return (
     <div className="p-4 border-t">
-      <div className="flex gap-2">
+      <form onSubmit={handleSubmit} className="flex gap-2">
         <textarea
           ref={textareaRef}
           value={inputMessage}
-          onChange={(e) => onInputChange(e.target.value)}
-          onKeyPress={onKeyPress}
+          onChange={(e) => setInputMessage(e.target.value)}
           placeholder="Describe the site you want to build..."
           className="flex-1 min-h-[80px] resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-          disabled={isGenerating}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && e.shiftKey) {
+              // Allow Shift+Enter for new lines
+              return;
+            }
+            if (e.key === "Enter") {
+              handleSubmit(e);
+            }
+          }}
         />
         <Button
-          onClick={onSendMessage}
+          type="submit"
           disabled={!inputMessage.trim() || isGenerating}
           size="icon"
           className="self-end"
         >
           <Send className="h-4 w-4" />
         </Button>
-      </div>
+      </form>
     </div>
   );
 }

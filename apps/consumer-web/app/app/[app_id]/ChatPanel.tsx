@@ -23,22 +23,20 @@ export default function ChatPanel() {
       timestamp: new Date(),
     },
   ]);
-  const [inputMessage, setInputMessage] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [shouldAutoFocus, setShouldAutoFocus] = useState(false);
 
-  const handleSendMessage = async () => {
-    if (!inputMessage.trim()) return;
+  const handleSendMessage = async (message: string) => {
+    if (!message.trim()) return;
 
     const newMessage: MessageData = {
       id: Date.now().toString(),
-      content: inputMessage,
+      content: message,
       isUser: true,
       timestamp: new Date(),
     };
 
     setMessages((prev) => [...prev, newMessage]);
-    setInputMessage("");
     setIsGenerating(true);
     setShouldAutoFocus(true);
 
@@ -55,13 +53,6 @@ export default function ChatPanel() {
       setIsGenerating(false);
       setShouldAutoFocus(false);
     }, 1500);
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
   };
 
   return (
@@ -116,11 +107,8 @@ export default function ChatPanel() {
       </div>
 
       <ChatInput
-        inputMessage={inputMessage}
         isGenerating={isGenerating}
-        onInputChange={setInputMessage}
         onSendMessage={handleSendMessage}
-        onKeyPress={handleKeyPress}
         autoFocus={shouldAutoFocus}
       />
     </>
