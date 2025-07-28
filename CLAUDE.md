@@ -108,6 +108,7 @@ bun generate:component
 4. **Type Safety**: All packages use strict TypeScript configuration with no unchecked indexed access
 5. **Testing**: Use Vitest for all testing needs - tests are located in `__tests__` directories or `.test.ts` files
 6. **Code Quality**: Maximum warnings policy (--max-warnings 0) enforced across all linting
+7. **Formatting**: Run formatter after completing development work
 
 ## Important Configuration Files
 
@@ -168,6 +169,7 @@ Classes are acceptable in specific scenarios:
 
 - Group related functionality into a single directory
 - Use `index.ts` to expose public APIs
+- `index.ts` should only re-export resources in the module
 - Keep internal implementation private within the module
 - Clear separation between public interface and internal details
 - Import folder with `index.ts`, should directly import the folder name. For example:
@@ -178,3 +180,4 @@ import { userRoute } from "user";
 ```
 
 - Should avoid import \* from 'package'. Instead use named imports
+- Use named imports/exports exclusively; wildcard imports/exports are only permitted when third-party modules require specific usage patterns
