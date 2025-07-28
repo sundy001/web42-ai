@@ -83,10 +83,10 @@ export default function ResizablePanels({
   const [leftPanel, rightPanel] = childrenArray;
 
   return (
-    <div className="flex h-full w-full" ref={containerRef}>
+    <div className={cn("flex h-full w-full", className)} ref={containerRef}>
       {/* Left Panel */}
       <div
-        className={cn("flex flex-col", className)}
+        className="flex flex-col"
         style={{
           width: `${leftPanelWidth}%`,
           minWidth: `${minLeftWidth}px`,
