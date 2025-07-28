@@ -44,6 +44,34 @@
         "vitest": "^2.1.8",
       },
     },
+    "apps/chat-api": {
+      "name": "@web42-ai/chat-api",
+      "version": "0.1.0",
+      "dependencies": {
+        "@anatine/zod-openapi": "^2.2.8",
+        "cors": "^2.8.5",
+        "express": "^4.19.2",
+        "helmet": "^7.1.0",
+        "morgan": "^1.10.0",
+        "swagger-ui-express": "^5.0.1",
+        "uuid": "^10.0.0",
+        "zod": "^3.23.8",
+      },
+      "devDependencies": {
+        "@types/cors": "^2.8.17",
+        "@types/express": "^4.17.21",
+        "@types/morgan": "^1.9.9",
+        "@types/node": "^22.15.3",
+        "@types/swagger-ui-express": "^4.1.8",
+        "@types/uuid": "^10.0.0",
+        "@web42-ai/eslint-config": "workspace:*",
+        "@web42-ai/typescript-config": "workspace:*",
+        "eslint": "^9.31.0",
+        "tsx": "^4.19.2",
+        "typescript": "5.8.2",
+        "vitest": "^2.1.8",
+      },
+    },
     "apps/consumer-web": {
       "name": "@web42-ai/consumer-web",
       "version": "0.1.0",
@@ -79,7 +107,7 @@
         "vitest": "^2.1.8",
       },
     },
-    "apps/site-director": {
+    "apps/core-api": {
       "name": "@web42-ai/core-api",
       "version": "0.1.0",
       "dependencies": {
@@ -607,9 +635,11 @@
 
     "@web42-ai/admin-web": ["@web42-ai/admin-web@workspace:apps/admin-web"],
 
+    "@web42-ai/chat-api": ["@web42-ai/chat-api@workspace:apps/chat-api"],
+
     "@web42-ai/consumer-web": ["@web42-ai/consumer-web@workspace:apps/consumer-web"],
 
-    "@web42-ai/core-api": ["@web42-ai/core-api@workspace:apps/site-director"],
+    "@web42-ai/core-api": ["@web42-ai/core-api@workspace:apps/core-api"],
 
     "@web42-ai/eslint-config": ["@web42-ai/eslint-config@workspace:packages/eslint-config"],
 
@@ -1530,6 +1560,8 @@
     "@typescript-eslint/typescript-estree/semver": ["semver@7.7.2", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-RF0Fw+rO5AMf9MAyaRXI4AV0Ulj5lMHqVxxdSgiVbixSCXoEmmX/jk0CuJw4+3SqroYO9VoUh+HcuJivvtJemA=="],
 
     "@web42-ai/admin-web/typescript": ["typescript@5.8.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="],
+
+    "@web42-ai/chat-api/typescript": ["typescript@5.8.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="],
 
     "@web42-ai/consumer-web/typescript": ["typescript@5.8.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="],
 

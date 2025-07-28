@@ -1,7 +1,7 @@
 "use client";
 
 import { Sparkles } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import AIMessage from "./AIMessage";
 import ChatInput from "./ChatInput";
 import UserMessage from "./UserMessage";
