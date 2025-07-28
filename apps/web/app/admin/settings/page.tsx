@@ -2,50 +2,39 @@
 
 import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormLabel,
-} from "@web42-ai/ui/form";
-import { Input } from "@web42-ai/ui/input";
+import { Form } from "@web42-ai/ui/form";
+import { FormInput } from "@web42-ai/ui/input";
 import { Label } from "@web42-ai/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@web42-ai/ui/select";
+import { FormSelect } from "@web42-ai/ui/select";
 import { Bell, Database, Mail, Save, Shield } from "lucide-react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 
-interface Settings {
-  general: {
-    siteName: string;
-    siteUrl: string;
-    supportEmail: string;
-    timezone: string;
-  };
-  notifications: {
-    emailNotifications: boolean;
-    systemAlerts: boolean;
-    maintenanceMode: boolean;
-  };
-  security: {
-    sessionTimeout: number;
-    passwordPolicy: string;
-    twoFactorAuth: boolean;
-  };
-  database: {
-    backupFrequency: string;
-    retentionDays: number;
-    autoCleanup: boolean;
-  };
+interface GeneralSettings {
+  siteName: string;
+  siteUrl: string;
+  supportEmail: string;
+  timezone: string;
 }
 
-// Mock settings data
+interface SecuritySettings {
+  sessionTimeout: number;
+  passwordPolicy: string;
+  twoFactorAuth: boolean;
+}
+
+interface DatabaseSettings {
+  backupFrequency: string;
+  retentionDays: number;
+  autoCleanup: boolean;
+}
+
+interface NotificationSettings {
+  emailNotifications: boolean;
+  systemAlerts: boolean;
+  maintenanceMode: boolean;
+}
+
 // Constants for styles to avoid duplication
 const TOGGLE_BUTTON_BASE =
   "relative inline-flex h-6 w-11 items-center rounded-full transition-colors";
@@ -57,57 +46,91 @@ const TOGGLE_WARNING_BG = "bg-orange-600";
 const TOGGLE_ACTIVE_POS = "translate-x-6";
 const TOGGLE_INACTIVE_POS = "translate-x-1";
 
-const mockSettings: Settings = {
-  general: {
-    siteName: "Web42 AI Platform",
-    siteUrl: "https://web42.ai",
-    supportEmail: "support@web42.ai",
-    timezone: "UTC",
+// Select options
+const timezoneOptions = [
+  { value: "UTC", label: "UTC" },
+  { value: "America/New_York", label: "Eastern Time" },
+  { value: "America/Los_Angeles", label: "Pacific Time" },
+  { value: "Europe/London", label: "London" },
+];
+
+const passwordPolicyOptions = [
+  { value: "basic", label: "Basic (8+ characters)" },
+  { value: "strong", label: "Strong (8+ chars, mixed case, numbers)" },
+  {
+    value: "very-strong",
+    label: "Very Strong (12+ chars, mixed case, numbers, symbols)",
   },
-  notifications: {
-    emailNotifications: true,
-    systemAlerts: true,
-    maintenanceMode: false,
-  },
-  security: {
-    sessionTimeout: 30,
-    passwordPolicy: "strong",
-    twoFactorAuth: true,
-  },
-  database: {
-    backupFrequency: "daily",
-    retentionDays: 30,
-    autoCleanup: true,
-  },
-};
+];
+
+const backupFrequencyOptions = [
+  { value: "hourly", label: "Hourly" },
+  { value: "daily", label: "Daily" },
+  { value: "weekly", label: "Weekly" },
+  { value: "monthly", label: "Monthly" },
+];
 
 export default function SettingsPage() {
-  const [settings, setSettings] = useState<Settings>(mockSettings);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("general");
+  const [notificationSettings, setNotificationSettings] =
+    useState<NotificationSettings>({
+      emailNotifications: true,
+      systemAlerts: true,
+      maintenanceMode: false,
+    });
+  const [twoFactorAuth, setTwoFactorAuth] = useState(true);
+  const [autoCleanup, setAutoCleanup] = useState(true);
+
+  // Form instances for each section
+  const generalForm = useForm<GeneralSettings>({
+    defaultValues: {
+      siteName: "Web42 AI Platform",
+      siteUrl: "https://web42.ai",
+      supportEmail: "support@web42.ai",
+      timezone: "UTC",
+    },
+  });
+
+  const securityForm = useForm<SecuritySettings>({
+    defaultValues: {
+      sessionTimeout: 30,
+      passwordPolicy: "strong",
+      twoFactorAuth: true,
+    },
+  });
+
+  const databaseForm = useForm<DatabaseSettings>({
+    defaultValues: {
+      backupFrequency: "daily",
+      retentionDays: 30,
+      autoCleanup: true,
+    },
+  });
 
   const handleSave = async () => {
     setSaving(true);
+
+    // Collect all form data
+    const allSettings = {
+      general: generalForm.getValues(),
+      security: {
+        ...securityForm.getValues(),
+        twoFactorAuth,
+      },
+      database: {
+        ...databaseForm.getValues(),
+        autoCleanup,
+      },
+      notifications: notificationSettings,
+    };
+
     // Simulate API call
     setTimeout(() => {
       setSaving(false);
       alert("Settings saved successfully!");
+      console.log("Saved settings:", allSettings);
     }, 1000);
-  };
-
-  const updateSetting = (
-    section: keyof Settings,
-    key: string,
-    value: string | number | boolean,
-  ) => {
-    setSettings((prev) => ({
-      ...prev,
-      [section]: {
-        // eslint-disable-next-line security/detect-object-injection -- Safe: section is type-checked as keyof Settings
-        ...prev[section],
-        [key]: value,
-      },
-    }));
   };
 
   const tabs = [
@@ -160,78 +183,46 @@ export default function SettingsPage() {
               <h3 className="text-lg font-medium text-gray-900 mb-6">
                 General Settings
               </h3>
-              <Form>
-                <div className="space-y-6">
-                  <FormField>
-                    <FormLabel htmlFor="siteName">Site Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        id="siteName"
-                        value={settings.general.siteName}
-                        onChange={(e) =>
-                          updateSetting("general", "siteName", e.target.value)
-                        }
-                      />
-                    </FormControl>
-                  </FormField>
+              <Form {...generalForm}>
+                <form className="space-y-6">
+                  <FormInput<GeneralSettings>
+                    name="siteName"
+                    label="Site Name"
+                    rules={{ required: "Site name is required" }}
+                  />
 
-                  <FormField>
-                    <FormLabel htmlFor="siteUrl">Site URL</FormLabel>
-                    <FormControl>
-                      <Input
-                        id="siteUrl"
-                        value={settings.general.siteUrl}
-                        onChange={(e) =>
-                          updateSetting("general", "siteUrl", e.target.value)
-                        }
-                      />
-                    </FormControl>
-                  </FormField>
+                  <FormInput<GeneralSettings>
+                    name="siteUrl"
+                    label="Site URL"
+                    rules={{
+                      required: "Site URL is required",
+                      pattern: {
+                        value: /^https?:\/\/.+/,
+                        message: "Please enter a valid URL",
+                      },
+                    }}
+                  />
 
-                  <FormField>
-                    <FormLabel htmlFor="supportEmail">Support Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        id="supportEmail"
-                        type="email"
-                        value={settings.general.supportEmail}
-                        onChange={(e) =>
-                          updateSetting(
-                            "general",
-                            "supportEmail",
-                            e.target.value,
-                          )
-                        }
-                      />
-                    </FormControl>
-                  </FormField>
+                  <FormInput<GeneralSettings>
+                    name="supportEmail"
+                    label="Support Email"
+                    type="email"
+                    rules={{
+                      required: "Support email is required",
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: "Please enter a valid email address",
+                      },
+                    }}
+                  />
 
-                  <FormField>
-                    <FormLabel>Timezone</FormLabel>
-                    <FormControl>
-                      <Select
-                        value={settings.general.timezone}
-                        onValueChange={(value) =>
-                          updateSetting("general", "timezone", value)
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="UTC">UTC</SelectItem>
-                          <SelectItem value="America/New_York">
-                            Eastern Time
-                          </SelectItem>
-                          <SelectItem value="America/Los_Angeles">
-                            Pacific Time
-                          </SelectItem>
-                          <SelectItem value="Europe/London">London</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                  </FormField>
-                </div>
+                  <FormSelect<GeneralSettings>
+                    name="timezone"
+                    label="Timezone"
+                    options={timezoneOptions}
+                    rules={{ required: "Timezone is required" }}
+                  />
+                </form>
               </Form>
             </Card>
           )}
@@ -253,21 +244,20 @@ export default function SettingsPage() {
                   </div>
                   <button
                     onClick={() =>
-                      updateSetting(
-                        "notifications",
-                        "emailNotifications",
-                        !settings.notifications.emailNotifications,
-                      )
+                      setNotificationSettings((prev) => ({
+                        ...prev,
+                        emailNotifications: !prev.emailNotifications,
+                      }))
                     }
                     className={`${TOGGLE_BUTTON_BASE} ${
-                      settings.notifications.emailNotifications
+                      notificationSettings.emailNotifications
                         ? TOGGLE_ACTIVE_BG
                         : TOGGLE_INACTIVE_BG
                     }`}
                   >
                     <span
                       className={`${TOGGLE_SWITCH_BASE} ${
-                        settings.notifications.emailNotifications
+                        notificationSettings.emailNotifications
                           ? TOGGLE_ACTIVE_POS
                           : TOGGLE_INACTIVE_POS
                       }`}
@@ -286,21 +276,20 @@ export default function SettingsPage() {
                   </div>
                   <button
                     onClick={() =>
-                      updateSetting(
-                        "notifications",
-                        "systemAlerts",
-                        !settings.notifications.systemAlerts,
-                      )
+                      setNotificationSettings((prev) => ({
+                        ...prev,
+                        systemAlerts: !prev.systemAlerts,
+                      }))
                     }
                     className={`${TOGGLE_BUTTON_BASE} ${
-                      settings.notifications.systemAlerts
+                      notificationSettings.systemAlerts
                         ? TOGGLE_ACTIVE_BG
                         : TOGGLE_INACTIVE_BG
                     }`}
                   >
                     <span
                       className={`${TOGGLE_SWITCH_BASE} ${
-                        settings.notifications.systemAlerts
+                        notificationSettings.systemAlerts
                           ? TOGGLE_ACTIVE_POS
                           : TOGGLE_INACTIVE_POS
                       }`}
@@ -319,21 +308,20 @@ export default function SettingsPage() {
                   </div>
                   <button
                     onClick={() =>
-                      updateSetting(
-                        "notifications",
-                        "maintenanceMode",
-                        !settings.notifications.maintenanceMode,
-                      )
+                      setNotificationSettings((prev) => ({
+                        ...prev,
+                        maintenanceMode: !prev.maintenanceMode,
+                      }))
                     }
                     className={`${TOGGLE_BUTTON_BASE} ${
-                      settings.notifications.maintenanceMode
+                      notificationSettings.maintenanceMode
                         ? TOGGLE_WARNING_BG
                         : TOGGLE_INACTIVE_BG
                     }`}
                   >
                     <span
                       className={`${TOGGLE_SWITCH_BASE} ${
-                        settings.notifications.maintenanceMode
+                        notificationSettings.maintenanceMode
                           ? TOGGLE_ACTIVE_POS
                           : TOGGLE_INACTIVE_POS
                       }`}
@@ -349,58 +337,32 @@ export default function SettingsPage() {
               <h3 className="text-lg font-medium text-gray-900 mb-6">
                 Security Settings
               </h3>
-              <Form>
-                <div className="space-y-6">
-                  <FormField>
-                    <FormLabel htmlFor="sessionTimeout">
-                      Session Timeout (minutes)
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        id="sessionTimeout"
-                        type="number"
-                        value={settings.security.sessionTimeout}
-                        onChange={(e) =>
-                          updateSetting(
-                            "security",
-                            "sessionTimeout",
-                            parseInt(e.target.value),
-                          )
-                        }
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Users will be logged out after this period of inactivity
-                    </FormDescription>
-                  </FormField>
+              <Form {...securityForm}>
+                <form className="space-y-6">
+                  <FormInput<SecuritySettings>
+                    name="sessionTimeout"
+                    label="Session Timeout (minutes)"
+                    type="number"
+                    rules={{
+                      required: "Session timeout is required",
+                      min: {
+                        value: 5,
+                        message: "Minimum timeout is 5 minutes",
+                      },
+                      max: {
+                        value: 120,
+                        message: "Maximum timeout is 120 minutes",
+                      },
+                    }}
+                    description="Users will be logged out after this period of inactivity"
+                  />
 
-                  <FormField>
-                    <FormLabel>Password Policy</FormLabel>
-                    <FormControl>
-                      <Select
-                        value={settings.security.passwordPolicy}
-                        onValueChange={(value) =>
-                          updateSetting("security", "passwordPolicy", value)
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="basic">
-                            Basic (8+ characters)
-                          </SelectItem>
-                          <SelectItem value="strong">
-                            Strong (8+ chars, mixed case, numbers)
-                          </SelectItem>
-                          <SelectItem value="very-strong">
-                            Very Strong (12+ chars, mixed case, numbers,
-                            symbols)
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                  </FormField>
+                  <FormSelect<SecuritySettings>
+                    name="passwordPolicy"
+                    label="Password Policy"
+                    options={passwordPolicyOptions}
+                    rules={{ required: "Password policy is required" }}
+                  />
 
                   <div className="flex items-center justify-between">
                     <div>
@@ -412,29 +374,21 @@ export default function SettingsPage() {
                       </p>
                     </div>
                     <button
-                      onClick={() =>
-                        updateSetting(
-                          "security",
-                          "twoFactorAuth",
-                          !settings.security.twoFactorAuth,
-                        )
-                      }
+                      onClick={() => setTwoFactorAuth(!twoFactorAuth)}
                       className={`${TOGGLE_BUTTON_BASE} ${
-                        settings.security.twoFactorAuth
-                          ? TOGGLE_ACTIVE_BG
-                          : TOGGLE_INACTIVE_BG
+                        twoFactorAuth ? TOGGLE_ACTIVE_BG : TOGGLE_INACTIVE_BG
                       }`}
                     >
                       <span
                         className={`${TOGGLE_SWITCH_BASE} ${
-                          settings.security.twoFactorAuth
+                          twoFactorAuth
                             ? TOGGLE_ACTIVE_POS
                             : TOGGLE_INACTIVE_POS
                         }`}
                       />
                     </button>
                   </div>
-                </div>
+                </form>
               </Form>
             </Card>
           )}
@@ -444,52 +398,32 @@ export default function SettingsPage() {
               <h3 className="text-lg font-medium text-gray-900 mb-6">
                 Database Settings
               </h3>
-              <Form>
-                <div className="space-y-6">
-                  <FormField>
-                    <FormLabel>Backup Frequency</FormLabel>
-                    <FormControl>
-                      <Select
-                        value={settings.database.backupFrequency}
-                        onValueChange={(value) =>
-                          updateSetting("database", "backupFrequency", value)
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="hourly">Hourly</SelectItem>
-                          <SelectItem value="daily">Daily</SelectItem>
-                          <SelectItem value="weekly">Weekly</SelectItem>
-                          <SelectItem value="monthly">Monthly</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                  </FormField>
+              <Form {...databaseForm}>
+                <form className="space-y-6">
+                  <FormSelect<DatabaseSettings>
+                    name="backupFrequency"
+                    label="Backup Frequency"
+                    options={backupFrequencyOptions}
+                    rules={{ required: "Backup frequency is required" }}
+                  />
 
-                  <FormField>
-                    <FormLabel htmlFor="retentionDays">
-                      Backup Retention (days)
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        id="retentionDays"
-                        type="number"
-                        value={settings.database.retentionDays}
-                        onChange={(e) =>
-                          updateSetting(
-                            "database",
-                            "retentionDays",
-                            parseInt(e.target.value),
-                          )
-                        }
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Number of days to keep backup files
-                    </FormDescription>
-                  </FormField>
+                  <FormInput<DatabaseSettings>
+                    name="retentionDays"
+                    label="Backup Retention (days)"
+                    type="number"
+                    rules={{
+                      required: "Retention days is required",
+                      min: {
+                        value: 1,
+                        message: "Minimum retention is 1 day",
+                      },
+                      max: {
+                        value: 365,
+                        message: "Maximum retention is 365 days",
+                      },
+                    }}
+                    description="Number of days to keep backup files"
+                  />
 
                   <div className="flex items-center justify-between">
                     <div>
@@ -501,29 +435,19 @@ export default function SettingsPage() {
                       </p>
                     </div>
                     <button
-                      onClick={() =>
-                        updateSetting(
-                          "database",
-                          "autoCleanup",
-                          !settings.database.autoCleanup,
-                        )
-                      }
+                      onClick={() => setAutoCleanup(!autoCleanup)}
                       className={`${TOGGLE_BUTTON_BASE} ${
-                        settings.database.autoCleanup
-                          ? TOGGLE_ACTIVE_BG
-                          : TOGGLE_INACTIVE_BG
+                        autoCleanup ? TOGGLE_ACTIVE_BG : TOGGLE_INACTIVE_BG
                       }`}
                     >
                       <span
                         className={`${TOGGLE_SWITCH_BASE} ${
-                          settings.database.autoCleanup
-                            ? TOGGLE_ACTIVE_POS
-                            : TOGGLE_INACTIVE_POS
+                          autoCleanup ? TOGGLE_ACTIVE_POS : TOGGLE_INACTIVE_POS
                         }`}
                       />
                     </button>
                   </div>
-                </div>
+                </form>
               </Form>
             </Card>
           )}
