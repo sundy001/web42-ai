@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { Button } from '@web42-ai/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@web42-ai/ui/card';
 import { Send, Eye, Sparkles, Menu } from 'lucide-react';
 import AIMessage from './AIMessage';
 import UserMessage from './UserMessage';
+import ResizablePanels from '@/components/ResizablePanels';
 
 interface MessageData {
   id: string;
@@ -29,9 +30,6 @@ export default function AIBuilderClient({ appId }: AIBuilderClientProps) {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [chatPanelWidth, setChatPanelWidth] = useState(50); // percentage
-  const [isResizing, setIsResizing] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
@@ -67,44 +65,6 @@ export default function AIBuilderClient({ appId }: AIBuilderClientProps) {
     }
   };
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsResizing(true);
-  };
-
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isResizing || !containerRef.current) return;
-
-    const containerRect = containerRef.current.getBoundingClientRect();
-    const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
-    
-    // Calculate min and max percentages based on container width
-    const minPercent = (250 / containerRect.width) * 100;
-    const maxPercent = (690 / containerRect.width) * 100;
-    
-    setChatPanelWidth(Math.min(Math.max(newWidth, minPercent), maxPercent));
-  }, [isResizing]);
-
-  const handleMouseUp = () => {
-    setIsResizing(false);
-  };
-
-  useEffect(() => {
-    if (isResizing) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      document.body.style.cursor = 'col-resize';
-      document.body.style.userSelect = 'none';
-    }
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
-    };
-  }, [isResizing, handleMouseMove]);
-
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Header */}
@@ -133,18 +93,12 @@ export default function AIBuilderClient({ appId }: AIBuilderClientProps) {
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden" ref={containerRef}>
-        {/* Chat Panel */}
-        <div 
-          className="flex flex-col" 
-          style={{ 
-            width: `${chatPanelWidth}%`,
-            minWidth: '250px',
-            maxWidth: '690px'
-          }}
-        >
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-hidden">
+        <ResizablePanels
+          leftPanel={
+            <>
+              {/* Messages */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((message) => (
               message.isUser ? (
                 <UserMessage
@@ -182,10 +136,10 @@ export default function AIBuilderClient({ appId }: AIBuilderClientProps) {
                 </div>
               </div>
             )}
-          </div>
+              </div>
 
-          {/* Input */}
-          <div className="p-4 border-t">
+              {/* Input */}
+              <div className="p-4 border-t">
             <div className="flex gap-2">
               <textarea
                 value={inputMessage}
@@ -204,19 +158,10 @@ export default function AIBuilderClient({ appId }: AIBuilderClientProps) {
                 <Send className="h-4 w-4" />
               </Button>
             </div>
-          </div>
-        </div>
-
-        {/* Resizer */}
-        <div
-          className="w-1 bg-border hover:bg-primary/20 cursor-col-resize transition-colors relative group"
-          onMouseDown={handleMouseDown}
-        >
-          <div className="absolute inset-y-0 -left-1 -right-1 group-hover:bg-primary/10" />
-        </div>
-
-        {/* Preview Panel */}
-        <div className="flex-1 flex flex-col">
+              </div>
+            </>
+          }
+          rightPanel={
           <div className="flex-1 bg-muted/30 p-4">
             <Card className="h-full">
               <CardHeader>
@@ -236,8 +181,12 @@ export default function AIBuilderClient({ appId }: AIBuilderClientProps) {
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </div>
+            </div>
+          }
+          defaultLeftWidth={50}
+          minLeftWidth={250}
+          maxLeftWidth={690}
+        />
       </div>
     </div>
   );
