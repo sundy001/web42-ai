@@ -1,7 +1,7 @@
 import { generateSchema } from "@anatine/zod-openapi";
 import { z } from "zod";
 import {
-  CreateUserSchema,
+  CreateUserFromSupabaseSchema,
   ErrorResponseSchema,
   ListUsersQuerySchema,
   ObjectIdSchema,
@@ -51,7 +51,7 @@ export const routeSchemas = {
     },
   },
   createUser: {
-    body: CreateUserSchema,
+    body: CreateUserFromSupabaseSchema,
     responses: {
       201: UserSchema,
       400: ErrorResponseSchema,
@@ -197,7 +197,7 @@ export function generateOpenApiDocument() {
           tags: ["Users"],
           requestBody: {
             required: true,
-            content: createResponseContent(CreateUserSchema),
+            content: createResponseContent(CreateUserFromSupabaseSchema),
           },
           responses: {
             "201": {
@@ -382,7 +382,9 @@ export function generateOpenApiDocument() {
     components: {
       schemas: {
         User: generateSchema(UserSchema),
-        CreateUserRequest: generateSchema(CreateUserSchema),
+        CreateUserFromSupabaseRequest: generateSchema(
+          CreateUserFromSupabaseSchema,
+        ),
         UpdateUserRequest: generateSchema(UpdateUserSchema),
         UserListResponse: generateSchema(UserListResponseSchema),
         UserStats: generateSchema(UserStatsSchema),

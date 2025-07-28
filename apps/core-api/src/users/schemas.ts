@@ -10,6 +10,10 @@ export const UserSchema = z.object({
     example: "68842630e5d48662e0313589",
     description: "MongoDB ObjectId",
   }),
+  supabaseUserId: z.string().uuid().openapi({
+    example: "550e8400-e29b-41d4-a716-446655440000",
+    description: "Supabase Auth User ID",
+  }),
   email: z.string().email("Invalid email format").openapi({
     example: "user@example.com",
     description: "User email address",
@@ -18,13 +22,22 @@ export const UserSchema = z.object({
     .string()
     .min(2, "Name must be at least 2 characters")
     .max(100, "Name must not exceed 100 characters")
+    .optional()
     .openapi({ example: "Jane Doe", description: "User full name" }),
+  avatarUrl: z.string().url().optional().openapi({
+    example: "https://avatars.githubusercontent.com/u/1234567",
+    description: "User avatar URL",
+  }),
   authProvider: z
     .enum(["google", "github", "email"])
     .openapi({ example: "google", description: "Authentication provider" }),
   status: z
     .enum(["active", "inactive", "deleted"])
     .openapi({ example: "active", description: "User status" }),
+  lastSignInAt: z.string().datetime().optional().openapi({
+    example: "2024-01-26T12:00:00.000Z",
+    description: "Last sign in timestamp from Supabase",
+  }),
   createdAt: z.string().datetime().optional().openapi({
     example: "2024-01-26T12:00:00.000Z",
     description: "User creation timestamp",
@@ -35,8 +48,12 @@ export const UserSchema = z.object({
   }),
 });
 
-// Create user request schema
-export const CreateUserSchema = z.object({
+// Create user request schema (for creating user from Supabase auth)
+export const CreateUserFromSupabaseSchema = z.object({
+  supabaseUserId: z.string().uuid().openapi({
+    example: "550e8400-e29b-41d4-a716-446655440000",
+    description: "Supabase Auth User ID",
+  }),
   email: z.string().email("Invalid email format").openapi({
     example: "user@example.com",
     description: "User email address",
@@ -45,7 +62,12 @@ export const CreateUserSchema = z.object({
     .string()
     .min(2, "Name must be at least 2 characters")
     .max(100, "Name must not exceed 100 characters")
+    .optional()
     .openapi({ example: "Jane Doe", description: "User full name" }),
+  avatarUrl: z.string().url().optional().openapi({
+    example: "https://avatars.githubusercontent.com/u/1234567",
+    description: "User avatar URL",
+  }),
   authProvider: z
     .enum(["google", "github", "email"])
     .openapi({ example: "google", description: "Authentication provider" }),
@@ -54,20 +76,16 @@ export const CreateUserSchema = z.object({
 // Update user request schema
 export const UpdateUserSchema = z
   .object({
-    email: z.string().email("Invalid email format").optional().openapi({
-      example: "user@example.com",
-      description: "User email address",
-    }),
     name: z
       .string()
       .min(2, "Name must be at least 2 characters")
       .max(100, "Name must not exceed 100 characters")
       .optional()
       .openapi({ example: "Jane Doe", description: "User full name" }),
-    authProvider: z
-      .enum(["google", "github", "email"])
-      .optional()
-      .openapi({ example: "google", description: "Authentication provider" }),
+    avatarUrl: z.string().url().optional().openapi({
+      example: "https://avatars.githubusercontent.com/u/1234567",
+      description: "User avatar URL",
+    }),
     status: z.enum(["active", "inactive"]).optional().openapi({
       example: "active",
       description: "User status (cannot set to deleted via update)",
@@ -79,6 +97,7 @@ export const UpdateUserSchema = z
 
 // Query filters schema
 export const UserFiltersSchema = z.object({
+  supabaseUserId: z.string().uuid().optional(),
   email: z.string().optional(),
   name: z.string().optional(),
   authProvider: z.enum(["google", "github", "email"]).optional(),
@@ -126,6 +145,7 @@ export const ListUsersQuerySchema = z.object({
     .transform(Number)
     .refine((n) => n >= 1 && n <= 100, "Limit must be between 1 and 100")
     .optional(),
+  supabaseUserId: z.string().uuid().optional(),
   email: z.string().optional(),
   name: z.string().optional(),
   authProvider: z.enum(["google", "github", "email"]).optional(),
@@ -191,7 +211,9 @@ export const ErrorResponseSchema = z.object({
 });
 
 // Export types inferred from schemas
-export type CreateUserInput = z.infer<typeof CreateUserSchema>;
+export type CreateUserFromSupabaseInput = z.infer<
+  typeof CreateUserFromSupabaseSchema
+>;
 export type UpdateUserInput = z.infer<typeof UpdateUserSchema>;
 export type UserFiltersInput = z.infer<typeof UserFiltersSchema>;
 export type PaginationInput = z.infer<typeof PaginationSchema>;

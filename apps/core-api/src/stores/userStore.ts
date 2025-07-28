@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
+import { getSupabaseAdmin } from "../config/supabase.js";
 import type {
-  CreateUserRequest,
+  CreateUserFromSupabaseRequest,
   PaginationOptions,
   UpdateUserRequest,
   User,
@@ -16,13 +17,33 @@ function getCollection() {
   return db.collection<User>(COLLECTION_NAME);
 }
 
-export async function createUser(userData: CreateUserRequest): Promise<User> {
+export async function createUserFromSupabase(
+  userData: CreateUserFromSupabaseRequest,
+): Promise<User> {
   const collection = getCollection();
   const now = new Date().toISOString();
 
+  // Get additional user data from Supabase
+  const supabaseAdmin = getSupabaseAdmin();
+  const { data: supabaseUser, error } =
+    await supabaseAdmin.auth.admin.getUserById(userData.supabaseUserId);
+
+  if (error || !supabaseUser.user) {
+    throw new Error(`Failed to fetch user from Supabase: ${error?.message}`);
+  }
+
   const user: Omit<User, "_id"> = {
-    ...userData,
+    supabaseUserId: userData.supabaseUserId,
+    email: userData.email,
+    name:
+      userData.name ||
+      supabaseUser.user.user_metadata?.name ||
+      supabaseUser.user.user_metadata?.full_name,
+    avatarUrl:
+      userData.avatarUrl || supabaseUser.user.user_metadata?.avatar_url,
+    authProvider: userData.authProvider,
     status: "active",
+    lastSignInAt: supabaseUser.user.last_sign_in_at,
     createdAt: now,
     updatedAt: now,
   };
@@ -61,6 +82,21 @@ export async function getUserByEmail(
   const collection = getCollection();
 
   const filter: Record<string, unknown> = { email };
+
+  if (!includeDeleted) {
+    filter.status = { $ne: "deleted" };
+  }
+
+  return await collection.findOne(filter);
+}
+
+export async function getUserBySupabaseId(
+  supabaseUserId: string,
+  includeDeleted = false,
+): Promise<User | null> {
+  const collection = getCollection();
+
+  const filter: Record<string, unknown> = { supabaseUserId };
 
   if (!includeDeleted) {
     filter.status = { $ne: "deleted" };
@@ -166,6 +202,9 @@ export async function listUsers(
   // Build filter query
   const query: Record<string, unknown> = {};
 
+  if (filters.supabaseUserId) {
+    query.supabaseUserId = filters.supabaseUserId;
+  }
   if (filters.email) {
     query.email = { $regex: filters.email, $options: "i" };
   }
@@ -256,4 +295,66 @@ export async function getUserStats(): Promise<{
     deleted,
     byAuthProvider: authProviderStats,
   };
+}
+
+export async function syncUserWithSupabase(
+  supabaseUserId: string,
+): Promise<User | null> {
+  const supabaseAdmin = getSupabaseAdmin();
+  const { data: supabaseUser, error } =
+    await supabaseAdmin.auth.admin.getUserById(supabaseUserId);
+
+  if (error || !supabaseUser.user) {
+    return null;
+  }
+
+  const collection = getCollection();
+  const now = new Date().toISOString();
+
+  // Try to find existing user by supabaseUserId
+  let existingUser = await getUserBySupabaseId(supabaseUserId, true);
+
+  // If not found by supabaseUserId, try to find by email
+  if (!existingUser) {
+    existingUser = await getUserByEmail(supabaseUser.user.email!, true);
+  }
+
+  const userData = {
+    supabaseUserId,
+    email: supabaseUser.user.email!,
+    name:
+      supabaseUser.user.user_metadata?.name ||
+      supabaseUser.user.user_metadata?.full_name,
+    avatarUrl: supabaseUser.user.user_metadata?.avatar_url,
+    authProvider:
+      (supabaseUser.user.app_metadata?.provider as
+        | "google"
+        | "github"
+        | "email") || "email",
+    lastSignInAt: supabaseUser.user.last_sign_in_at,
+    updatedAt: now,
+  };
+
+  if (existingUser) {
+    // Update existing user
+    const result = await collection.findOneAndUpdate(
+      { _id: existingUser._id },
+      { $set: userData },
+      { returnDocument: "after" },
+    );
+    return result || null;
+  } else {
+    // Create new user
+    const newUser: Omit<User, "_id"> = {
+      ...userData,
+      status: "active",
+      createdAt: now,
+    };
+
+    const result = await collection.insertOne(newUser);
+    return {
+      _id: result.insertedId,
+      ...newUser,
+    };
+  }
 }

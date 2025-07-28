@@ -9,7 +9,7 @@ import { openApiDocument } from "./openapi/openApiConfig.js";
 import { getHealthStatus } from "./stores/index.js";
 
 const app = express();
-const PORT = 3003; // Default port for Chat API
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3003;
 
 // Middleware
 app.use(helmet());

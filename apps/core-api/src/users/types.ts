@@ -2,28 +2,33 @@ import type { ObjectId } from "mongodb";
 
 export interface User {
   _id?: ObjectId;
+  supabaseUserId: string;
   email: string;
-  name: string;
+  name?: string;
+  avatarUrl?: string;
   authProvider: string;
   status: "active" | "inactive" | "deleted";
+  lastSignInAt?: string;
   createdAt?: string;
   updatedAt?: string;
 }
 
-export interface CreateUserRequest {
+export interface CreateUserFromSupabaseRequest {
+  supabaseUserId: string;
   email: string;
-  name: string;
+  name?: string;
+  avatarUrl?: string;
   authProvider: string;
 }
 
 export interface UpdateUserRequest {
-  email?: string;
   name?: string;
-  authProvider?: string;
+  avatarUrl?: string;
   status?: "active" | "inactive";
 }
 
 export interface UserFilters {
+  supabaseUserId?: string;
   email?: string;
   name?: string;
   authProvider?: string;

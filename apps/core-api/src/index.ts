@@ -3,13 +3,14 @@ import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
+
 import { openApiDocument } from "./openapi/openApiConfig.js";
 import { databaseStore, getHealthStatus } from "./stores/index.js";
 import { userRoutes } from "./users/index.js";
 import { errorHandler } from "./users/middleware.js";
 
 const app = express();
-const PORT = 3002; // Default port for Core API
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3002;
 
 // Middleware
 app.use(helmet());

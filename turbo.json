@@ -6,7 +6,7 @@
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"],
-      "env": ["MONGODB_URI", "DATABASE_NAME"]
+      "env": ["PORT", "MONGODB_URI", "DATABASE_NAME", "SUPABASE_URL", "SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY"]
     },
     "lint": {
       "dependsOn": ["^lint"]
@@ -20,7 +20,7 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "env": ["MONGODB_URI", "DATABASE_NAME"]
+      "env": ["PORT", "MONGODB_URI", "DATABASE_NAME", "SUPABASE_URL", "SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY"]
     }
   }
 }
