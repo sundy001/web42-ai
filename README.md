@@ -17,8 +17,8 @@ This Turborepo includes the following packages/apps:
 ### Apps and Packages
 
 - `docs`: a [Next.js](https://nextjs.org/) app
-- `@web42-ai/webapp`: another [Next.js](https://nextjs.org/) app
-- `@web42-ai/ui`: a stub React component library shared by both `web` and `docs` applications
+- `@web42-ai/admin-web`: another [Next.js](https://nextjs.org/) app
+- `@web42-ai/ui`: a stub React component library shared by both `admin-web` and `docs` applications
 - `@web42-ai/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
 - `@web42-ai/typescript-config`: `tsconfig.json`s used throughout the monorepo
 
@@ -80,12 +80,12 @@ You can develop a specific package by using a [filter](https://turborepo.com/doc
 
 ```
 # With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+turbo dev --filter=@web42-ai/admin-web
 
 # Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
+npx turbo dev --filter=@web42-ai/admin-web
+yarn exec turbo dev --filter=@web42-ai/admin-web
+pnpm exec turbo dev --filter=@web42-ai/admin-web
 ```
 
 ### Remote Caching

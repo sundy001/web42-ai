@@ -10,6 +10,40 @@
         "typescript": "5.8.3",
       },
     },
+    "apps/admin-web": {
+      "name": "@web42-ai/admin-web",
+      "version": "0.1.0",
+      "dependencies": {
+        "@radix-ui/react-slot": "^1.2.3",
+        "@web42-ai/ui": "*",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "lucide-react": "^0.525.0",
+        "next": "^15.4.2",
+        "react": "^19.1.0",
+        "react-dom": "^19.1.0",
+        "react-hook-form": "^7.61.1",
+        "react-toastify": "^11.0.5",
+        "tailwind-merge": "^3.3.1",
+        "uuid": "^10.0.0",
+      },
+      "devDependencies": {
+        "@tailwindcss/postcss": "^4.1.11",
+        "@types/node": "^22.15.3",
+        "@types/react": "19.1.0",
+        "@types/react-dom": "19.1.1",
+        "@types/uuid": "^10.0.0",
+        "@vitest/ui": "^2.1.8",
+        "@web42-ai/eslint-config": "*",
+        "@web42-ai/typescript-config": "*",
+        "autoprefixer": "^10.4.21",
+        "eslint": "^9.31.0",
+        "postcss": "^8.5.6",
+        "tailwindcss": "^4.1.11",
+        "typescript": "5.8.2",
+        "vitest": "^2.1.8",
+      },
+    },
     "apps/docs": {
       "name": "docs",
       "version": "0.1.0",
@@ -52,40 +86,6 @@
         "@web42-ai/typescript-config": "workspace:*",
         "eslint": "^9.31.0",
         "tsx": "^4.19.2",
-        "typescript": "5.8.2",
-        "vitest": "^2.1.8",
-      },
-    },
-    "apps/web": {
-      "name": "@web42-ai/web-app",
-      "version": "0.1.0",
-      "dependencies": {
-        "@radix-ui/react-slot": "^1.2.3",
-        "@web42-ai/ui": "*",
-        "class-variance-authority": "^0.7.1",
-        "clsx": "^2.1.1",
-        "lucide-react": "^0.525.0",
-        "next": "^15.4.2",
-        "react": "^19.1.0",
-        "react-dom": "^19.1.0",
-        "react-hook-form": "^7.61.1",
-        "react-toastify": "^11.0.5",
-        "tailwind-merge": "^3.3.1",
-        "uuid": "^10.0.0",
-      },
-      "devDependencies": {
-        "@tailwindcss/postcss": "^4.1.11",
-        "@types/node": "^22.15.3",
-        "@types/react": "19.1.0",
-        "@types/react-dom": "19.1.1",
-        "@types/uuid": "^10.0.0",
-        "@vitest/ui": "^2.1.8",
-        "@web42-ai/eslint-config": "*",
-        "@web42-ai/typescript-config": "*",
-        "autoprefixer": "^10.4.21",
-        "eslint": "^9.31.0",
-        "postcss": "^8.5.6",
-        "tailwindcss": "^4.1.11",
         "typescript": "5.8.2",
         "vitest": "^2.1.8",
       },
@@ -589,6 +589,8 @@
 
     "@vitest/utils": ["@vitest/utils@2.1.9", "", { "dependencies": { "@vitest/pretty-format": "2.1.9", "loupe": "^3.1.2", "tinyrainbow": "^1.2.0" } }, "sha512-v0psaMSkNJ3A2NMrUEHFRzJtDPFn+/VWZ5WxImB21T9fjucJRmS7xCS3ppEnARb9y11OAzaD+P2Ps+b+BGX5iQ=="],
 
+    "@web42-ai/admin-web": ["@web42-ai/admin-web@workspace:apps/admin-web"],
+
     "@web42-ai/eslint-config": ["@web42-ai/eslint-config@workspace:packages/eslint-config"],
 
     "@web42-ai/site-director": ["@web42-ai/site-director@workspace:apps/siteDirector"],
@@ -596,8 +598,6 @@
     "@web42-ai/typescript-config": ["@web42-ai/typescript-config@workspace:packages/typescript-config"],
 
     "@web42-ai/ui": ["@web42-ai/ui@workspace:packages/ui"],
-
-    "@web42-ai/web-app": ["@web42-ai/web-app@workspace:apps/web"],
 
     "@web42-ai/workers": ["@web42-ai/workers@workspace:apps/workers"],
 
@@ -1509,11 +1509,11 @@
 
     "@typescript-eslint/typescript-estree/semver": ["semver@7.7.2", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-RF0Fw+rO5AMf9MAyaRXI4AV0Ulj5lMHqVxxdSgiVbixSCXoEmmX/jk0CuJw4+3SqroYO9VoUh+HcuJivvtJemA=="],
 
+    "@web42-ai/admin-web/typescript": ["typescript@5.8.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="],
+
     "@web42-ai/site-director/typescript": ["typescript@5.8.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="],
 
     "@web42-ai/ui/typescript": ["typescript@5.8.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="],
-
-    "@web42-ai/web-app/typescript": ["typescript@5.8.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="],
 
     "@web42-ai/workers/vitest": ["vitest@3.2.4", "", { "dependencies": { "@types/chai": "^5.2.2", "@vitest/expect": "3.2.4", "@vitest/mocker": "3.2.4", "@vitest/pretty-format": "^3.2.4", "@vitest/runner": "3.2.4", "@vitest/snapshot": "3.2.4", "@vitest/spy": "3.2.4", "@vitest/utils": "3.2.4", "chai": "^5.2.0", "debug": "^4.4.1", "expect-type": "^1.2.1", "magic-string": "^0.30.17", "pathe": "^2.0.3", "picomatch": "^4.0.2", "std-env": "^3.9.0", "tinybench": "^2.9.0", "tinyexec": "^0.3.2", "tinyglobby": "^0.2.14", "tinypool": "^1.1.1", "tinyrainbow": "^2.0.0", "vite": "^5.0.0 || ^6.0.0 || ^7.0.0-0", "vite-node": "3.2.4", "why-is-node-running": "^2.3.0" }, "peerDependencies": { "@edge-runtime/vm": "*", "@types/debug": "^4.1.12", "@types/node": "^18.0.0 || ^20.0.0 || >=22.0.0", "@vitest/browser": "3.2.4", "@vitest/ui": "3.2.4", "happy-dom": "*", "jsdom": "*" }, "optionalPeers": ["@edge-runtime/vm", "@types/debug", "@types/node", "@vitest/browser", "@vitest/ui", "happy-dom", "jsdom"], "bin": { "vitest": "vitest.mjs" } }, "sha512-LUCP5ev3GURDysTWiP47wRRUpLKMOfPh+yKTx3kVIEiu5KOMeqzpnYNsKyOoVrULivR8tLcks4+lga33Whn90A=="],
 

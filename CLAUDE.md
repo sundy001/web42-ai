@@ -11,7 +11,7 @@ This is a Turborepo monorepo project named `web42-ai` - an AI site generator pla
 ### Monorepo Structure
 
 - **apps/** - Contains the main applications
-  - `web/` - Main Next.js application (port 3000) with server-side utilities
+  - `admin-web/` - Admin Next.js application (port 3000) with server-side utilities
   - `docs/` - Documentation Next.js application (port 3001)
   - `workers/` - Cloudflare Workers for queue processing and event handling
 - **packages/** - Shared packages across apps
@@ -50,7 +50,7 @@ The system uses Cloudflare Queues for asynchronous communication:
 bun dev
 
 # Start specific app
-bun dev --filter=web
+bun dev --filter=@web42-ai/admin-web
 bun dev --filter=docs
 ```
 
@@ -61,7 +61,7 @@ bun dev --filter=docs
 bun build
 
 # Build specific app
-bun build --filter=web
+bun build --filter=@web42-ai/admin-web
 bun build --filter=docs
 ```
 
@@ -102,7 +102,7 @@ bun generate:component
 
 1. **Filtering Tasks**: Use Turborepo's `--filter` flag to work on specific apps or packages
 2. **Port Allocation**:
-   - Web app: http://localhost:3000
+   - Admin web app: http://localhost:3000
    - Docs app: http://localhost:3001
 3. **Shared Dependencies**: Changes to packages in `packages/` will automatically be reflected in apps that depend on them
 4. **Type Safety**: All packages use strict TypeScript configuration with no unchecked indexed access

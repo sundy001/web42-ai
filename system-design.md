@@ -38,7 +38,7 @@ A resource-intensive service dedicated to running the `npm run build` command. I
 - Consumes "project-builds-queue" events, specifying which version to build.
 - Fetches the correct source code snapshot from R2, runs the build, and uploads the final static assets back to R2.
 
-### **`@web42-ai/web-app` (Backend-for-Frontend):**
+### **`@web42-ai/admin-web` (Backend-for-Frontend):**
 
 A lightweight service that manages the Server-Sent Events (SSE) connection to the user's browser for real-time UI updates.
 
@@ -65,9 +65,9 @@ The system relies on six queues to manage workflows:
 | :-------------------------- | :-------------- | :------------------ | :----------------------------------------------------- |
 | `plan-steps-queue`          | `SiteDirector`  | `AIAppWorker`       | Holds the code generation tasks for the AI worker.     |
 | `project-builds-queue`      | `SiteDirector`  | `Build Service`     | Triggers a new build job.                              |
-| `step-status-to-bff-queue`  | `AIAppWorker`   | `@web42-ai/web-app` | Fans out real-time code generation progress to the UI. |
+| `step-status-to-bff-queue`  | `AIAppWorker`   | `@web42-ai/admin-web` | Fans out real-time code generation progress to the UI. |
 | `step-status-to-db-queue`   | `AIAppWorker`   | `SiteDirector`      | Fans out code generation progress for persistence.     |
-| `build-status-to-bff-queue` | `Build Service` | `@web42-ai/web-app` | Fans out real-time build progress to the UI.           |
+| `build-status-to-bff-queue` | `Build Service` | `@web42-ai/admin-web` | Fans out real-time build progress to the UI.           |
 | `build-status-to-db-queue`  | `Build Service` | `SiteDirector`      | Fans out build progress for persistence.               |
 
 ## 7. Development Environment
