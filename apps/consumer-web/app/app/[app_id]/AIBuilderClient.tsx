@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { Button } from '@web42-ai/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@web42-ai/ui/card';
 import { Send, MessageSquare, Eye, Sparkles, Menu } from 'lucide-react';
-import Message from './Message';
+import AIMessage from './AIMessage';
+import UserMessage from './UserMessage';
 
 interface MessageData {
   id: string;
@@ -104,12 +105,19 @@ export default function AIBuilderClient({ appId }: AIBuilderClientProps) {
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((message) => (
-              <Message
-                key={message.id}
-                content={message.content}
-                isUser={message.isUser}
-                timestamp={message.timestamp}
-              />
+              message.isUser ? (
+                <UserMessage
+                  key={message.id}
+                  content={message.content}
+                  timestamp={message.timestamp}
+                />
+              ) : (
+                <AIMessage
+                  key={message.id}
+                  content={message.content}
+                  timestamp={message.timestamp}
+                />
+              )
             ))}
             {isGenerating && (
               <div className="w-full">
