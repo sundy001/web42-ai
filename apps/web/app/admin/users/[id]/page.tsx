@@ -1,5 +1,13 @@
 "use client";
 
+import { ApiRequestError } from "@/lib/api/errors";
+import type { UpdateUserData, User } from "@/lib/api/types";
+import {
+  deleteUser,
+  fetchUser,
+  restoreUser,
+  updateUser,
+} from "@/lib/api/users";
 import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";
 import { Form } from "@web42-ai/ui/form";
@@ -12,24 +20,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-interface User {
-  _id: string;
-  email: string;
-  name: string;
-  authProvider: string;
-  status: "active" | "inactive" | "deleted";
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface UpdateUserForm {
-  name: string;
-  email: string;
-  authProvider: string;
-  status: string;
-}
-
-const API_BASE_URL = "http://localhost:3002";
+type UpdateUserForm = UpdateUserData;
 
 export default function UserDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -64,16 +55,10 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
     { value: "inactive", label: "Inactive" },
   ];
 
-  const fetchUser = useCallback(async () => {
+  const loadUser = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/api/v1/users/${params.id}`);
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch user");
-      }
-
-      const userData: User = await response.json();
+      const userData = await fetchUser(params.id);
       setUser(userData);
       reset({
         name: userData.name,
@@ -91,39 +76,18 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
   const onSubmit = async (data: UpdateUserForm) => {
     try {
       setSaving(true);
-      const response = await fetch(
-        `${API_BASE_URL}/api/v1/users/${params.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        },
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-
-        // Handle validation errors
-        if (response.status === 400 && errorData.details) {
-          errorData.details.forEach(
-            (detail: { field: string; message: string }) => {
-              setFormError(detail.field as keyof UpdateUserForm, {
-                message: detail.message,
-              });
-            },
-          );
-          return;
-        }
-
-        throw new Error(errorData.message || "Failed to update user");
-      }
-
-      const updatedUser: User = await response.json();
+      const updatedUser = await updateUser(params.id, data);
       setUser(updatedUser);
       alert("User updated successfully!");
     } catch (err) {
+      if (err instanceof ApiRequestError && err.status === 400 && err.details) {
+        err.details.forEach((detail) => {
+          setFormError(detail.field as keyof UpdateUserForm, {
+            message: detail.message,
+          });
+        });
+        return;
+      }
       alert(
         "Failed to update user: " +
           (err instanceof Error ? err.message : "Unknown error"),
@@ -139,17 +103,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
     }
 
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/v1/users/${params.id}`,
-        {
-          method: "DELETE",
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to delete user");
-      }
-
+      await deleteUser(params.id);
       alert("User deleted successfully!");
       router.push("/admin/users");
     } catch (err) {
@@ -166,19 +120,9 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
     }
 
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/v1/users/${params.id}/restore`,
-        {
-          method: "POST",
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to restore user");
-      }
-
+      await restoreUser(params.id);
       alert("User restored successfully!");
-      fetchUser(); // Refresh user data
+      loadUser(); // Refresh user data
     } catch (err) {
       alert(
         "Failed to restore user: " +
@@ -188,8 +132,8 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
   };
 
   useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
+    loadUser();
+  }, [loadUser]);
 
   if (loading) {
     return (

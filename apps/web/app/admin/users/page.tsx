@@ -1,5 +1,7 @@
 "use client";
 
+import type { User } from "@/lib/api/types";
+import { deleteUser, fetchUsers } from "@/lib/api/users";
 import { Badge } from "@web42-ai/ui/badge";
 import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";
@@ -15,26 +17,6 @@ import { Eye, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-interface User {
-  _id: string;
-  email: string;
-  name: string;
-  authProvider: string;
-  status: "active" | "inactive" | "deleted";
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface UserListResponse {
-  users: User[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
-
-const API_BASE_URL = "http://localhost:3002";
-
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,18 +28,10 @@ export default function UsersPage() {
     totalPages: 0,
   });
 
-  const fetchUsers = async (page = 1) => {
+  const loadUsers = async (page = 1) => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `${API_BASE_URL}/api/v1/users?page=${page}&limit=10`,
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch users");
-      }
-
-      const data: UserListResponse = await response.json();
+      const data = await fetchUsers(page, 10);
       setUsers(data.users);
       setPagination({
         page: data.page,
@@ -78,16 +52,9 @@ export default function UsersPage() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/users/${userId}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to delete user");
-      }
-
+      await deleteUser(userId);
       // Refresh the users list
-      fetchUsers(pagination.page);
+      loadUsers(pagination.page);
     } catch (err) {
       alert(
         "Failed to delete user: " +
@@ -97,7 +64,7 @@ export default function UsersPage() {
   };
 
   useEffect(() => {
-    fetchUsers();
+    loadUsers();
   }, []);
 
   const getStatusBadge = (status: User["status"]) => {
@@ -210,7 +177,7 @@ export default function UsersPage() {
         <div className="flex justify-center mt-6 gap-2">
           <Button
             variant="outline"
-            onClick={() => fetchUsers(pagination.page - 1)}
+            onClick={() => loadUsers(pagination.page - 1)}
             disabled={pagination.page <= 1}
           >
             Previous
@@ -220,7 +187,7 @@ export default function UsersPage() {
           </span>
           <Button
             variant="outline"
-            onClick={() => fetchUsers(pagination.page + 1)}
+            onClick={() => loadUsers(pagination.page + 1)}
             disabled={pagination.page >= pagination.totalPages}
           >
             Next

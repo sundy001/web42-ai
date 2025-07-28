@@ -1,5 +1,8 @@
 "use client";
 
+import { ApiRequestError } from "@/lib/api/errors";
+import type { CreateUserData } from "@/lib/api/types";
+import { createUser } from "@/lib/api/users";
 import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";
 import { Form } from "@web42-ai/ui/form";
@@ -11,13 +14,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-const API_BASE_URL = "http://localhost:3002";
-
-interface CreateUserForm {
-  name: string;
-  email: string;
-  authProvider: string;
-}
+type CreateUserForm = CreateUserData;
 
 export default function NewUserPage() {
   const router = useRouter();
@@ -45,36 +42,18 @@ export default function NewUserPage() {
   const onSubmit = async (data: CreateUserForm) => {
     try {
       setSaving(true);
-      const response = await fetch(`${API_BASE_URL}/api/v1/users`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-
-        // Handle validation errors
-        if (response.status === 400 && errorData.details) {
-          errorData.details.forEach(
-            (detail: { field: string; message: string }) => {
-              setError(detail.field as keyof CreateUserForm, {
-                message: detail.message,
-              });
-            },
-          );
-          return;
-        }
-
-        throw new Error(errorData.message || "Failed to create user");
-      }
-
-      const newUser = await response.json();
+      const newUser = await createUser(data);
       alert("User created successfully!");
       router.push(`/admin/users/${newUser._id}`);
     } catch (err) {
+      if (err instanceof ApiRequestError && err.status === 400 && err.details) {
+        err.details.forEach((detail) => {
+          setError(detail.field as keyof CreateUserForm, {
+            message: detail.message,
+          });
+        });
+        return;
+      }
       alert(
         "Failed to create user: " +
           (err instanceof Error ? err.message : "Unknown error"),
