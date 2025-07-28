@@ -18,11 +18,12 @@ import { DeleteUserButton } from "./_components/DeleteUserButton";
 import { Pagination } from "./_components/Pagination";
 
 interface UsersPageProps {
-  searchParams: { page?: string };
+  searchParams: Promise<{ page?: string }>;
 }
 
 export default async function UsersPage({ searchParams }: UsersPageProps) {
-  const page = Number(searchParams.page) || 1;
+  const resolvedSearchParams = await searchParams;
+  const page = Number(resolvedSearchParams.page) || 1;
 
   const data = await fetchUsers(page, 10);
   const users = data.users;
