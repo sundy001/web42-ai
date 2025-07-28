@@ -268,7 +268,6 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                         message: "Name must be at least 2 characters",
                       },
                     }}
-                    id="name"
                     placeholder="Enter user's full name"
                     message={errors.name?.message}
                   />
@@ -282,7 +281,6 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                         message: "Invalid email address",
                       },
                     }}
-                    id="email"
                     placeholder="Enter user's email address"
                     message={errors.email?.message}
                   />

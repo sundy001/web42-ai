@@ -1,7 +1,7 @@
 export { FormSelect } from "./FormSelect";
 export type { FormSelectProps, SelectOption } from "./FormSelect";
 export {
-  Select as RawSelect,
+  Select,
   SelectContent,
   SelectGroup,
   SelectItem,
@@ -11,4 +11,4 @@ export {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
-} from "./RawSelect";
+} from "./Select";

@@ -1,9 +1,9 @@
 "use client";
 
+import { cn } from "@web42-ai/ui/utils";
+import { FolderOpen, Settings, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Users, FolderOpen, Settings } from "lucide-react";
-import { cn } from "@web42-ai/ui/utils";
 
 const navigation = [
   { name: "Users", href: "/admin/users", icon: Users },
@@ -30,7 +30,7 @@ export function AdminSidebar() {
                 "flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors",
                 isActive
                   ? "bg-blue-50 text-blue-700"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
               )}
             >
               <item.icon className="mr-3 h-5 w-5" />

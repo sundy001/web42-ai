@@ -1,11 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { Plus, Eye, Trash2 } from "lucide-react";
+import { Badge } from "@web42-ai/ui/badge";
 import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";
-import { Badge } from "@web42-ai/ui/badge";
 import {
   Table,
   TableBody,
@@ -14,6 +11,9 @@ import {
   TableHeader,
   TableRow,
 } from "@web42-ai/ui/table";
+import { Eye, Plus, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 interface User {
   _id: string;
@@ -50,13 +50,13 @@ export default function UsersPage() {
     try {
       setLoading(true);
       const response = await fetch(
-        `${API_BASE_URL}/api/v1/users?page=${page}&limit=10`
+        `${API_BASE_URL}/api/v1/users?page=${page}&limit=10`,
       );
-      
+
       if (!response.ok) {
         throw new Error("Failed to fetch users");
       }
-      
+
       const data: UserListResponse = await response.json();
       setUsers(data.users);
       setPagination({
@@ -89,7 +89,10 @@ export default function UsersPage() {
       // Refresh the users list
       fetchUsers(pagination.page);
     } catch (err) {
-      alert("Failed to delete user: " + (err instanceof Error ? err.message : "Unknown error"));
+      alert(
+        "Failed to delete user: " +
+          (err instanceof Error ? err.message : "Unknown error"),
+      );
     }
   };
 
@@ -102,7 +105,9 @@ export default function UsersPage() {
       case "active":
         return <Badge className="bg-green-100 text-green-800">Active</Badge>;
       case "inactive":
-        return <Badge className="bg-yellow-100 text-yellow-800">Inactive</Badge>;
+        return (
+          <Badge className="bg-yellow-100 text-yellow-800">Inactive</Badge>
+        );
       case "deleted":
         return <Badge className="bg-red-100 text-red-800">Deleted</Badge>;
       default:
@@ -164,7 +169,9 @@ export default function UsersPage() {
               <TableRow key={user._id}>
                 <TableCell className="font-medium">{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
-                <TableCell className="capitalize">{user.authProvider}</TableCell>
+                <TableCell className="capitalize">
+                  {user.authProvider}
+                </TableCell>
                 <TableCell>{getStatusBadge(user.status)}</TableCell>
                 <TableCell>
                   {new Date(user.createdAt).toLocaleDateString()}
@@ -192,11 +199,9 @@ export default function UsersPage() {
             ))}
           </TableBody>
         </Table>
-        
+
         {users.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
-            No users found.
-          </div>
+          <div className="text-center py-8 text-gray-500">No users found.</div>
         )}
       </Card>
 

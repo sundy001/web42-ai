@@ -1,5 +1,5 @@
 import { Card } from "@web42-ai/ui/card";
-import { Users, FolderOpen, Settings } from "lucide-react";
+import { FolderOpen, Settings, Users } from "lucide-react";
 import Link from "next/link";
 
 export default function AdminDashboard() {
@@ -21,7 +21,9 @@ export default function AdminDashboard() {
               </div>
               <div className="ml-4">
                 <h3 className="text-lg font-medium text-gray-900">Users</h3>
-                <p className="text-gray-600">Manage user accounts and permissions</p>
+                <p className="text-gray-600">
+                  Manage user accounts and permissions
+                </p>
               </div>
             </div>
           </Card>

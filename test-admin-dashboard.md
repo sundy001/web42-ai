@@ -3,20 +3,24 @@
 ## Created Components
 
 ### Main Dashboard Files:
+
 - `apps/web/app/admin/layout.tsx` - Admin layout with sidebar
 - `apps/web/app/admin/page.tsx` - Main dashboard overview
 - `apps/web/app/admin/components/AdminSidebar.tsx` - Navigation sidebar
 
 ### Users Section (Full API Integration):
+
 - `apps/web/app/admin/users/page.tsx` - Users listing with pagination
 - `apps/web/app/admin/users/[id]/page.tsx` - User detail/edit page
 - `apps/web/app/admin/users/new/page.tsx` - Create new user page
 
 ### Mock Sections:
+
 - `apps/web/app/admin/projects/page.tsx` - Projects overview (mock data)
 - `apps/web/app/admin/settings/page.tsx` - Settings page (mock data)
 
 ### UI Components Added:
+
 - `packages/ui/src/table.tsx` - Table components
 - `packages/ui/src/label.tsx` - Label component
 - `packages/ui/src/select.tsx` - Select dropdown
@@ -26,6 +30,7 @@
 ## Features Implemented
 
 ### Users Management:
+
 ✅ List users with pagination
 ✅ Search and filter users
 ✅ View user details
@@ -36,11 +41,13 @@
 ✅ Real-time API integration with Site Director
 
 ### Projects (Mock):
+
 ✅ Projects overview with stats
 ✅ Project listing table
 ✅ Status badges and filters
 
 ### Settings (Mock):
+
 ✅ Tabbed settings interface
 ✅ General settings
 ✅ Notification preferences
@@ -51,12 +58,14 @@
 ## How to Test
 
 1. Start the Site Director API:
+
    ```bash
    cd apps/siteDirector
    bun dev
    ```
 
 2. Start the Web App:
+
    ```bash
    cd apps/web
    bun dev
@@ -73,6 +82,7 @@
 ## API Integration
 
 The Users section connects to:
+
 - `GET /api/v1/users` - List users with pagination
 - `GET /api/v1/users/:id` - Get user by ID
 - `POST /api/v1/users` - Create new user

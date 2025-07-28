@@ -32,7 +32,6 @@ export default function NewUserPage() {
   });
 
   const {
-    control,
     formState: { errors },
     setError,
   } = methods;
@@ -115,7 +114,6 @@ export default function NewUserPage() {
                       message: "Name must be at least 2 characters",
                     },
                   }}
-                  id="name"
                   placeholder="Enter user's full name"
                   message={errors.name?.message}
                 />

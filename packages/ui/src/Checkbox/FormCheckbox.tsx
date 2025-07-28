@@ -4,8 +4,11 @@ import { Checkbox } from "./Checkbox";
 
 interface FormCheckboxProps<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
-> extends Omit<React.ComponentPropsWithoutRef<typeof Checkbox>, "name" | "checked" | "onCheckedChange"> {
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+> extends Omit<
+    React.ComponentPropsWithoutRef<typeof Checkbox>,
+    "name" | "checked" | "onCheckedChange"
+  > {
   name: TName;
   control: Control<TFieldValues>;
   rules?: Parameters<typeof Controller<TFieldValues, TName>>[0]["rules"];
@@ -13,7 +16,7 @@ interface FormCheckboxProps<
 
 const FormCheckbox = <
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({
   name,
   control,

@@ -1,10 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Eye, Globe, Calendar } from "lucide-react";
+import { Badge } from "@web42-ai/ui/badge";
 import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";
-import { Badge } from "@web42-ai/ui/badge";
 import {
   Table,
   TableBody,
@@ -13,6 +11,8 @@ import {
   TableHeader,
   TableRow,
 } from "@web42-ai/ui/table";
+import { Calendar, Eye, Globe, Plus } from "lucide-react";
+import { useState } from "react";
 
 interface Project {
   id: string;
@@ -108,12 +108,16 @@ export default function ProjectsPage() {
               <Globe className="h-6 w-6 text-blue-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500">Total Projects</p>
-              <p className="text-2xl font-bold text-gray-900">{projects.length}</p>
+              <p className="text-sm font-medium text-gray-500">
+                Total Projects
+              </p>
+              <p className="text-2xl font-bold text-gray-900">
+                {projects.length}
+              </p>
             </div>
           </div>
         </Card>
-        
+
         <Card className="p-6">
           <div className="flex items-center">
             <div className="flex-shrink-0">
@@ -122,12 +126,12 @@ export default function ProjectsPage() {
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-500">Active</p>
               <p className="text-2xl font-bold text-gray-900">
-                {projects.filter(p => p.status === "active").length}
+                {projects.filter((p) => p.status === "active").length}
               </p>
             </div>
           </div>
         </Card>
-        
+
         <Card className="p-6">
           <div className="flex items-center">
             <div className="flex-shrink-0">
@@ -136,12 +140,12 @@ export default function ProjectsPage() {
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-500">Completed</p>
               <p className="text-2xl font-bold text-gray-900">
-                {projects.filter(p => p.status === "completed").length}
+                {projects.filter((p) => p.status === "completed").length}
               </p>
             </div>
           </div>
         </Card>
-        
+
         <Card className="p-6">
           <div className="flex items-center">
             <div className="flex-shrink-0">
@@ -150,7 +154,7 @@ export default function ProjectsPage() {
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-500">Archived</p>
               <p className="text-2xl font-bold text-gray-900">
-                {projects.filter(p => p.status === "archived").length}
+                {projects.filter((p) => p.status === "archived").length}
               </p>
             </div>
           </div>
@@ -185,8 +189,7 @@ export default function ProjectsPage() {
                 <TableCell>
                   {project.lastDeployment
                     ? new Date(project.lastDeployment).toLocaleDateString()
-                    : "Never"
-                  }
+                    : "Never"}
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">

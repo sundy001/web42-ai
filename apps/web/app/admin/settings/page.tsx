@@ -1,9 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { Save, Bell, Shield, Database, Mail } from "lucide-react";
 import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormLabel,
+} from "@web42-ai/ui/form";
 import { Input } from "@web42-ai/ui/input";
 import { Label } from "@web42-ai/ui/label";
 import {
@@ -13,13 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@web42-ai/ui/select";
-import {
-  Form,
-  FormField,
-  FormLabel,
-  FormControl,
-  FormDescription,
-} from "@web42-ai/ui/form";
+import { Bell, Database, Mail, Save, Shield } from "lucide-react";
+import { useState } from "react";
 
 interface Settings {
   general: {
@@ -47,8 +47,10 @@ interface Settings {
 
 // Mock settings data
 // Constants for styles to avoid duplication
-const TOGGLE_BUTTON_BASE = "relative inline-flex h-6 w-11 items-center rounded-full transition-colors";
-const TOGGLE_SWITCH_BASE = "inline-block h-4 w-4 transform rounded-full bg-white transition-transform";
+const TOGGLE_BUTTON_BASE =
+  "relative inline-flex h-6 w-11 items-center rounded-full transition-colors";
+const TOGGLE_SWITCH_BASE =
+  "inline-block h-4 w-4 transform rounded-full bg-white transition-transform";
 const TOGGLE_ACTIVE_BG = "bg-blue-600";
 const TOGGLE_INACTIVE_BG = "bg-gray-200";
 const TOGGLE_WARNING_BG = "bg-orange-600";
@@ -93,8 +95,12 @@ export default function SettingsPage() {
     }, 1000);
   };
 
-  const updateSetting = (section: keyof Settings, key: string, value: string | number | boolean) => {
-    setSettings(prev => ({
+  const updateSetting = (
+    section: keyof Settings,
+    key: string,
+    value: string | number | boolean,
+  ) => {
+    setSettings((prev) => ({
       ...prev,
       [section]: {
         // eslint-disable-next-line security/detect-object-injection -- Safe: section is type-checked as keyof Settings
@@ -190,7 +196,11 @@ export default function SettingsPage() {
                         type="email"
                         value={settings.general.supportEmail}
                         onChange={(e) =>
-                          updateSetting("general", "supportEmail", e.target.value)
+                          updateSetting(
+                            "general",
+                            "supportEmail",
+                            e.target.value,
+                          )
                         }
                       />
                     </FormControl>
@@ -246,7 +256,7 @@ export default function SettingsPage() {
                       updateSetting(
                         "notifications",
                         "emailNotifications",
-                        !settings.notifications.emailNotifications
+                        !settings.notifications.emailNotifications,
                       )
                     }
                     className={`${TOGGLE_BUTTON_BASE} ${
@@ -279,7 +289,7 @@ export default function SettingsPage() {
                       updateSetting(
                         "notifications",
                         "systemAlerts",
-                        !settings.notifications.systemAlerts
+                        !settings.notifications.systemAlerts,
                       )
                     }
                     className={`${TOGGLE_BUTTON_BASE} ${
@@ -312,7 +322,7 @@ export default function SettingsPage() {
                       updateSetting(
                         "notifications",
                         "maintenanceMode",
-                        !settings.notifications.maintenanceMode
+                        !settings.notifications.maintenanceMode,
                       )
                     }
                     className={`${TOGGLE_BUTTON_BASE} ${
@@ -354,7 +364,7 @@ export default function SettingsPage() {
                           updateSetting(
                             "security",
                             "sessionTimeout",
-                            parseInt(e.target.value)
+                            parseInt(e.target.value),
                           )
                         }
                       />
@@ -377,12 +387,15 @@ export default function SettingsPage() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="basic">Basic (8+ characters)</SelectItem>
+                          <SelectItem value="basic">
+                            Basic (8+ characters)
+                          </SelectItem>
                           <SelectItem value="strong">
                             Strong (8+ chars, mixed case, numbers)
                           </SelectItem>
                           <SelectItem value="very-strong">
-                            Very Strong (12+ chars, mixed case, numbers, symbols)
+                            Very Strong (12+ chars, mixed case, numbers,
+                            symbols)
                           </SelectItem>
                         </SelectContent>
                       </Select>
@@ -403,7 +416,7 @@ export default function SettingsPage() {
                         updateSetting(
                           "security",
                           "twoFactorAuth",
-                          !settings.security.twoFactorAuth
+                          !settings.security.twoFactorAuth,
                         )
                       }
                       className={`${TOGGLE_BUTTON_BASE} ${
@@ -468,7 +481,7 @@ export default function SettingsPage() {
                           updateSetting(
                             "database",
                             "retentionDays",
-                            parseInt(e.target.value)
+                            parseInt(e.target.value),
                           )
                         }
                       />
@@ -492,7 +505,7 @@ export default function SettingsPage() {
                         updateSetting(
                           "database",
                           "autoCleanup",
-                          !settings.database.autoCleanup
+                          !settings.database.autoCleanup,
                         )
                       }
                       className={`${TOGGLE_BUTTON_BASE} ${
