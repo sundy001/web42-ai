@@ -25,6 +25,7 @@ export default function ChatPanel() {
   ]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [shouldAutoFocus, setShouldAutoFocus] = useState(false);
+  const [abortController, setAbortController] = useState<AbortController | null>(null);
 
   const handleSendMessage = async (message: string) => {
     if (!message.trim()) return;
@@ -40,19 +41,40 @@ export default function ChatPanel() {
     setIsGenerating(true);
     setShouldAutoFocus(true);
 
+    // Create abort controller for this request
+    const controller = new AbortController();
+    setAbortController(controller);
+
     // Simulate AI response
-    setTimeout(() => {
-      const aiResponse: MessageData = {
-        id: (Date.now() + 1).toString(),
-        content:
-          "Great idea! I'm working on creating that for you. Let me generate the code and preview...",
-        isUser: false,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, aiResponse]);
+    const timeoutId = setTimeout(() => {
+      if (!controller.signal.aborted) {
+        const aiResponse: MessageData = {
+          id: (Date.now() + 1).toString(),
+          content:
+            "Great idea! I'm working on creating that for you. Let me generate the code and preview...",
+          isUser: false,
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, aiResponse]);
+        setIsGenerating(false);
+        setShouldAutoFocus(false);
+        setAbortController(null);
+      }
+    }, 1500);
+
+    // Store timeout ID for cleanup
+    controller.signal.addEventListener('abort', () => {
+      clearTimeout(timeoutId);
       setIsGenerating(false);
       setShouldAutoFocus(false);
-    }, 1500);
+      setAbortController(null);
+    });
+  };
+
+  const handleAbort = () => {
+    if (abortController) {
+      abortController.abort();
+    }
   };
 
   return (
@@ -109,6 +131,7 @@ export default function ChatPanel() {
       <ChatInput
         isGenerating={isGenerating}
         onSendMessage={handleSendMessage}
+        onAbort={handleAbort}
         autoFocus={shouldAutoFocus}
       />
     </>

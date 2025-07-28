@@ -1,18 +1,20 @@
 "use client";
 
 import { Button } from "@web42-ai/ui/button";
-import { Send } from "lucide-react";
+import { Send, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 interface ChatInputProps {
   isGenerating: boolean;
   onSendMessage: (message: string) => void;
+  onAbort?: () => void;
   autoFocus?: boolean;
 }
 
 export default function ChatInput({
   isGenerating,
   onSendMessage,
+  onAbort,
   autoFocus = false,
 }: ChatInputProps) {
   const [inputMessage, setInputMessage] = useState("");
@@ -26,6 +28,10 @@ export default function ChatInput({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isGenerating) {
+      onAbort?.();
+      return;
+    }
     if (!inputMessage.trim()) return;
     onSendMessage(inputMessage);
     setInputMessage("");
@@ -46,17 +52,23 @@ export default function ChatInput({
               return;
             }
             if (e.key === "Enter") {
+              e.preventDefault();
               handleSubmit(e);
             }
           }}
         />
         <Button
           type="submit"
-          disabled={!inputMessage.trim() || isGenerating}
+          disabled={!isGenerating && !inputMessage.trim()}
           size="icon"
           className="self-end"
+          variant="default"
         >
-          <Send className="h-4 w-4" />
+          {isGenerating ? (
+            <X className="h-4 w-4" />
+          ) : (
+            <Send className="h-4 w-4" />
+          )}
         </Button>
       </form>
     </div>
