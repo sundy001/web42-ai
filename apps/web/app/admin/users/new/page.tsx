@@ -3,6 +3,7 @@
 import { ApiRequestError } from "@/lib/api/errors";
 import type { CreateUserData } from "@/lib/api/types";
 import { createUser } from "@/lib/api/users";
+import { showError, showSuccess } from "@/lib/utils/toast";
 import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";
 import { Form } from "@web42-ai/ui/form";
@@ -43,7 +44,7 @@ export default function NewUserPage() {
     try {
       setSaving(true);
       const newUser = await createUser(data);
-      alert("User created successfully!");
+      showSuccess("User created successfully!");
       router.push(`/admin/users/${newUser._id}`);
     } catch (err) {
       if (err instanceof ApiRequestError && err.status === 400 && err.details) {
@@ -54,7 +55,7 @@ export default function NewUserPage() {
         });
         return;
       }
-      alert(
+      showError(
         "Failed to create user: " +
           (err instanceof Error ? err.message : "Unknown error"),
       );

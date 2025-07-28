@@ -1,5 +1,6 @@
 "use client";
 
+import { showError, showWarning } from "@/lib/utils/toast";
 import { Button } from "@web42-ai/ui/button";
 import {
   Card,
@@ -21,7 +22,7 @@ export default function ApiTestPage() {
 
   const startStreaming = () => {
     if (!message.trim()) {
-      alert("Please enter a message");
+      showWarning("Please enter a message");
       return;
     }
 
@@ -87,7 +88,7 @@ export default function ApiTestPage() {
     } catch (error) {
       console.error("Failed to create EventSource:", error);
       setIsConnected(false);
-      alert("Failed to connect to the API");
+      showError("Failed to connect to the API");
     }
   };
 

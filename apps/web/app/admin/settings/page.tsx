@@ -1,5 +1,6 @@
 "use client";
 
+import { showSuccess } from "@/lib/utils/toast";
 import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";
 import { Form } from "@web42-ai/ui/form";
@@ -128,7 +129,7 @@ export default function SettingsPage() {
     // Simulate API call
     setTimeout(() => {
       setSaving(false);
-      alert("Settings saved successfully!");
+      showSuccess("Settings saved successfully!");
       console.log("Saved settings:", allSettings);
     }, 1000);
   };

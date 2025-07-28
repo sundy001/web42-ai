@@ -1,6 +1,7 @@
 "use client";
 
 import { deleteUser } from "@/lib/api/users";
+import { showError } from "@/lib/utils/toast";
 import { Button } from "@web42-ai/ui/button";
 import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -21,7 +22,7 @@ export function DeleteUserButton({ userId }: DeleteUserButtonProps) {
       await deleteUser(userId);
       router.refresh();
     } catch (err) {
-      alert(
+      showError(
         "Failed to delete user: " +
           (err instanceof Error ? err.message : "Unknown error"),
       );

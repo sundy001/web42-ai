@@ -9,6 +9,7 @@ import {
   updateUser,
 } from "@/lib/api/users";
 import { formatDateTime } from "@/lib/utils/dateUtils";
+import { showError, showSuccess } from "@/lib/utils/toast";
 import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";
 import { Form } from "@web42-ai/ui/form";
@@ -84,7 +85,7 @@ export default function UserDetailPage({
       setSaving(true);
       const updatedUser = await updateUser(id, data);
       setUser(updatedUser);
-      alert("User updated successfully!");
+      showSuccess("User updated successfully!");
     } catch (err) {
       if (err instanceof ApiRequestError && err.status === 400 && err.details) {
         err.details.forEach((detail) => {
@@ -94,7 +95,7 @@ export default function UserDetailPage({
         });
         return;
       }
-      alert(
+      showError(
         "Failed to update user: " +
           (err instanceof Error ? err.message : "Unknown error"),
       );
@@ -110,10 +111,10 @@ export default function UserDetailPage({
 
     try {
       await deleteUser(id);
-      alert("User deleted successfully!");
+      showSuccess("User deleted successfully!");
       router.push("/admin/users");
     } catch (err) {
-      alert(
+      showError(
         "Failed to delete user: " +
           (err instanceof Error ? err.message : "Unknown error"),
       );
@@ -127,10 +128,10 @@ export default function UserDetailPage({
 
     try {
       await restoreUser(id);
-      alert("User restored successfully!");
+      showSuccess("User restored successfully!");
       loadUser(); // Refresh user data
     } catch (err) {
-      alert(
+      showError(
         "Failed to restore user: " +
           (err instanceof Error ? err.message : "Unknown error"),
       );

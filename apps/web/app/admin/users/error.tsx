@@ -41,7 +41,7 @@ export default function Error({ error, reset }: ErrorProps) {
             </Button>
             <Button
               variant="outline"
-              onClick={() => window.location.href = "/admin"}
+              onClick={() => (window.location.href = "/admin")}
             >
               Back to Admin
             </Button>
