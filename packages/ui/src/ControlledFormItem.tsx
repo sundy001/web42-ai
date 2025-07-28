@@ -97,7 +97,7 @@ const ControlledFormItem = <
           {label && <FormLabel>{label}</FormLabel>}
           <FormControl>
             {render({
-              props,
+              props: props as OmitFormItemProps<TComponent>,
               field,
             })}
           </FormControl>
