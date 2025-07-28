@@ -1,7 +1,7 @@
 "use client";
 
 import { Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import AIMessage from "./AIMessage";
 import ChatInput from "./ChatInput";
 import UserMessage from "./UserMessage";
@@ -27,6 +27,15 @@ export default function ChatPanel() {
   const [shouldAutoFocus, setShouldAutoFocus] = useState(false);
   const [abortController, setAbortController] =
     useState<AbortController | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const handleSendMessage = async (message: string) => {
     if (!message.trim()) return;
@@ -127,6 +136,7 @@ export default function ChatPanel() {
             </div>
           </div>
         )}
+        <div ref={messagesEndRef} />
       </div>
 
       <ChatInput
