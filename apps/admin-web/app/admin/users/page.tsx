@@ -28,8 +28,6 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
   const users = data.users;
   const pagination = {
     page: data.page,
-    limit: data.limit,
-    total: data.total,
     totalPages: data.totalPages,
   };
 
