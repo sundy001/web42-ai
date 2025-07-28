@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@web42-ai/ui/button";
-import { Send, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { useState } from "react";
 import AIMessage from "./AIMessage";
+import ChatInput from "./ChatInput";
 import UserMessage from "./UserMessage";
 
 interface MessageData {
@@ -25,6 +25,7 @@ export default function ChatPanel() {
   ]);
   const [inputMessage, setInputMessage] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [shouldAutoFocus, setShouldAutoFocus] = useState(false);
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
@@ -39,6 +40,7 @@ export default function ChatPanel() {
     setMessages((prev) => [...prev, newMessage]);
     setInputMessage("");
     setIsGenerating(true);
+    setShouldAutoFocus(true);
 
     // Simulate AI response
     setTimeout(() => {
@@ -51,6 +53,7 @@ export default function ChatPanel() {
       };
       setMessages((prev) => [...prev, aiResponse]);
       setIsGenerating(false);
+      setShouldAutoFocus(false);
     }, 1500);
   };
 
@@ -112,27 +115,14 @@ export default function ChatPanel() {
         )}
       </div>
 
-      {/* Input */}
-      <div className="p-4 border-t">
-        <div className="flex gap-2">
-          <textarea
-            value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Describe the site you want to build..."
-            className="flex-1 min-h-[80px] resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            disabled={isGenerating}
-          />
-          <Button
-            onClick={handleSendMessage}
-            disabled={!inputMessage.trim() || isGenerating}
-            size="icon"
-            className="self-end"
-          >
-            <Send className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
+      <ChatInput
+        inputMessage={inputMessage}
+        isGenerating={isGenerating}
+        onInputChange={setInputMessage}
+        onSendMessage={handleSendMessage}
+        onKeyPress={handleKeyPress}
+        autoFocus={shouldAutoFocus}
+      />
     </>
   );
 }
