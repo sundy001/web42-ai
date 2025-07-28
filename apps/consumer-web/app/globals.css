@@ -1,1 +1,5 @@
 @import "tailwindcss";
+
+@import "@web42-ai/ui/styles.css";
+/* register the ui package */
+@source "../../../packages/ui";
