@@ -17,12 +17,13 @@ import { FormSelect } from "@web42-ai/ui/select";
 import { ArrowLeft, RotateCcw, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 type UpdateUserForm = UpdateUserData;
 
-export default function UserDetailPage({ params }: { params: { id: string } }) {
+export default function UserDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -58,7 +59,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
   const loadUser = useCallback(async () => {
     try {
       setLoading(true);
-      const userData = await fetchUser(params.id);
+      const userData = await fetchUser(id);
       setUser(userData);
       reset({
         name: userData.name,
@@ -71,12 +72,12 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
     } finally {
       setLoading(false);
     }
-  }, [params.id, reset]);
+  }, [id, reset]);
 
   const onSubmit = async (data: UpdateUserForm) => {
     try {
       setSaving(true);
-      const updatedUser = await updateUser(params.id, data);
+      const updatedUser = await updateUser(id, data);
       setUser(updatedUser);
       alert("User updated successfully!");
     } catch (err) {
@@ -103,7 +104,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
     }
 
     try {
-      await deleteUser(params.id);
+      await deleteUser(id);
       alert("User deleted successfully!");
       router.push("/admin/users");
     } catch (err) {
@@ -120,7 +121,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
     }
 
     try {
-      await restoreUser(params.id);
+      await restoreUser(id);
       alert("User restored successfully!");
       loadUser(); // Refresh user data
     } catch (err) {
@@ -255,45 +256,41 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
           </Card>
         </div>
 
-        <div>
-          <Card className="p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              User Information
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <Label className="text-sm font-medium text-gray-500">
-                  User ID
-                </Label>
-                <p className="text-sm text-gray-900 font-mono">{user._id}</p>
-              </div>
-              <div>
-                <Label className="text-sm font-medium text-gray-500">
-                  Created At
-                </Label>
-                <p className="text-sm text-gray-900">
-                  {new Date(user.createdAt).toLocaleString()}
-                </p>
-              </div>
-              <div>
-                <Label className="text-sm font-medium text-gray-500">
-                  Last Updated
-                </Label>
-                <p className="text-sm text-gray-900">
-                  {new Date(user.updatedAt).toLocaleString()}
-                </p>
-              </div>
-              <div>
-                <Label className="text-sm font-medium text-gray-500">
-                  Current Status
-                </Label>
-                <p className="text-sm text-gray-900 capitalize">
-                  {user.status}
-                </p>
-              </div>
+        <Card className="p-6">
+          <h3 className="text-lg font-medium text-gray-900 mb-4">
+            User Information
+          </h3>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-sm font-medium text-gray-500">
+                User ID
+              </Label>
+              <p className="text-sm text-gray-900 font-mono">{user._id}</p>
             </div>
-          </Card>
-        </div>
+            <div>
+              <Label className="text-sm font-medium text-gray-500">
+                Created At
+              </Label>
+              <p className="text-sm text-gray-900">
+                {new Date(user.createdAt).toLocaleString()}
+              </p>
+            </div>
+            <div>
+              <Label className="text-sm font-medium text-gray-500">
+                Last Updated
+              </Label>
+              <p className="text-sm text-gray-900">
+                {new Date(user.updatedAt).toLocaleString()}
+              </p>
+            </div>
+            <div>
+              <Label className="text-sm font-medium text-gray-500">
+                Current Status
+              </Label>
+              <p className="text-sm text-gray-900 capitalize">{user.status}</p>
+            </div>
+          </div>
+        </Card>
       </div>
     </div>
   );
