@@ -162,27 +162,74 @@ Classes are acceptable in specific scenarios:
 
 ### One Function Per File Rule (Flexible)
 
-- Guideline: Prefer one function per file for modularity, but be pragmatic
-- Small functions: Can be inlined if they lack strong semantic meaning
-- Related functions: Group highly related functions in the same file
-- File size limit: Single file should not exceed 200 lines
-- Breaking point: If a file grows beyond 200 lines, split it into smaller modules
+**Core Principle:** Balance modularity with pragmatism
+
+- **Prefer one function per file** for significant, standalone utilities
+- **Group related functions** when they share domain logic or dependencies
+- **Consider semantic cohesion** - functions that work together belong together
+
+**When to Group Functions:**
+
+- Utility functions that operate on the same data type (e.g., `formatDate`, `formatDateTime`)
+- Functions that share private helper functions
+- Small helper functions that lack standalone semantic meaning
+- Functions that are always used together
+
+**When to Separate Functions:**
+
+- Complex functions with distinct responsibilities
+- Functions that could be reused independently
+- Functions that require different testing strategies
+
+**File Size Guidelines:**
+
+- **Soft limit**: 200 lines per file
+- **Hard limit**: 300 lines per file
+- **Breaking point**: Split when file becomes difficult to navigate or understand
+
+**Example - Good Grouping:**
+
+```typescript
+// dateUtils.ts - Related date formatting functions
+export const formatDate = (date: string) => {
+  /* ... */
+};
+export const formatDateTime = (date: string) => {
+  /* ... */
+};
+export const parseISODate = (date: string) => {
+  /* ... */
+};
+```
 
 ## Module Structure
 
 ### Directory-Based Modules
 
 - Group related functionality into a single directory
-- Use `index.ts` to expose public APIs
-- `index.ts` should only re-export resources in the module
+- Use `index.ts` to expose public APIs through named exports
+- `index.ts` should only re-export resources from the module
 - Keep internal implementation private within the module
 - Clear separation between public interface and internal details
-- Import folder with `index.ts`, should directly import the folder name. For example:
+- Import folder with `index.ts` by using the folder name directly:
 
 ```typescript
-import { userRoute } from "users/index"; // this is not correct
-import { userRoute } from "user";
+import { userRoutes } from "users/index"; // ❌ Incorrect
+import { userRoutes } from "users"; // ✅ Correct
 ```
 
-- Should avoid import \* from 'package'. Instead use named imports
-- Use named imports/exports exclusively; wildcard imports/exports are only permitted when third-party modules require specific usage patterns
+**Export Guidelines:**
+
+- Prefer named exports over wildcard exports for clarity
+- Use wildcard exports (`export *`) only when re-exporting comprehensive APIs
+- Type-only exports should use `export type` syntax when supported
+
+**Example Structure:**
+
+```
+users/
+├── index.ts          // Public API exports
+├── userRoutes.ts     // Route implementations
+├── schemas.ts        // Validation schemas
+└── types.ts          // Type definitions
+```
