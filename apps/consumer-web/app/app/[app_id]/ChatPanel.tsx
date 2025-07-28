@@ -25,7 +25,8 @@ export default function ChatPanel() {
   ]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [shouldAutoFocus, setShouldAutoFocus] = useState(false);
-  const [abortController, setAbortController] = useState<AbortController | null>(null);
+  const [abortController, setAbortController] =
+    useState<AbortController | null>(null);
 
   const handleSendMessage = async (message: string) => {
     if (!message.trim()) return;
@@ -63,7 +64,7 @@ export default function ChatPanel() {
     }, 1500);
 
     // Store timeout ID for cleanup
-    controller.signal.addEventListener('abort', () => {
+    controller.signal.addEventListener("abort", () => {
       clearTimeout(timeoutId);
       setIsGenerating(false);
       setShouldAutoFocus(false);
