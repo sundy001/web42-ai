@@ -24,27 +24,14 @@ interface UsersPageProps {
 export default async function UsersPage({ searchParams }: UsersPageProps) {
   const page = Number(searchParams.page) || 1;
 
-  let users: User[] = [];
-  let pagination = {
-    page: 1,
-    limit: 10,
-    total: 0,
-    totalPages: 0,
+  const data = await fetchUsers(page, 10);
+  const users = data.users;
+  const pagination = {
+    page: data.page,
+    limit: data.limit,
+    total: data.total,
+    totalPages: data.totalPages,
   };
-  let error: string | null = null;
-
-  try {
-    const data = await fetchUsers(page, 10);
-    users = data.users;
-    pagination = {
-      page: data.page,
-      limit: data.limit,
-      total: data.total,
-      totalPages: data.totalPages,
-    };
-  } catch (err) {
-    error = err instanceof Error ? err.message : "An error occurred";
-  }
 
   const getStatusBadge = (status: User["status"]) => {
     switch (status) {
@@ -60,16 +47,6 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
         return <Badge>{status}</Badge>;
     }
   };
-
-  if (error) {
-    return (
-      <div className="p-8">
-        <div className="flex justify-center items-center h-64">
-          <div className="text-lg text-red-600">Error: {error}</div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="p-8">
