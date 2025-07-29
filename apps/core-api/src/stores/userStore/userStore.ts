@@ -1,13 +1,13 @@
 import { ObjectId } from "mongodb";
-import type { User } from "../users/types";
-import { databaseStore } from "./database";
+import type { User } from "../../users/types";
+import { databaseStore } from "../database";
 import type {
   CreateUserData,
   PaginationOptionsDb,
   UpdateUserData,
   UserFiltersDb,
   UserListResponseDb,
-} from "./userStoreTypes";
+} from "./types";
 
 const COLLECTION_NAME = "users";
 
@@ -233,17 +233,10 @@ export async function listUsers(
   };
 }
 
-export async function userExists(
-  email: string,
-  excludeDeleted = true,
-): Promise<boolean> {
+export async function userExists(email: string): Promise<boolean> {
   const collection = getCollection();
 
   const filter: Record<string, unknown> = { email };
-
-  if (excludeDeleted) {
-    filter.status = { $ne: "deleted" };
-  }
 
   const count = await collection.countDocuments(filter);
   return count > 0;
