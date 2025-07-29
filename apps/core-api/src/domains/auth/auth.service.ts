@@ -1,4 +1,4 @@
-import { getUserBySupabaseId } from "../users/user.service";
+import { getUserBySupabaseId } from "../users";
 import type { LoginRequest, LoginResponse } from "./auth.types";
 import { login, signout } from "./providers";
 

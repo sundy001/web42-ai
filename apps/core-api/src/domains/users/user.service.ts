@@ -1,4 +1,4 @@
-import { getAuthProvider } from "../auth/providers";
+import { getAuthProvider } from "../auth";
 import { combineUserData } from "./combineUserData";
 import * as userStore from "./user.repository";
 import type {

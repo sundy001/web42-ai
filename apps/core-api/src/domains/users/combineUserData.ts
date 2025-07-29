@@ -1,4 +1,4 @@
-import { getAuthProvider } from "../auth/providers";
+import { getAuthProvider } from "../auth";
 import type { CombinedUser, User } from "./user.types";
 
 // Helper function to merge MongoDB user with auth provider user data
