@@ -1,5 +1,5 @@
-import type { CombinedUser, User } from "../../users/types";
-import { getAuthProvider } from "../authProvider";
+import { getAuthProvider } from "../auth/providers";
+import type { CombinedUser, User } from "./user.types";
 
 // Helper function to merge MongoDB user with auth provider user data
 export async function combineUserData(mongoUser: User): Promise<CombinedUser> {

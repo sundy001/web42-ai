@@ -1,23 +1,22 @@
 import type { Request, Response } from "express";
 import express from "express";
 import {
-  authenticateUser,
-  requireAdmin,
-  type AuthenticatedRequest,
-} from "../middleware/auth";
-import {
   asyncHandler,
   validateBody,
   validateObjectId,
   validateQuery,
-} from "./middleware";
+} from "../../middleware";
+import {
+  authenticateUser,
+  requireAdmin,
+  type AuthenticatedRequest,
+} from "../../middleware/auth";
 import {
   CreateUserSchema,
   ListUsersQuerySchema,
   UpdateUserSchema,
   type ListUsersQueryInput,
-} from "./schemas";
-import type { CreateUserRequest, UpdateUserRequest } from "./types";
+} from "./user.schemas";
 import {
   createUser,
   deleteUser,
@@ -29,7 +28,8 @@ import {
   restoreUser,
   syncUserWithAuthProvider,
   updateUser,
-} from "./userService";
+} from "./user.service";
+import type { CreateUserRequest, UpdateUserRequest } from "./user.types";
 
 const router = express.Router();
 

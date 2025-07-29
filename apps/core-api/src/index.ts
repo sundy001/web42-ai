@@ -4,12 +4,12 @@ import helmet from "helmet";
 import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
 
-import authRoutes from "./auth/authRoutes";
 import { config } from "./config";
+import authRoutes from "./domains/auth/auth.routes";
+import userRoutes from "./domains/users/user.routes";
+import { errorHandler } from "./middleware";
 import { openApiDocument } from "./openapi/openApiConfig";
 import { databaseStore, getHealthStatus } from "./stores";
-import { userRoutes } from "./users";
-import { errorHandler } from "./users/middleware";
 
 const app = express();
 const PORT = config.server.port;

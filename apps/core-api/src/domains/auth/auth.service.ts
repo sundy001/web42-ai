@@ -1,6 +1,6 @@
-import { login, signout } from "../lib/authProvider";
-import { getUserBySupabaseId } from "../users/userService";
-import type { LoginRequest, LoginResponse } from "./types";
+import { getUserBySupabaseId } from "../users/user.service";
+import type { LoginRequest, LoginResponse } from "./auth.types";
+import { login, signout } from "./providers";
 
 // Login with email and password
 export async function loginUser(

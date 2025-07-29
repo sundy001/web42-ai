@@ -1,4 +1,4 @@
-import type { CombinedUser } from "../users/types.js";
+import type { CombinedUser } from "../users/user.types.js";
 
 export interface LoginRequest {
   email: string;

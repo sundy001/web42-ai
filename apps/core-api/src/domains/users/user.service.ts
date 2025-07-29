@@ -1,6 +1,6 @@
-import { getAuthProvider } from "../lib/authProvider";
-import { combineUserData } from "../lib/user/combineUserData";
-import * as userStore from "../stores/userStore";
+import { getAuthProvider } from "../auth/providers";
+import { combineUserData } from "./combineUserData";
+import * as userStore from "./user.repository";
 import type {
   CombinedUser,
   CreateUserRequest,
@@ -8,7 +8,7 @@ import type {
   UpdateUserRequest,
   UserFilters,
   UserListResponse,
-} from "./types";
+} from "./user.types";
 
 // High-level user service that coordinates between userStore and auth provider
 

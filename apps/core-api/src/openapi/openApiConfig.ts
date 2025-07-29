@@ -5,7 +5,7 @@ import {
   LoginSchema,
   SignoutResponseSchema,
   SignoutSchema,
-} from "../auth/schemas.js";
+} from "../domains/auth/auth.schemas.js";
 import {
   CreateUserSchema,
   ErrorResponseSchema,
@@ -15,7 +15,7 @@ import {
   UserListResponseSchema,
   UserSchema,
   UserStatsSchema,
-} from "../users/schemas.js";
+} from "../domains/users/user.schemas.js";
 import { generateExample } from "./generateExample.js";
 
 // Constants for response descriptions

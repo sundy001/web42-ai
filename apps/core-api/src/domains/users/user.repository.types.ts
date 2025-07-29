@@ -1,4 +1,4 @@
-import type { User } from "../../users/types";
+import type { User } from "./user.types";
 
 // Database-only operations for user store
 export interface CreateUserData {

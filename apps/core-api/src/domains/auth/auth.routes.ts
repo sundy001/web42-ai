@@ -1,9 +1,9 @@
 import type { Request, Response } from "express";
 import express from "express";
-import { asyncHandler, validateBody } from "../users/middleware";
-import { loginUser, signoutUser } from "./auth";
-import { LoginSchema, SignoutSchema } from "./schemas";
-import type { LoginRequest } from "./types";
+import { asyncHandler, validateBody } from "../../middleware";
+import { LoginSchema, SignoutSchema } from "./auth.schemas";
+import { loginUser, signoutUser } from "./auth.service";
+import type { LoginRequest } from "./auth.types";
 
 const router = express.Router();
 
