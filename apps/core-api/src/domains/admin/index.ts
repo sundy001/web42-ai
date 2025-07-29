@@ -1,5 +1,6 @@
 import express from "express";
 import { authenticateUser, requireAdmin } from "../auth";
+import projectRoutes from "./projects";
 import userRoutes from "./users";
 
 const router = express.Router();
@@ -10,5 +11,6 @@ router.use(requireAdmin);
 
 // Mount domain-specific routes
 router.use("/users", userRoutes);
+router.use("/projects", projectRoutes);
 
 export default router;

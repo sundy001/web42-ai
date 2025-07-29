@@ -1,5 +1,5 @@
-import type { AuthProvider, AuthUser } from "../types";
 import { createAuthError, withErrorHandling } from "../authUtils";
+import type { AuthProvider, AuthUser } from "../types";
 import { getSupabaseAdmin, supabaseClient } from "./supabase";
 
 // Convert Supabase user to our AuthUser interface
@@ -29,7 +29,6 @@ function mapSupabaseUser(supabaseUser: {
     appMetadata: supabaseUser.app_metadata,
   };
 }
-
 
 export const supabaseAuthProvider = {
   createUser: withErrorHandling("Failed to create user", async (input) => {
@@ -65,10 +64,7 @@ export const supabaseAuthProvider = {
       await supabaseAdmin.auth.admin.getUserById(id);
 
     if (error) {
-      throw createAuthError(
-        `Failed to get user: ${error.message}`,
-        error.code,
-      );
+      throw createAuthError(`Failed to get user: ${error.message}`, error.code);
     }
 
     if (!supabaseUser.user) {
@@ -130,24 +126,27 @@ export const supabaseAuthProvider = {
     }
   }),
 
-  signInWithPassword: withErrorHandling("Login failed", async (email, password) => {
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
-      email,
-      password,
-    });
+  signInWithPassword: withErrorHandling(
+    "Login failed",
+    async (email, password) => {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (error || !data.user || !data.session) {
-      throw createAuthError(
-        `Login failed: ${error?.message || "Invalid credentials"}`,
-        error?.code,
-      );
-    }
+      if (error || !data.user || !data.session) {
+        throw createAuthError(
+          `Login failed: ${error?.message || "Invalid credentials"}`,
+          error?.code,
+        );
+      }
 
-    return {
-      user: mapSupabaseUser(data.user),
-      session: data.session,
-    };
-  }),
+      return {
+        user: mapSupabaseUser(data.user),
+        session: data.session,
+      };
+    },
+  ),
 
   signOut: withErrorHandling("Sign out failed", async () => {
     const { error } = await supabaseClient.auth.signOut();

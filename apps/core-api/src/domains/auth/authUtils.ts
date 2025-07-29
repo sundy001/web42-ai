@@ -2,9 +2,12 @@ import type { AuthError as AuthErrorType } from "./types";
 
 // Create proper AuthError class for distinct error type checking
 export class AuthError extends Error {
-  constructor(message: string, public code?: string) {
+  constructor(
+    message: string,
+    public code?: string,
+  ) {
     super(message);
-    this.name = 'AuthError';
+    this.name = "AuthError";
   }
 }
 
@@ -16,7 +19,7 @@ export function createAuthError(message: string, code?: string): AuthErrorType {
 // Higher-order function to handle common error wrapping pattern
 export function withErrorHandling<T extends unknown[], R>(
   operation: string,
-  fn: (...args: T) => Promise<R>
+  fn: (...args: T) => Promise<R>,
 ) {
   return async (...args: T): Promise<R> => {
     try {
