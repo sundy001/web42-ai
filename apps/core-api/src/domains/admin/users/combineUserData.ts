@@ -40,6 +40,8 @@ export async function combineUserData(
       emailConfirmedAt: resolvedAuthUser.emailConfirmedAt || undefined,
       phoneConfirmedAt: resolvedAuthUser.phoneConfirmedAt || undefined,
       phone: resolvedAuthUser.phone || undefined,
+      userMetadata: resolvedAuthUser.userMetadata,
+      appMetadata: resolvedAuthUser.appMetadata,
     };
   } catch (error) {
     console.warn(
