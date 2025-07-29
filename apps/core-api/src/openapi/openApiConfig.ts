@@ -10,6 +10,12 @@ import {
   UserSchema,
 } from "../domains/admin/users";
 import {
+  CreateProjectSchema,
+  ListProjectsQuerySchema,
+  ProjectListResponseSchema,
+  ProjectSchema,
+} from "../domains/admin/projects/project.schemas";
+import {
   LoginResponseSchema,
   LoginSchema,
   SignoutResponseSchema,
@@ -94,6 +100,44 @@ export const routeSchemas = {
     },
     responses: {
       200: UserSchema,
+      400: ErrorResponseSchema,
+      404: ErrorResponseSchema,
+      500: ErrorResponseSchema,
+    },
+  },
+  listProjects: {
+    query: ListProjectsQuerySchema,
+    responses: {
+      200: ProjectListResponseSchema,
+      400: ErrorResponseSchema,
+      500: ErrorResponseSchema,
+    },
+  },
+  getProject: {
+    params: {
+      id: ObjectIdSchema,
+    },
+    responses: {
+      200: ProjectSchema,
+      400: ErrorResponseSchema,
+      404: ErrorResponseSchema,
+      500: ErrorResponseSchema,
+    },
+  },
+  createProject: {
+    body: CreateProjectSchema,
+    responses: {
+      201: ProjectSchema,
+      400: ErrorResponseSchema,
+      500: ErrorResponseSchema,
+    },
+  },
+  deleteProject: {
+    params: {
+      id: ObjectIdSchema,
+    },
+    responses: {
+      204: undefined,
       400: ErrorResponseSchema,
       404: ErrorResponseSchema,
       500: ErrorResponseSchema,
@@ -421,6 +465,159 @@ export function generateOpenApiDocument() {
           },
         },
       },
+      "/api/v1/admin/projects": {
+        get: {
+          summary: "List all projects",
+          description:
+            "Retrieve a paginated list of projects with optional filtering",
+          tags: ["Projects"],
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            {
+              in: "query",
+              name: "page",
+              schema: { type: "string" },
+              description: "Page number for pagination",
+            },
+            {
+              in: "query",
+              name: "limit",
+              schema: { type: "string" },
+              description: "Number of projects per page (1-100)",
+            },
+            {
+              in: "query",
+              name: "userId",
+              schema: { type: "string" },
+              description: "Filter by user ID",
+            },
+            {
+              in: "query",
+              name: "name",
+              schema: { type: "string" },
+              description: "Filter by project name (case-insensitive partial match)",
+            },
+            {
+              in: "query",
+              name: "status",
+              schema: { type: "string", enum: ["active", "deleted"] },
+              description: "Filter by project status",
+            },
+            {
+              in: "query",
+              name: "includeDeleted",
+              schema: { type: "string" },
+              description: "Include deleted projects (pass 'true' to include)",
+            },
+          ],
+          responses: {
+            "200": {
+              description: "List of projects retrieved successfully",
+              content: createResponseContent(ProjectListResponseSchema),
+            },
+            "400": {
+              description: VALIDATION_ERROR_DESC,
+              content: createResponseContent(ErrorResponseSchema),
+            },
+            "500": {
+              description: INTERNAL_ERROR_DESC,
+              content: createResponseContent(ErrorResponseSchema),
+            },
+          },
+        },
+        post: {
+          summary: "Create a new project",
+          description: "Create a new project with the provided information",
+          tags: ["Projects"],
+          security: [{ bearerAuth: [] }],
+          requestBody: {
+            required: true,
+            content: createResponseContent(CreateProjectSchema),
+          },
+          responses: {
+            "201": {
+              description: "Project created successfully",
+              content: createResponseContent(ProjectSchema),
+            },
+            "400": {
+              description: VALIDATION_ERROR_DESC,
+              content: createResponseContent(ErrorResponseSchema),
+            },
+            "500": {
+              description: INTERNAL_ERROR_DESC,
+              content: createResponseContent(ErrorResponseSchema),
+            },
+          },
+        },
+      },
+      "/api/v1/admin/projects/{id}": {
+        get: {
+          summary: "Get project by ID",
+          description: "Retrieve a specific project by its MongoDB ObjectId",
+          tags: ["Projects"],
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            {
+              in: "path",
+              name: "id",
+              required: true,
+              description: "Project MongoDB ObjectId",
+              schema: generateSchema(ObjectIdSchema),
+            },
+          ],
+          responses: {
+            "200": {
+              description: "Project retrieved successfully",
+              content: createResponseContent(ProjectSchema),
+            },
+            "400": {
+              description: VALIDATION_ERROR_DESC,
+              content: createResponseContent(ErrorResponseSchema),
+            },
+            "404": {
+              description: "Project not found",
+              content: createResponseContent(ErrorResponseSchema),
+            },
+            "500": {
+              description: INTERNAL_ERROR_DESC,
+              content: createResponseContent(ErrorResponseSchema),
+            },
+          },
+        },
+        delete: {
+          summary: "Soft delete project",
+          description:
+            "Soft delete a project by setting its status to 'deleted'",
+          tags: ["Projects"],
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            {
+              in: "path",
+              name: "id",
+              required: true,
+              description: "Project MongoDB ObjectId",
+              schema: generateSchema(ObjectIdSchema),
+            },
+          ],
+          responses: {
+            "204": {
+              description: "Project deleted successfully",
+            },
+            "400": {
+              description: VALIDATION_ERROR_DESC,
+              content: createResponseContent(ErrorResponseSchema),
+            },
+            "404": {
+              description: "Project not found",
+              content: createResponseContent(ErrorResponseSchema),
+            },
+            "500": {
+              description: INTERNAL_ERROR_DESC,
+              content: createResponseContent(ErrorResponseSchema),
+            },
+          },
+        },
+      },
     },
     components: {
       schemas: {
@@ -428,6 +625,9 @@ export function generateOpenApiDocument() {
         CreateUserRequest: generateSchema(CreateUserSchema),
         UpdateUserRequest: generateSchema(UpdateUserSchema),
         UserListResponse: generateSchema(UserListResponseSchema),
+        Project: generateSchema(ProjectSchema),
+        CreateProjectRequest: generateSchema(CreateProjectSchema),
+        ProjectListResponse: generateSchema(ProjectListResponseSchema),
         LoginRequest: generateSchema(LoginSchema),
         LoginResponse: generateSchema(LoginResponseSchema),
         SignoutRequest: generateSchema(SignoutSchema),
@@ -451,6 +651,10 @@ export function generateOpenApiDocument() {
       {
         name: "Users",
         description: "User management operations",
+      },
+      {
+        name: "Projects",
+        description: "Project management operations",
       },
     ],
   };
