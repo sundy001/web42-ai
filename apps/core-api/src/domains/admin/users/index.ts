@@ -8,7 +8,6 @@ export {
   getUserByEmail,
   getUserById,
   getUserBySupabaseId,
-  getUserStats,
   listUsers,
   restoreUser,
   updateUser,
@@ -51,7 +50,6 @@ export {
   UpdateUserSchema,
   UserListResponseSchema,
   UserSchema,
-  UserStatsSchema,
 } from "./user.schemas";
 
 // Note: Repository layer, internal types, and combineUserData are kept private

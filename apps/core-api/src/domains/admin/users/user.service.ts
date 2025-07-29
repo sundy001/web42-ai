@@ -171,12 +171,3 @@ export async function userExists(email: string): Promise<boolean> {
   return userStore.userExists(email);
 }
 
-export async function getUserStats(): Promise<{
-  total: number;
-  active: number;
-  inactive: number;
-  deleted: number;
-  byAuthProvider: Record<string, number>;
-}> {
-  return userStore.getUserStats();
-}

@@ -151,24 +151,6 @@ export const UserListResponseSchema = z.object({
     .openapi({ example: 10, description: "Total number of pages" }),
 });
 
-export const UserStatsSchema = z.object({
-  total: z
-    .number()
-    .openapi({ example: 100, description: "Total number of users" }),
-  active: z
-    .number()
-    .openapi({ example: 80, description: "Number of active users" }),
-  inactive: z
-    .number()
-    .openapi({ example: 15, description: "Number of inactive users" }),
-  deleted: z
-    .number()
-    .openapi({ example: 5, description: "Number of deleted users" }),
-  byAuthProvider: z.record(z.string(), z.number()).openapi({
-    example: { google: 50, github: 30, email: 20 },
-    description: "User count by authentication provider",
-  }),
-});
 
 export const ErrorResponseSchema = z.object({
   error: z

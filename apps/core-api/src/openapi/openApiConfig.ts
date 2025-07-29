@@ -8,7 +8,6 @@ import {
   UpdateUserSchema,
   UserListResponseSchema,
   UserSchema,
-  UserStatsSchema,
 } from "../domains/admin/users";
 import {
   LoginResponseSchema,
@@ -97,12 +96,6 @@ export const routeSchemas = {
       200: UserSchema,
       400: ErrorResponseSchema,
       404: ErrorResponseSchema,
-      500: ErrorResponseSchema,
-    },
-  },
-  getUserStats: {
-    responses: {
-      200: UserStatsSchema,
       500: ErrorResponseSchema,
     },
   },
@@ -283,25 +276,6 @@ export function generateOpenApiDocument() {
           },
         },
       },
-      "/api/v1/admin/users/stats": {
-        get: {
-          summary: "Get user statistics",
-          description:
-            "Retrieve statistics about users including counts by status and auth provider",
-          tags: ["Users"],
-          security: [{ bearerAuth: [] }],
-          responses: {
-            "200": {
-              description: "User statistics retrieved successfully",
-              content: createResponseContent(UserStatsSchema),
-            },
-            "500": {
-              description: INTERNAL_ERROR_DESC,
-              content: createResponseContent(ErrorResponseSchema),
-            },
-          },
-        },
-      },
       "/api/v1/admin/users/{id}": {
         get: {
           summary: "Get user by ID",
@@ -454,7 +428,6 @@ export function generateOpenApiDocument() {
         CreateUserRequest: generateSchema(CreateUserSchema),
         UpdateUserRequest: generateSchema(UpdateUserSchema),
         UserListResponse: generateSchema(UserListResponseSchema),
-        UserStats: generateSchema(UserStatsSchema),
         LoginRequest: generateSchema(LoginSchema),
         LoginResponse: generateSchema(LoginResponseSchema),
         SignoutRequest: generateSchema(SignoutSchema),

@@ -18,7 +18,6 @@ import {
   deleteUser,
   getUserByEmail,
   getUserById,
-  getUserStats,
   listUsers,
   restoreUser,
   updateUser,
@@ -45,15 +44,6 @@ router.get(
 
     const result = await listUsers(filters, pagination);
     res.json(result);
-  }),
-);
-
-// GET /users/stats - Get user statistics
-router.get(
-  "/stats",
-  asyncHandler(async (req: Request, res: Response) => {
-    const stats = await getUserStats();
-    res.json(stats);
   }),
 );
 

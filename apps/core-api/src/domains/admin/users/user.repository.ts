@@ -249,41 +249,6 @@ export async function userExists(email: string): Promise<boolean> {
   return count > 0;
 }
 
-export async function getUserStats(): Promise<{
-  total: number;
-  active: number;
-  inactive: number;
-  deleted: number;
-  byAuthProvider: Record<string, number>;
-}> {
-  const collection = getCollection();
-
-  const [total, active, inactive, deleted, byRole] = await Promise.all([
-    collection.countDocuments({}),
-    collection.countDocuments({ status: "active" }),
-    collection.countDocuments({ status: "inactive" }),
-    collection.countDocuments({ status: "deleted" }),
-    collection
-      .aggregate([{ $group: { _id: "$role", count: { $sum: 1 } } }])
-      .toArray(),
-  ]);
-
-  const roleStats = (byRole as { _id: string; count: number }[]).reduce(
-    (acc: Record<string, number>, item) => {
-      acc[item._id] = item.count;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
-
-  return {
-    total,
-    active,
-    inactive,
-    deleted,
-    byAuthProvider: roleStats,
-  };
-}
 
 // Re-export repository types for external use (if needed)
 export type {
