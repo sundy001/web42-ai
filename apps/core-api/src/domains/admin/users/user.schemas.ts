@@ -54,11 +54,9 @@ export const CreateUserSchema = z.object({
     .string()
     .min(2, "Name must be at least 2 characters")
     .max(100, "Name must not exceed 100 characters")
-    .optional()
     .openapi({ example: "Jane Doe", description: "User full name" }),
   role: z
     .enum(["admin", "user"])
-    .default("user")
     .openapi({ example: "user", description: "User role" }),
 });
 

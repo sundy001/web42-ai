@@ -43,7 +43,7 @@ export const supabaseAuthProvider = {
           name: input.name,
         },
         app_metadata: {
-          role: input.role || "user",
+          role: input.role,
         },
         email_confirm: input.emailConfirm ?? true,
       });

@@ -23,7 +23,7 @@ export async function createUser(
       email: userData.email,
       password: userData.password,
       name: userData.name,
-      role: userData.role || "user",
+      role: userData.role,
       emailConfirm: true, // Auto-confirm email for admin-created users
     });
 
@@ -31,7 +31,7 @@ export async function createUser(
     const mongoUser = await userStore.createUser({
       supabaseUserId: authUser.id,
       email: userData.email,
-      role: userData.role || "user",
+      role: userData.role,
       status: "active",
     });
 

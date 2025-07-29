@@ -93,8 +93,8 @@ export interface SignoutResponse {
 export interface AuthProviderCreateUserInput {
   email: string;
   password?: string;
-  name?: string;
-  role?: string;
+  name: string;
+  role: string;
   emailConfirm?: boolean;
 }
 

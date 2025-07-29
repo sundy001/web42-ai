@@ -14,7 +14,7 @@ export function createAuthError(message: string, code?: string): AuthErrorType {
 }
 
 // Higher-order function to handle common error wrapping pattern
-export function withErrorHandling<T extends any[], R>(
+export function withErrorHandling<T extends unknown[], R>(
   operation: string,
   fn: (...args: T) => Promise<R>
 ) {

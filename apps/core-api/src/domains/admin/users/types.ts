@@ -49,8 +49,8 @@ export type UserStatus = "active" | "inactive" | "deleted";
 export interface CreateUserRequest {
   email: string;
   password?: string;
-  name?: string;
-  role?: UserRole;
+  name: string;
+  role: UserRole;
 }
 
 /**
