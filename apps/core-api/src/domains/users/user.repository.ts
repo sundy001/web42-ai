@@ -1,13 +1,20 @@
 import { ObjectId } from "mongodb";
 import { databaseStore } from "../../stores/database";
-import type { Repository, User } from "./types";
+import type {
+  User,
+  UserRepositoryCreateData,
+  UserRepositoryFilters,
+  UserRepositoryListResponse,
+  UserRepositoryPaginationOptions,
+  UserRepositoryUpdateData,
+} from "./types";
 
 // Type aliases for cleaner code
-type CreateUserData = Repository.CreateUserData;
-type UpdateUserData = Repository.UpdateUserData;
-type UserFiltersDb = Repository.UserFilters;
-type PaginationOptionsDb = Repository.PaginationOptions;
-type UserListResponseDb = Repository.UserListResponse;
+type CreateUserData = UserRepositoryCreateData;
+type UpdateUserData = UserRepositoryUpdateData;
+type UserFiltersDb = UserRepositoryFilters;
+type PaginationOptionsDb = UserRepositoryPaginationOptions;
+type UserListResponseDb = UserRepositoryListResponse;
 
 const COLLECTION_NAME = "users";
 

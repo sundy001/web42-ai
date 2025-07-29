@@ -86,53 +86,52 @@ export interface SignoutResponse {
  * Provider layer types - internal to the auth domain
  * These types define the contract for authentication providers (Supabase, Auth0, etc.)
  */
-export namespace Provider {
-  /**
-   * Input for creating a user in the auth provider
-   */
-  export interface CreateUserInput {
-    email: string;
-    password?: string;
-    name?: string;
-    role?: string;
-    emailConfirm?: boolean;
-  }
 
-  /**
-   * Input for updating a user in the auth provider
-   */
-  export interface UpdateUserInput {
-    email?: string;
-    password?: string;
-    userMetadata?: Record<string, unknown>;
-    appMetadata?: Record<string, unknown>;
-  }
+/**
+ * Input for creating a user in the auth provider
+ */
+export interface AuthProviderCreateUserInput {
+  email: string;
+  password?: string;
+  name?: string;
+  role?: string;
+  emailConfirm?: boolean;
+}
 
-  /**
-   * Response from auth provider sign-in operations
-   */
-  export interface SignInResponse {
-    user: AuthUser;
-    session: unknown; // Provider-specific session format
-  }
+/**
+ * Input for updating a user in the auth provider
+ */
+export interface AuthProviderUpdateUserInput {
+  email?: string;
+  password?: string;
+  userMetadata?: Record<string, unknown>;
+  appMetadata?: Record<string, unknown>;
+}
 
-  /**
-   * Abstract interface that all auth providers must implement
-   */
-  export interface AuthProvider {
-    // User management operations
-    createUser(input: CreateUserInput): Promise<AuthUser>;
-    getUserById(id: string): Promise<AuthUser | null>;
-    updateUser(id: string, input: UpdateUserInput): Promise<AuthUser>;
-    deleteUser(id: string): Promise<void>;
+/**
+ * Response from auth provider sign-in operations
+ */
+export interface AuthProviderSignInResponse {
+  user: AuthUser;
+  session: unknown; // Provider-specific session format
+}
 
-    // Authentication operations
-    signInWithPassword(
-      email: string,
-      password: string,
-    ): Promise<SignInResponse>;
-    signOut(): Promise<void>;
-  }
+/**
+ * Abstract interface that all auth providers must implement
+ */
+export interface AuthProviderInterface {
+  // User management operations
+  createUser(input: AuthProviderCreateUserInput): Promise<AuthUser>;
+  getUserById(id: string): Promise<AuthUser | null>;
+  updateUser(id: string, input: AuthProviderUpdateUserInput): Promise<AuthUser>;
+  deleteUser(id: string): Promise<void>;
+
+  // Authentication operations
+  signInWithPassword(
+    email: string,
+    password: string,
+  ): Promise<AuthProviderSignInResponse>;
+  signOut(): Promise<void>;
 }
 
 // =============================================================================
@@ -142,41 +141,40 @@ export namespace Provider {
 /**
  * Middleware layer types - for Express.js request handling
  */
-export namespace Middleware {
-  /**
-   * Authenticated user data attached to request
-   */
-  export interface AuthenticatedUser {
-    id: string;
-    email?: string;
-    role?: string;
-  }
 
-  /**
-   * Express request with authenticated user data
-   */
-  export interface AuthenticatedRequest extends Request {
-    user?: AuthenticatedUser;
-  }
-
-  /**
-   * Type for authentication middleware functions
-   */
-  export type AuthMiddleware = (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ) => Promise<void>;
-
-  /**
-   * Type for authorization middleware functions
-   */
-  export type AuthorizationMiddleware = (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ) => void;
+/**
+ * Authenticated user data attached to request
+ */
+export interface AuthenticatedUserData {
+  id: string;
+  email?: string;
+  role?: string;
 }
+
+/**
+ * Express request with authenticated user data
+ */
+export interface AuthenticatedRequestInterface extends Request {
+  user?: AuthenticatedUserData;
+}
+
+/**
+ * Type for authentication middleware functions
+ */
+export type AuthMiddlewareFunction = (
+  req: AuthenticatedRequestInterface,
+  res: Response,
+  next: NextFunction,
+) => Promise<void>;
+
+/**
+ * Type for authorization middleware functions
+ */
+export type AuthorizationMiddlewareFunction = (
+  req: AuthenticatedRequestInterface,
+  res: Response,
+  next: NextFunction,
+) => void;
 
 // =============================================================================
 // TYPE GUARDS AND UTILITIES
@@ -194,21 +192,21 @@ export function isAuthError(error: unknown): error is AuthError {
  */
 export function isAuthenticatedRequest(
   req: Request,
-): req is Middleware.AuthenticatedRequest {
+): req is AuthenticatedRequestInterface {
   return "user" in req && req.user !== undefined;
 }
 
 /**
  * Type guard to check if user has admin role
  */
-export function isAdminUser(user: Middleware.AuthenticatedUser): boolean {
+export function isAdminUser(user: AuthenticatedUserData): boolean {
   return user.role === "admin";
 }
 
 /**
  * Utility to extract user ID from authenticated request
  */
-export function getUserId(req: Middleware.AuthenticatedRequest): string | null {
+export function getUserId(req: AuthenticatedRequestInterface): string | null {
   return req.user?.id ?? null;
 }
 
@@ -217,7 +215,7 @@ export function getUserId(req: Middleware.AuthenticatedRequest): string | null {
 // =============================================================================
 
 // Create type aliases for cleaner imports and backwards compatibility
-export type CreateAuthUserInput = Provider.CreateUserInput;
-export type UpdateAuthUserInput = Provider.UpdateUserInput;
-export type AuthProvider = Provider.AuthProvider;
-export type AuthenticatedRequest = Middleware.AuthenticatedRequest;
+export type CreateAuthUserInput = AuthProviderCreateUserInput;
+export type UpdateAuthUserInput = AuthProviderUpdateUserInput;
+export type AuthProvider = AuthProviderInterface;
+export type AuthenticatedRequest = AuthenticatedRequestInterface;

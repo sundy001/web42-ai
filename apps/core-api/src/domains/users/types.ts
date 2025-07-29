@@ -75,7 +75,7 @@ export interface UserFilters {
 /**
  * Paginated list response for users (service layer)
  */
-export interface UserListResponse extends PaginatedResponse<CombinedUser> {}
+export type UserListResponse = PaginatedResponse<CombinedUser>;
 
 // =============================================================================
 // REPOSITORY LAYER CONTRACTS
@@ -85,49 +85,48 @@ export interface UserListResponse extends PaginatedResponse<CombinedUser> {}
  * Repository layer types - internal to the domain
  * These types are specific to database operations and should not leak outside the domain
  */
-export namespace Repository {
-  /**
-   * Data structure for creating user in database
-   */
-  export interface CreateUserData {
-    supabaseUserId: string;
-    email: string;
-    role: UserRole;
-    status: UserStatus;
-  }
 
-  /**
-   * Data structure for updating user in database
-   */
-  export interface UpdateUserData {
-    role?: UserRole;
-    status?: UserStatus;
-  }
-
-  /**
-   * Database-level filters for user queries
-   */
-  export interface UserFilters {
-    supabaseUserId?: string;
-    email?: string;
-    role?: UserRole;
-    status?: UserStatus;
-    includeDeleted?: boolean;
-  }
-
-  /**
-   * Database-level paginated response (returns raw User entities)
-   */
-  export interface UserListResponse extends PaginatedResponse<User> {}
-
-  /**
-   * Database-level pagination options
-   */
-  export interface PaginationOptions {
-    page?: number;
-    limit?: number;
-  }
+/**
+ * Data structure for creating user in database
+ */
+export interface UserRepositoryCreateData {
+  supabaseUserId: string;
+  email: string;
+  role: UserRole;
+  status: UserStatus;
 }
+
+/**
+ * Data structure for updating user in database
+ */
+export interface UserRepositoryUpdateData {
+  role?: UserRole;
+  status?: UserStatus;
+}
+
+/**
+ * Database-level filters for user queries
+ */
+export interface UserRepositoryFilters {
+  supabaseUserId?: string;
+  email?: string;
+  role?: UserRole;
+  status?: UserStatus;
+  includeDeleted?: boolean;
+}
+
+/**
+ * Database-level pagination options
+ */
+export interface UserRepositoryPaginationOptions {
+  page?: number;
+  limit?: number;
+}
+
+/**
+ * Database-level paginated response (returns raw User entities)
+ */
+export type UserRepositoryListResponse = PaginatedResponse<User>;
 
 // =============================================================================
 // SHARED UTILITIES

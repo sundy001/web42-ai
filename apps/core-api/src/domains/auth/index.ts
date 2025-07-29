@@ -15,19 +15,16 @@ export type {
   AuthError,
 
   // Provider types (for extensions)
-  AuthProvider,
   AuthSession,
   // Core domain types
   AuthUser,
   // Middleware types
   AuthenticatedRequest,
-  CreateAuthUserInput,
   // Service layer types
   LoginRequest,
   LoginResponse,
   SignoutRequest,
   SignoutResponse,
-  UpdateAuthUserInput,
   getUserId,
   isAdminUser,
   // Utility functions
