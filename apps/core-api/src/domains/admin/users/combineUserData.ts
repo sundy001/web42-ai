@@ -1,13 +1,30 @@
 import { getAuthProvider } from "../../auth";
+import type { AuthUser } from "../../auth/types";
 import type { CombinedUser, User } from "./types";
 
 // Helper function to merge MongoDB user with auth provider user data
-export async function combineUserData(mongoUser: User): Promise<CombinedUser> {
+export async function combineUserData(mongoUser: User): Promise<CombinedUser>;
+export async function combineUserData(
+  mongoUser: User,
+  authUser: AuthUser,
+): Promise<CombinedUser>;
+export async function combineUserData(
+  mongoUser: User,
+  authUser?: AuthUser,
+): Promise<CombinedUser> {
   try {
-    const authProvider = getAuthProvider();
-    const authUser = await authProvider.getUserById(mongoUser.supabaseUserId);
+    let resolvedAuthUser = authUser;
 
-    if (!authUser) {
+    // If authUser not provided, fetch from auth provider
+    if (!resolvedAuthUser) {
+      const authProvider = getAuthProvider();
+      const fetchedAuthUser = await authProvider.getUserById(
+        mongoUser.supabaseUserId,
+      );
+      resolvedAuthUser = fetchedAuthUser || undefined;
+    }
+
+    if (!resolvedAuthUser) {
       console.warn(
         `Failed to fetch auth user ${mongoUser.supabaseUserId}: User not found`,
       );
@@ -16,13 +33,13 @@ export async function combineUserData(mongoUser: User): Promise<CombinedUser> {
 
     return {
       ...mongoUser,
-      name: authUser.name,
-      avatarUrl: authUser.avatarUrl,
-      authProvider: authUser.authProvider,
-      lastSignInAt: authUser.lastSignInAt || undefined,
-      emailConfirmedAt: authUser.emailConfirmedAt || undefined,
-      phoneConfirmedAt: authUser.phoneConfirmedAt || undefined,
-      phone: authUser.phone || undefined,
+      name: resolvedAuthUser.name,
+      avatarUrl: resolvedAuthUser.avatarUrl,
+      authProvider: resolvedAuthUser.authProvider,
+      lastSignInAt: resolvedAuthUser.lastSignInAt || undefined,
+      emailConfirmedAt: resolvedAuthUser.emailConfirmedAt || undefined,
+      phoneConfirmedAt: resolvedAuthUser.phoneConfirmedAt || undefined,
+      phone: resolvedAuthUser.phone || undefined,
     };
   } catch (error) {
     console.warn(

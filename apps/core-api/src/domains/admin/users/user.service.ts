@@ -35,8 +35,8 @@ export async function createUser(
       status: "active",
     });
 
-    // Return combined user data
-    return combineUserData(mongoUser);
+    // Return combined user data using existing authUser to avoid API call
+    return combineUserData(mongoUser, authUser);
   } catch (error) {
     console.error("Error creating user:", error);
     throw error;
@@ -196,8 +196,8 @@ export async function syncUserWithAuthProvider(
     // Check if user already exists
     const existingUser = await userStore.getUserBySupabaseId(authUserId);
     if (existingUser) {
-      // User exists, return combined data
-      return combineUserData(existingUser);
+      // User exists, return combined data using existing authUser to avoid API call
+      return combineUserData(existingUser, authUser);
     }
 
     // Create new user in MongoDB from auth provider data
@@ -208,7 +208,7 @@ export async function syncUserWithAuthProvider(
       status: "active",
     });
 
-    return combineUserData(mongoUser);
+    return combineUserData(mongoUser, authUser);
   } catch (error) {
     console.error("Error syncing user with auth provider:", error);
     return null;

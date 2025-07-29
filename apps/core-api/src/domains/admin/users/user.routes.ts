@@ -86,8 +86,8 @@ router.post(
   asyncHandler(async (req: Request, res: Response) => {
     const userData: CreateUserRequest = res.locals.validatedBody;
 
-    // Check if user already exists by email
-    const existingUser = await getUserByEmail(userData.email);
+    // Check if user already exists by email, including soft deleted users
+    const existingUser = await getUserByEmail(userData.email, true);
     if (existingUser) {
       res.status(409).json({
         error: "Conflict",
