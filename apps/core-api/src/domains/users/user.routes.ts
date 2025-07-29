@@ -10,7 +10,8 @@ import {
   authenticateUser,
   requireAdmin,
   type AuthenticatedRequest,
-} from "../../middleware/auth";
+} from "../auth";
+import type { CreateUserRequest, UpdateUserRequest } from "./types";
 import {
   CreateUserSchema,
   ListUsersQuerySchema,
@@ -29,7 +30,6 @@ import {
   syncUserWithAuthProvider,
   updateUser,
 } from "./user.service";
-import type { CreateUserRequest, UpdateUserRequest } from "./user.types";
 
 const router = express.Router();
 

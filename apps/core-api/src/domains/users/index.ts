@@ -4,45 +4,55 @@
 // Main service functions for external consumption
 export {
   createUser,
-  getUserById,
-  getUserByEmail,
-  getUserBySupabaseId,
-  updateUser,
   deleteUser,
-  restoreUser,
-  listUsers,
-  syncUserWithAuthProvider,
+  getUserByEmail,
+  getUserById,
+  getUserBySupabaseId,
   getUserStats,
+  listUsers,
+  restoreUser,
+  syncUserWithAuthProvider,
+  updateUser,
   userExists,
 } from "./user.service";
 
 // HTTP routes for application setup
 export { default as userRoutes } from "./user.routes";
 
-// Public types that external consumers need
+// Export all types under a namespace for external consumers
+export type * as UserTypes from "./types";
+
+// Export commonly used types directly for convenience
 export type {
-  // Core domain types
-  User,
   CombinedUser,
-  
   // Service layer types for API consumers
   CreateUserRequest,
-  UpdateUserRequest,
-  UserFilters,
   PaginationOptions,
+  UpdateUserRequest,
+  // Core domain types
+  User,
+  UserFilters,
   UserListResponse,
-} from "./user.types";
+  UserRole,
+  UserStatus,
+  isActiveUser,
+  // Utility functions
+  isAdmin,
+  isDeletedUser,
+} from "./types";
+
+// Note: Repository namespace types are kept internal to the domain
 
 // Schema exports for validation and OpenAPI
 export {
-  UserSchema,
   CreateUserSchema,
-  UpdateUserSchema,
-  ListUsersQuerySchema,
-  UserListResponseSchema,
-  UserStatsSchema,
-  ObjectIdSchema,
   ErrorResponseSchema,
+  ListUsersQuerySchema,
+  ObjectIdSchema,
+  UpdateUserSchema,
+  UserListResponseSchema,
+  UserSchema,
+  UserStatsSchema,
 } from "./user.schemas";
 
 // Note: Repository layer, internal types, and combineUserData are kept private

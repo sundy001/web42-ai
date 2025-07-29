@@ -1,6 +1,6 @@
 import { getUserBySupabaseId } from "../users";
-import type { LoginRequest, LoginResponse } from "./auth.types";
 import { login, signout } from "./providers";
+import type { LoginRequest, LoginResponse } from "./types";
 
 // Login with email and password
 export async function loginUser(

@@ -1,6 +1,5 @@
 import { getAuthProvider } from "../auth";
 import { combineUserData } from "./combineUserData";
-import * as userStore from "./user.repository";
 import type {
   CombinedUser,
   CreateUserRequest,
@@ -8,7 +7,8 @@ import type {
   UpdateUserRequest,
   UserFilters,
   UserListResponse,
-} from "./user.types";
+} from "./types";
+import * as userStore from "./user.repository";
 
 // High-level user service that coordinates between userStore and auth provider
 

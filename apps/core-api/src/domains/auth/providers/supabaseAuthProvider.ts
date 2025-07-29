@@ -1,5 +1,5 @@
+import type { AuthError, AuthProvider, AuthUser } from "../types";
 import { getSupabaseAdmin, supabaseClient } from "./supabase";
-import type { AuthError, AuthProvider, AuthUser } from "./types";
 
 // Convert Supabase user to our AuthUser interface
 function mapSupabaseUser(supabaseUser: {

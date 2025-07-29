@@ -1,5 +1,5 @@
+import type { AuthProvider } from "../types";
 import { supabaseAuthProvider } from "./supabaseAuthProvider";
-import type { AuthProvider } from "./types";
 
 // Auth service factory - makes it easy to switch providers in the future
 export function getAuthProvider(): AuthProvider {

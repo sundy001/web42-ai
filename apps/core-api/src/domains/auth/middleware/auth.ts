@@ -1,13 +1,9 @@
-import type { NextFunction, Request, Response } from "express";
-import { supabaseClient } from "../domains/auth";
+import type { NextFunction, Response } from "express";
+import { supabaseClient } from "../providers/supabase";
+import type { AuthenticatedRequest as AuthReq } from "../types";
 
-export interface AuthenticatedRequest extends Request {
-  user?: {
-    id: string;
-    email?: string;
-    role?: string;
-  };
-}
+// Re-export for backwards compatibility
+export type AuthenticatedRequest = AuthReq;
 
 /**
  * Middleware to verify Supabase JWT tokens

@@ -1,13 +1,13 @@
 import { ObjectId } from "mongodb";
 import { databaseStore } from "../../stores/database";
-import type {
-  CreateUserData,
-  PaginationOptionsDb,
-  UpdateUserData,
-  UserFiltersDb,
-  UserListResponseDb,
-} from "./user.repository.types";
-import type { User } from "./user.types";
+import type { Repository, User } from "./types";
+
+// Type aliases for cleaner code
+type CreateUserData = Repository.CreateUserData;
+type UpdateUserData = Repository.UpdateUserData;
+type UserFiltersDb = Repository.UserFilters;
+type PaginationOptionsDb = Repository.PaginationOptions;
+type UserListResponseDb = Repository.UserListResponse;
 
 const COLLECTION_NAME = "users";
 
@@ -278,11 +278,11 @@ export async function getUserStats(): Promise<{
   };
 }
 
-// Re-export types for external use
+// Re-export repository types for external use (if needed)
 export type {
   CreateUserData,
   PaginationOptionsDb,
   UpdateUserData,
   UserFiltersDb,
   UserListResponseDb,
-} from "./user.repository.types";
+};

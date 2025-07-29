@@ -3,7 +3,7 @@ import express from "express";
 import { asyncHandler, validateBody } from "../../middleware";
 import { LoginSchema, SignoutSchema } from "./auth.schemas";
 import { loginUser, signoutUser } from "./auth.service";
-import type { LoginRequest } from "./auth.types";
+import type { LoginRequest } from "./types";
 
 const router = express.Router();
 
