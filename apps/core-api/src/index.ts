@@ -4,6 +4,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
 
+import authRoutes from "./auth/authRoutes.js";
 import { openApiDocument } from "./openapi/openApiConfig.js";
 import { databaseStore, getHealthStatus } from "./stores/index.js";
 import { userRoutes } from "./users/index.js";
@@ -51,6 +52,9 @@ app.get("/api/v1/status", (req, res) => {
   });
 });
 
+// Auth routes
+app.use("/api/v1/auth", authRoutes);
+
 // User routes
 app.use("/api/v1/users", userRoutes);
 
@@ -62,6 +66,7 @@ app.get("/", (req, res) => {
     endpoints: {
       health: "/health",
       api: "/api/v1/status",
+      auth: "/api/v1/auth",
       users: "/api/v1/users",
       documentation: "/api-docs",
     },

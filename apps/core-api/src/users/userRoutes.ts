@@ -4,9 +4,9 @@ import {
   authenticateUser,
   requireAdmin,
   type AuthenticatedRequest,
-} from "../middleware/auth.js";
+} from "../middleware/auth";
 import {
-  createUserFromSupabase,
+  createUser,
   deleteUser,
   getUserByEmail,
   getUserById,
@@ -22,17 +22,14 @@ import {
   validateBody,
   validateObjectId,
   validateQuery,
-} from "./middleware.js";
+} from "./middleware";
 import {
-  CreateUserFromSupabaseSchema,
+  CreateUserSchema,
   ListUsersQuerySchema,
   UpdateUserSchema,
   type ListUsersQueryInput,
-} from "./schemas.js";
-import type {
-  CreateUserFromSupabaseRequest,
-  UpdateUserRequest,
-} from "./types.js";
+} from "./schemas";
+import type { CreateUserRequest, UpdateUserRequest } from "./types";
 
 const router = express.Router();
 
@@ -43,22 +40,13 @@ router.get(
   requireAdmin,
   validateQuery(ListUsersQuerySchema),
   asyncHandler(async (req: Request, res: Response) => {
-    const {
-      page,
-      limit,
-      supabaseUserId,
-      email,
-      name,
-      authProvider,
-      status,
-      includeDeleted,
-    } = res.locals.validatedQuery as ListUsersQueryInput;
+    const { page, limit, supabaseUserId, email, role, status, includeDeleted } =
+      res.locals.validatedQuery as ListUsersQueryInput;
 
     const filters = {
       supabaseUserId,
       email,
-      name,
-      authProvider,
+      role,
       status,
       includeDeleted,
     };
@@ -101,26 +89,18 @@ router.get(
   }),
 );
 
-// POST /users - Create new user from Supabase auth
+// POST /users - Create new user (creates both Supabase and MongoDB user)
 router.post(
   "/",
-  validateBody(CreateUserFromSupabaseSchema),
+  authenticateUser,
+  requireAdmin,
+  validateBody(CreateUserSchema),
   asyncHandler(async (req: Request, res: Response) => {
-    const userData: CreateUserFromSupabaseRequest = res.locals.validatedBody;
-
-    // Check if user already exists by supabaseUserId
-    const existingUser = await getUserBySupabaseId(userData.supabaseUserId);
-    if (existingUser) {
-      res.status(409).json({
-        error: "Conflict",
-        message: "User with this Supabase ID already exists",
-      });
-      return;
-    }
+    const userData: CreateUserRequest = res.locals.validatedBody;
 
     // Check if user already exists by email
-    const existingEmailUser = await getUserByEmail(userData.email);
-    if (existingEmailUser) {
+    const existingUser = await getUserByEmail(userData.email);
+    if (existingUser) {
       res.status(409).json({
         error: "Conflict",
         message: "User with this email already exists",
@@ -128,7 +108,7 @@ router.post(
       return;
     }
 
-    const user = await createUserFromSupabase(userData);
+    const user = await createUser(userData);
     res.status(201).json(user);
   }),
 );

@@ -1,37 +1,44 @@
 import type { ObjectId } from "mongodb";
 
+// MongoDB User document
 export interface User {
   _id?: ObjectId;
   supabaseUserId: string;
-  email: string;
-  name?: string;
-  avatarUrl?: string;
-  authProvider: string;
+  email: string; // Duplicated for performance
+  role: "admin" | "user"; // Duplicated for performance
   status: "active" | "inactive" | "deleted";
-  lastSignInAt?: string;
   createdAt?: string;
   updatedAt?: string;
 }
 
-export interface CreateUserFromSupabaseRequest {
-  supabaseUserId: string;
-  email: string;
+// Combined user data (MongoDB + Supabase)
+export interface CombinedUser extends User {
+  // Supabase fields
   name?: string;
   avatarUrl?: string;
-  authProvider: string;
+  authProvider?: string;
+  lastSignInAt?: string;
+  emailConfirmedAt?: string;
+  phoneConfirmedAt?: string;
+  phone?: string;
+}
+
+export interface CreateUserRequest {
+  email: string;
+  password?: string;
+  name?: string;
+  role?: "admin" | "user";
 }
 
 export interface UpdateUserRequest {
-  name?: string;
-  avatarUrl?: string;
+  role?: "admin" | "user";
   status?: "active" | "inactive";
 }
 
 export interface UserFilters {
   supabaseUserId?: string;
   email?: string;
-  name?: string;
-  authProvider?: string;
+  role?: "admin" | "user";
   status?: "active" | "inactive";
   includeDeleted?: boolean;
 }
@@ -42,7 +49,7 @@ export interface PaginationOptions {
 }
 
 export interface UserListResponse {
-  users: User[];
+  users: CombinedUser[];
   total: number;
   page: number;
   limit: number;

@@ -1,7 +1,13 @@
 import { generateSchema } from "@anatine/zod-openapi";
 import { z } from "zod";
 import {
-  CreateUserFromSupabaseSchema,
+  LoginResponseSchema,
+  LoginSchema,
+  SignoutResponseSchema,
+  SignoutSchema,
+} from "../auth/schemas.js";
+import {
+  CreateUserSchema,
   ErrorResponseSchema,
   ListUsersQuerySchema,
   ObjectIdSchema,
@@ -51,7 +57,7 @@ export const routeSchemas = {
     },
   },
   createUser: {
-    body: CreateUserFromSupabaseSchema,
+    body: CreateUserSchema,
     responses: {
       201: UserSchema,
       400: ErrorResponseSchema,
@@ -121,6 +127,61 @@ export function generateOpenApiDocument() {
       },
     ],
     paths: {
+      "/api/v1/auth/login": {
+        post: {
+          summary: "User login",
+          description:
+            "Authenticate user with email and password, returns user data and session tokens",
+          tags: ["Authentication"],
+          requestBody: {
+            required: true,
+            content: createResponseContent(LoginSchema),
+          },
+          responses: {
+            "200": {
+              description: "Login successful",
+              content: createResponseContent(LoginResponseSchema),
+            },
+            "400": {
+              description: VALIDATION_ERROR_DESC,
+              content: createResponseContent(ErrorResponseSchema),
+            },
+            "401": {
+              description: "Authentication failed",
+              content: createResponseContent(ErrorResponseSchema),
+            },
+            "500": {
+              description: INTERNAL_ERROR_DESC,
+              content: createResponseContent(ErrorResponseSchema),
+            },
+          },
+        },
+      },
+      "/api/v1/auth/signout": {
+        post: {
+          summary: "User signout",
+          description: "Sign out user by invalidating their access token",
+          tags: ["Authentication"],
+          requestBody: {
+            required: true,
+            content: createResponseContent(SignoutSchema),
+          },
+          responses: {
+            "200": {
+              description: "Signout successful",
+              content: createResponseContent(SignoutResponseSchema),
+            },
+            "400": {
+              description: VALIDATION_ERROR_DESC,
+              content: createResponseContent(ErrorResponseSchema),
+            },
+            "500": {
+              description: INTERNAL_ERROR_DESC,
+              content: createResponseContent(ErrorResponseSchema),
+            },
+          },
+        },
+      },
       "/api/v1/users": {
         get: {
           summary: "List all users",
@@ -197,7 +258,7 @@ export function generateOpenApiDocument() {
           tags: ["Users"],
           requestBody: {
             required: true,
-            content: createResponseContent(CreateUserFromSupabaseSchema),
+            content: createResponseContent(CreateUserSchema),
           },
           responses: {
             "201": {
@@ -382,16 +443,22 @@ export function generateOpenApiDocument() {
     components: {
       schemas: {
         User: generateSchema(UserSchema),
-        CreateUserFromSupabaseRequest: generateSchema(
-          CreateUserFromSupabaseSchema,
-        ),
+        CreateUserRequest: generateSchema(CreateUserSchema),
         UpdateUserRequest: generateSchema(UpdateUserSchema),
         UserListResponse: generateSchema(UserListResponseSchema),
         UserStats: generateSchema(UserStatsSchema),
+        LoginRequest: generateSchema(LoginSchema),
+        LoginResponse: generateSchema(LoginResponseSchema),
+        SignoutRequest: generateSchema(SignoutSchema),
+        SignoutResponse: generateSchema(SignoutResponseSchema),
         ErrorResponse: generateSchema(ErrorResponseSchema),
       },
     },
     tags: [
+      {
+        name: "Authentication",
+        description: "User authentication operations",
+      },
       {
         name: "Users",
         description: "User management operations",
