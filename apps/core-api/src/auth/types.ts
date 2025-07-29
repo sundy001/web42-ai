@@ -8,10 +8,10 @@ export interface LoginRequest {
 export interface LoginResponse {
   user: CombinedUser;
   session: {
-    access_token: string;
-    refresh_token: string;
-    expires_in: number;
-    token_type: string;
+    access_token?: string;
+    refresh_token?: string;
+    expires_in?: number;
+    token_type?: string;
   };
 }
 

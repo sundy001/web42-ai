@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb";
-import { getSupabaseAdmin } from "../lib/supabase/supabase";
+import { getAuthProvider } from "../lib/authProvider";
+import { combineUserData } from "../lib/user/combineUserData";
 import type {
   CombinedUser,
   CreateUserRequest,
@@ -18,70 +19,28 @@ function getCollection() {
   return db.collection<User>(COLLECTION_NAME);
 }
 
-// Helper function to merge MongoDB user with Supabase user data
-async function combineUserData(mongoUser: User): Promise<CombinedUser> {
-  try {
-    const supabaseAdmin = getSupabaseAdmin();
-    const { data: supabaseUser, error } =
-      await supabaseAdmin.auth.admin.getUserById(mongoUser.supabaseUserId);
-
-    if (error || !supabaseUser.user) {
-      console.warn(
-        `Failed to fetch Supabase user ${mongoUser.supabaseUserId}:`,
-        error?.message,
-      );
-      return mongoUser as CombinedUser;
-    }
-
-    const user = supabaseUser.user;
-    return {
-      ...mongoUser,
-      name: user.user_metadata?.name || user.user_metadata?.full_name,
-      avatarUrl: user.user_metadata?.avatar_url,
-      authProvider: user.app_metadata?.provider,
-      lastSignInAt: user.last_sign_in_at,
-      emailConfirmedAt: user.email_confirmed_at,
-      phoneConfirmedAt: user.phone_confirmed_at,
-      phone: user.phone,
-    };
-  } catch (error) {
-    console.warn(
-      `Error combining user data for ${mongoUser.supabaseUserId}:`,
-      error,
-    );
-    return mongoUser as CombinedUser;
-  }
-}
+// Helper function is now imported from lib/user/combineUserData.ts
 
 export async function createUser(
   userData: CreateUserRequest,
 ): Promise<CombinedUser> {
   const collection = getCollection();
   const now = new Date().toISOString();
-  const supabaseAdmin = getSupabaseAdmin();
+  const authProvider = getAuthProvider();
 
   try {
-    // Create user in Supabase first
-    const { data: supabaseUser, error } =
-      await supabaseAdmin.auth.admin.createUser({
-        email: userData.email,
-        password: userData.password,
-        user_metadata: {
-          name: userData.name,
-        },
-        app_metadata: {
-          role: userData.role || "user",
-        },
-        email_confirm: true, // Auto-confirm email for admin-created users
-      });
-
-    if (error || !supabaseUser.user) {
-      throw new Error(`Failed to create Supabase user: ${error?.message}`);
-    }
+    // Create user in auth provider first
+    const authUser = await authProvider.createUser({
+      email: userData.email,
+      password: userData.password,
+      name: userData.name,
+      role: userData.role || "user",
+      emailConfirm: true, // Auto-confirm email for admin-created users
+    });
 
     // Create user document in MongoDB
     const mongoUser: Omit<User, "_id"> = {
-      supabaseUserId: supabaseUser.user.id,
+      supabaseUserId: authUser.id,
       email: userData.email,
       role: userData.role || "user",
       status: "active",
@@ -171,14 +130,14 @@ export async function updateUser(
   updateData: UpdateUserRequest,
 ): Promise<CombinedUser | null> {
   const collection = getCollection();
-  const supabaseAdmin = getSupabaseAdmin();
+  const authProvider = getAuthProvider();
 
   if (!ObjectId.isValid(id)) {
     return null;
   }
 
   try {
-    // Get the current user to find the Supabase ID
+    // Get the current user to find the auth provider ID
     const currentUser = await collection.findOne({
       _id: new ObjectId(id),
       status: { $ne: "deleted" },
@@ -204,14 +163,11 @@ export async function updateUser(
       return null;
     }
 
-    // Update Supabase user if role changed
+    // Update auth provider user if role changed
     if (updateData.role) {
-      await supabaseAdmin.auth.admin.updateUserById(
-        currentUser.supabaseUserId,
-        {
-          app_metadata: { role: updateData.role },
-        },
-      );
+      await authProvider.updateUser(currentUser.supabaseUserId, {
+        appMetadata: { role: updateData.role },
+      });
     }
 
     return combineUserData(mongoResult);
@@ -223,14 +179,14 @@ export async function updateUser(
 
 export async function deleteUser(id: string): Promise<boolean> {
   const collection = getCollection();
-  const supabaseAdmin = getSupabaseAdmin();
+  const authProvider = getAuthProvider();
 
   if (!ObjectId.isValid(id)) {
     return false;
   }
 
   try {
-    // Get the current user to find the Supabase ID
+    // Get the current user to find the auth provider ID
     const currentUser = await collection.findOne({
       _id: new ObjectId(id),
       status: { $ne: "deleted" },
@@ -240,13 +196,12 @@ export async function deleteUser(id: string): Promise<boolean> {
       return false;
     }
 
-    // Delete from Supabase first
-    const { error } = await supabaseAdmin.auth.admin.deleteUser(
-      currentUser.supabaseUserId,
-    );
-    if (error) {
-      console.error("Failed to delete Supabase user:", error);
-      // Continue with soft delete in MongoDB even if Supabase deletion fails
+    // Delete from auth provider first
+    try {
+      await authProvider.deleteUser(currentUser.supabaseUserId);
+    } catch (error) {
+      console.error("Failed to delete auth provider user:", error);
+      // Continue with soft delete in MongoDB even if auth provider deletion fails
     }
 
     // Soft delete in MongoDB
@@ -417,36 +372,36 @@ export async function getUserStats(): Promise<{
   };
 }
 
-// Sync function for creating user from Supabase auth (for OAuth flows)
-export async function syncUserWithSupabase(
-  supabaseUserId: string,
+// Sync function for creating user from auth provider (for OAuth flows)
+export async function syncUserWithAuthProvider(
+  authUserId: string,
 ): Promise<CombinedUser | null> {
-  const supabaseAdmin = getSupabaseAdmin();
+  const authProvider = getAuthProvider();
   const collection = getCollection();
 
   try {
-    const { data: supabaseUser, error } =
-      await supabaseAdmin.auth.admin.getUserById(supabaseUserId);
+    const authUser = await authProvider.getUserById(authUserId);
 
-    if (error || !supabaseUser.user) {
+    if (!authUser) {
       return null;
     }
 
     // Check if user already exists
-    const existingUser = await collection.findOne({ supabaseUserId });
+    const existingUser = await collection.findOne({
+      supabaseUserId: authUserId,
+    });
 
     if (existingUser) {
       // User exists, return combined data
       return combineUserData(existingUser);
     }
 
-    // Create new user in MongoDB from Supabase data
+    // Create new user in MongoDB from auth provider data
     const now = new Date().toISOString();
     const mongoUser: Omit<User, "_id"> = {
-      supabaseUserId,
-      email: supabaseUser.user.email!,
-      role:
-        (supabaseUser.user.app_metadata?.role as "admin" | "user") || "user",
+      supabaseUserId: authUserId,
+      email: authUser.email!,
+      role: (authUser.appMetadata?.role as "admin" | "user") || "user",
       status: "active",
       createdAt: now,
       updatedAt: now,
@@ -459,7 +414,7 @@ export async function syncUserWithSupabase(
       ...mongoUser,
     });
   } catch (error) {
-    console.error("Error syncing user with Supabase:", error);
+    console.error("Error syncing user with auth provider:", error);
     return null;
   }
 }

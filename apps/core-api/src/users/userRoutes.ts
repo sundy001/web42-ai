@@ -14,7 +14,7 @@ import {
   getUserStats,
   listUsers,
   restoreUser,
-  syncUserWithSupabase,
+  syncUserWithAuthProvider,
   updateUser,
 } from "../stores/userStore";
 import {
@@ -175,7 +175,7 @@ router.post(
       return;
     }
 
-    const user = await syncUserWithSupabase(supabaseUserId);
+    const user = await syncUserWithAuthProvider(supabaseUserId);
 
     if (!user) {
       res.status(404).json({

@@ -1,4 +1,4 @@
-import { login, signout } from "../lib/supabase";
+import { login, signout } from "../lib/authProvider";
 import { getUserBySupabaseId } from "../stores/userStore";
 import type { LoginRequest, LoginResponse } from "./types";
 
@@ -16,13 +16,20 @@ export async function loginUser(
       throw new Error("Failed to sync user data");
     }
 
+    const session = data.session as {
+      access_token?: string;
+      refresh_token?: string;
+      expires_in?: number;
+      token_type?: string;
+    } | null;
+
     return {
       user: mongoUser,
       session: {
-        access_token: data.session.access_token,
-        refresh_token: data.session.refresh_token,
-        expires_in: data.session.expires_in,
-        token_type: data.session.token_type,
+        access_token: session?.access_token,
+        refresh_token: session?.refresh_token,
+        expires_in: session?.expires_in,
+        token_type: session?.token_type,
       },
     };
   } catch (error) {
