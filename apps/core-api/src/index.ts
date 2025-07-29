@@ -5,8 +5,8 @@ import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
 
 import { config } from "./config";
+import adminRoutes from "./domains/admin";
 import { authRoutes } from "./domains/auth";
-import { userRoutes } from "./domains/users";
 import { errorHandler } from "./middleware";
 import { openApiDocument } from "./openapi/openApiConfig";
 import { databaseStore, getHealthStatus } from "./stores";
@@ -56,8 +56,8 @@ app.get("/api/v1/status", (req, res) => {
 // Auth routes
 app.use("/api/v1/auth", authRoutes);
 
-// User routes
-app.use("/api/v1/users", userRoutes);
+// Admin routes
+app.use("/api/v1/admin", adminRoutes);
 
 // Welcome endpoint
 app.get("/", (req, res) => {
@@ -68,7 +68,7 @@ app.get("/", (req, res) => {
       health: "/health",
       api: "/api/v1/status",
       auth: "/api/v1/auth",
-      users: "/api/v1/users",
+      admin: "/api/v1/admin",
       documentation: "/api-docs",
     },
   });

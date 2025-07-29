@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { databaseStore } from "../../stores/database";
+import { databaseStore } from "../../../stores/database";
 import type {
   User,
   UserRepositoryCreateData,
@@ -268,8 +268,8 @@ export async function getUserStats(): Promise<{
       .toArray(),
   ]);
 
-  const roleStats = byRole.reduce(
-    (acc, item) => {
+  const roleStats = (byRole as { _id: string; count: number }[]).reduce(
+    (acc: Record<string, number>, item) => {
       acc[item._id] = item.count;
       return acc;
     },

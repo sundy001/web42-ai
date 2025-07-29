@@ -1,12 +1,6 @@
 import { generateSchema } from "@anatine/zod-openapi";
 import { z } from "zod";
 import {
-  LoginResponseSchema,
-  LoginSchema,
-  SignoutResponseSchema,
-  SignoutSchema,
-} from "../domains/auth";
-import {
   CreateUserSchema,
   ErrorResponseSchema,
   ListUsersQuerySchema,
@@ -15,7 +9,13 @@ import {
   UserListResponseSchema,
   UserSchema,
   UserStatsSchema,
-} from "../domains/users";
+} from "../domains/admin/users";
+import {
+  LoginResponseSchema,
+  LoginSchema,
+  SignoutResponseSchema,
+  SignoutSchema,
+} from "../domains/auth";
 import { generateExample } from "./generateExample.js";
 
 // Constants for response descriptions
@@ -182,7 +182,7 @@ export function generateOpenApiDocument() {
           },
         },
       },
-      "/api/v1/users": {
+      "/api/v1/admin/users": {
         get: {
           summary: "List all users",
           description:
@@ -280,7 +280,7 @@ export function generateOpenApiDocument() {
           },
         },
       },
-      "/api/v1/users/stats": {
+      "/api/v1/admin/users/stats": {
         get: {
           summary: "Get user statistics",
           description:
@@ -298,7 +298,7 @@ export function generateOpenApiDocument() {
           },
         },
       },
-      "/api/v1/users/{id}": {
+      "/api/v1/admin/users/{id}": {
         get: {
           summary: "Get user by ID",
           description: "Retrieve a specific user by their MongoDB ObjectId",
@@ -404,7 +404,7 @@ export function generateOpenApiDocument() {
           },
         },
       },
-      "/api/v1/users/{id}/restore": {
+      "/api/v1/admin/users/{id}/restore": {
         post: {
           summary: "Restore deleted user",
           description:

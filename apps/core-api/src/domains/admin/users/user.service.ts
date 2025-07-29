@@ -1,4 +1,4 @@
-import { getAuthProvider } from "../auth";
+import { getAuthProvider } from "../../auth";
 import { combineUserData } from "./combineUserData";
 import type {
   CombinedUser,

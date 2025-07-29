@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import type { CombinedUser } from "../users";
+import type { CombinedUser } from "../admin/users";
 
 // =============================================================================
 // DOMAIN ENTITIES

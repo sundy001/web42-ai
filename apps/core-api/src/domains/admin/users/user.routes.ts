@@ -5,12 +5,8 @@ import {
   validateBody,
   validateObjectId,
   validateQuery,
-} from "../../middleware";
-import {
-  authenticateUser,
-  requireAdmin,
-  type AuthenticatedRequest,
-} from "../auth";
+} from "../../../middleware";
+import { type AuthenticatedRequest } from "../../auth";
 import type { CreateUserRequest, UpdateUserRequest } from "./types";
 import {
   CreateUserSchema,
@@ -36,8 +32,6 @@ const router = express.Router();
 // GET /users - List users with optional filtering and pagination (Admin only)
 router.get(
   "/",
-  authenticateUser,
-  requireAdmin,
   validateQuery(ListUsersQuerySchema),
   asyncHandler(async (req: Request, res: Response) => {
     const { page, limit, supabaseUserId, email, role, status, includeDeleted } =
@@ -60,8 +54,6 @@ router.get(
 // GET /users/stats - Get user statistics (Admin only)
 router.get(
   "/stats",
-  authenticateUser,
-  requireAdmin,
   asyncHandler(async (req: Request, res: Response) => {
     const stats = await getUserStats();
     res.json(stats);
@@ -71,8 +63,6 @@ router.get(
 // GET /users/:id - Get user by ID (Admin only)
 router.get(
   "/:id",
-  authenticateUser,
-  requireAdmin,
   validateObjectId(),
   asyncHandler(async (req: Request, res: Response) => {
     const user = await getUserById(res.locals.validatedId);
@@ -92,8 +82,6 @@ router.get(
 // POST /users - Create new user (creates both Supabase and MongoDB user)
 router.post(
   "/",
-  authenticateUser,
-  requireAdmin,
   validateBody(CreateUserSchema),
   asyncHandler(async (req: Request, res: Response) => {
     const userData: CreateUserRequest = res.locals.validatedBody;
@@ -116,7 +104,6 @@ router.post(
 // GET /users/supabase/:supabaseUserId - Get user by Supabase ID
 router.get(
   "/supabase/:supabaseUserId",
-  authenticateUser,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const { supabaseUserId } = req.params;
 
@@ -128,14 +115,7 @@ router.get(
       return;
     }
 
-    // Allow users to access their own profile, or admins to access any profile
-    if (req.user?.id !== supabaseUserId && req.user?.role !== "admin") {
-      res.status(403).json({
-        error: "Forbidden",
-        message: "You can only access your own profile",
-      });
-      return;
-    }
+    // Admin can access any user profile
 
     const user = await getUserBySupabaseId(supabaseUserId);
 
@@ -154,7 +134,6 @@ router.get(
 // POST /users/sync/:supabaseUserId - Sync user with Supabase
 router.post(
   "/sync/:supabaseUserId",
-  authenticateUser,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const { supabaseUserId } = req.params;
 
@@ -166,14 +145,7 @@ router.post(
       return;
     }
 
-    // Allow users to sync their own profile, or admins to sync any profile
-    if (req.user?.id !== supabaseUserId && req.user?.role !== "admin") {
-      res.status(403).json({
-        error: "Forbidden",
-        message: "You can only sync your own profile",
-      });
-      return;
-    }
+    // Admin can sync any user profile
 
     const user = await syncUserWithAuthProvider(supabaseUserId);
 
@@ -192,8 +164,6 @@ router.post(
 // PUT /users/:id - Update user (Admin only)
 router.put(
   "/:id",
-  authenticateUser,
-  requireAdmin,
   validateObjectId(),
   validateBody(UpdateUserSchema),
   asyncHandler(async (req: Request, res: Response) => {
@@ -217,8 +187,6 @@ router.put(
 // DELETE /users/:id - Soft delete user (Admin only)
 router.delete(
   "/:id",
-  authenticateUser,
-  requireAdmin,
   validateObjectId(),
   asyncHandler(async (req: Request, res: Response) => {
     const deleted = await deleteUser(res.locals.validatedId);
@@ -238,8 +206,6 @@ router.delete(
 // POST /users/:id/restore - Restore deleted user (Admin only)
 router.post(
   "/:id/restore",
-  authenticateUser,
-  requireAdmin,
   validateObjectId(),
   asyncHandler(async (req: Request, res: Response) => {
     const user = await restoreUser(res.locals.validatedId);

@@ -1,4 +1,4 @@
-import { getUserBySupabaseId } from "../users";
+import { getUserBySupabaseId } from "../admin/users";
 import { login, signout } from "./providers";
 import type { LoginRequest, LoginResponse } from "./types";
 

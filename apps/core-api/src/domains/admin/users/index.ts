@@ -17,7 +17,7 @@ export {
 } from "./user.service";
 
 // HTTP routes for application setup
-export { default as userRoutes } from "./user.routes";
+export { default } from "./user.routes";
 
 // Export all types under a namespace for external consumers
 export type * as UserTypes from "./types";

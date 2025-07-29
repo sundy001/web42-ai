@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { ZodError, type ZodIssue, type ZodSchema } from "zod";
-import { ObjectIdSchema } from "../domains/users";
+import { ObjectIdSchema } from "../domains/admin/users";
 
 const INTERNAL_SERVER_ERROR = "Internal server error";
 const VALIDATION_FAILED = "Validation failed";
