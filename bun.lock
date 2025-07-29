@@ -139,21 +139,6 @@
         "vitest": "^2.1.8",
       },
     },
-    "apps/workers": {
-      "name": "@web42-ai/workers",
-      "version": "0.0.0",
-      "dependencies": {
-        "zod": "^4.0.10",
-      },
-      "devDependencies": {
-        "@cloudflare/vitest-pool-workers": "^0.8.19",
-        "@web42-ai/eslint-config": "workspace:*",
-        "eslint": "^9.31.0",
-        "typescript": "^5.5.2",
-        "vitest": "~3.2.0",
-        "wrangler": "^4.26.0",
-      },
-    },
     "packages/eslint-config": {
       "name": "@web42-ai/eslint-config",
       "version": "0.0.0",
@@ -206,6 +191,21 @@
         "@web42-ai/typescript-config": "*",
         "eslint": "^9.31.0",
         "typescript": "5.8.2",
+      },
+    },
+    "packages/workers": {
+      "name": "@web42-ai/workers",
+      "version": "0.0.0",
+      "dependencies": {
+        "zod": "^4.0.10",
+      },
+      "devDependencies": {
+        "@cloudflare/vitest-pool-workers": "^0.8.19",
+        "@web42-ai/eslint-config": "workspace:*",
+        "eslint": "^9.31.0",
+        "typescript": "^5.5.2",
+        "vitest": "~3.2.0",
+        "wrangler": "^4.26.0",
       },
     },
   },
@@ -678,7 +678,7 @@
 
     "@web42-ai/ui": ["@web42-ai/ui@workspace:packages/ui"],
 
-    "@web42-ai/workers": ["@web42-ai/workers@workspace:apps/workers"],
+    "@web42-ai/workers": ["@web42-ai/workers@workspace:packages/workers"],
 
     "accepts": ["accepts@1.3.8", "", { "dependencies": { "mime-types": "~2.1.34", "negotiator": "0.6.3" } }, "sha512-PYAthTa2m2VKxuvSD3DPC/Gy+U+sOA1LAuT8mkmRuvw+NACSaeXEQ+NHcVF7rONl6qcaxV3Uuemwawk+7+SJLw=="],
 
