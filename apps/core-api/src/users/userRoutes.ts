@@ -6,18 +6,6 @@ import {
   type AuthenticatedRequest,
 } from "../middleware/auth";
 import {
-  createUser,
-  deleteUser,
-  getUserByEmail,
-  getUserById,
-  getUserBySupabaseId,
-  getUserStats,
-  listUsers,
-  restoreUser,
-  syncUserWithAuthProvider,
-  updateUser,
-} from "./userService";
-import {
   asyncHandler,
   validateBody,
   validateObjectId,
@@ -30,6 +18,18 @@ import {
   type ListUsersQueryInput,
 } from "./schemas";
 import type { CreateUserRequest, UpdateUserRequest } from "./types";
+import {
+  createUser,
+  deleteUser,
+  getUserByEmail,
+  getUserById,
+  getUserBySupabaseId,
+  getUserStats,
+  listUsers,
+  restoreUser,
+  syncUserWithAuthProvider,
+  updateUser,
+} from "./userService";
 
 const router = express.Router();
 

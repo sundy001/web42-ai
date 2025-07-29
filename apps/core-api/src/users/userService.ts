@@ -69,7 +69,10 @@ export async function getUserBySupabaseId(
   supabaseUserId: string,
   includeDeleted = false,
 ): Promise<CombinedUser | null> {
-  const mongoUser = await userStore.getUserBySupabaseId(supabaseUserId, includeDeleted);
+  const mongoUser = await userStore.getUserBySupabaseId(
+    supabaseUserId,
+    includeDeleted,
+  );
   if (!mongoUser) {
     return null;
   }
@@ -152,7 +155,7 @@ export async function listUsers(
   pagination: PaginationOptions = {},
 ): Promise<UserListResponse> {
   const result = await userStore.listUsers(filters, pagination);
-  
+
   // Combine each user with auth provider data
   const users = await Promise.all(
     result.users.map((user) => combineUserData(user)),
