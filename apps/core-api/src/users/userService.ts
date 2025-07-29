@@ -167,11 +167,8 @@ export async function listUsers(
   };
 }
 
-export async function userExists(
-  email: string,
-  excludeDeleted = true,
-): Promise<boolean> {
-  return userStore.userExists(email, excludeDeleted);
+export async function userExists(email: string): Promise<boolean> {
+  return userStore.userExists(email);
 }
 
 export async function getUserStats(): Promise<{

@@ -6,7 +6,7 @@
   "description": "Core API Express server for web42-ai platform",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "tsx watch --env-file=.env src/index.ts",
+    "dev": "bun --watch --env-file=.env src/index.ts",
     "build": "tsc",
     "start": "bun -r dotenv/config dist/index.js",
     "lint": "eslint . --max-warnings 0",
