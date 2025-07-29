@@ -15,11 +15,12 @@ This is a Turborepo monorepo project named `web42-ai` - an AI site generator pla
   - `consumer-web/` - Consumer-facing Next.js application (port 3001)
   - `core-api/` - Express.js server (port 3002) for API endpoints and site operations
   - `chat-api/` - Express.js server (port 3003) for chat functionality
-  - `workers/` - Cloudflare Workers for queue processing and event handling
 - **packages/** - Shared packages across apps
   - `@web42-ai/ui` - Shared React component library using Radix UI, CVA, and Tailwind
   - `@web42-ai/eslint-config` - Comprehensive ESLint configurations with security and complexity rules
   - `@web42-ai/typescript-config` - Shared TypeScript configurations with strict mode
+  - `@web42-ai/migrations` - Database migration utilities and CLI
+  - `@web42-ai/workers` - Cloudflare Workers for queue processing and event handling
 
 ### Key Technologies
 
@@ -89,8 +90,8 @@ bun test
 # Run specific test file
 bun test stringUtils
 
-# Run tests with UI
-bun test:ui
+# Run tests with Vitest UI (if configured)
+# bun test:ui
 
 # Run all checks before committing
 bun lint && bun check-types
@@ -139,7 +140,7 @@ The `@web42-ai/ui` package uses:
 
 ## Worker Architecture
 
-Cloudflare Workers in `apps/workers/` handle:
+Cloudflare Workers in `packages/workers/` handle:
 
 - Queue message processing for the event-driven system
 - AI code generation tasks via `plan-steps-queue`

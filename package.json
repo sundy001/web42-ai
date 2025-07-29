@@ -1,5 +1,5 @@
 {
-  "name": "my-turborepo",
+  "name": "web42-ai",
   "private": true,
   "scripts": {
     "build": "turbo run build",
