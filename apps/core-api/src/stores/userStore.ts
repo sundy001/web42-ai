@@ -31,12 +31,21 @@ export async function createUser(userData: CreateUserData): Promise<User> {
     updatedAt: now,
   };
 
-  const result = await collection.insertOne(mongoUser);
+  try {
+    const result = await collection.insertOne(mongoUser);
 
-  return {
-    _id: result.insertedId,
-    ...mongoUser,
-  };
+    return {
+      _id: result.insertedId,
+      ...mongoUser,
+    };
+  } catch (error) {
+    // Handle duplicate key error for email
+    if ((error as { code?: number; keyPattern?: { email?: number } }).code === 11000 && 
+        (error as { keyPattern?: { email?: number } }).keyPattern?.email) {
+      throw new Error(`User with email ${userData.email} already exists`);
+    }
+    throw error;
+  }
 }
 
 export async function getUserById(

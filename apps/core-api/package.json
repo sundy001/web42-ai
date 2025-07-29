@@ -12,7 +12,10 @@
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "migrate": "bun scripts/migrations/cli.ts up",
+    "migrate:down": "bun scripts/migrations/cli.ts down",
+    "migrate:status": "bun scripts/migrations/cli.ts status"
   },
   "dependencies": {
     "@anatine/zod-openapi": "^2.2.8",
@@ -24,6 +27,7 @@
     "mongodb": "^6.18.0",
     "morgan": "^1.10.0",
     "swagger-ui-express": "^5.0.1",
+    "umzug": "^3.8.2",
     "zod": "^3.23.8"
   },
   "devDependencies": {
