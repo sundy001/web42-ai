@@ -6,7 +6,6 @@ import {
   validateObjectId,
   validateQuery,
 } from "../../../middleware";
-import { type AuthenticatedRequest } from "../../auth";
 import type { CreateUserRequest, UpdateUserRequest } from "./types";
 import {
   CreateUserSchema,
@@ -19,17 +18,15 @@ import {
   deleteUser,
   getUserByEmail,
   getUserById,
-  getUserBySupabaseId,
   getUserStats,
   listUsers,
   restoreUser,
-  syncUserWithAuthProvider,
   updateUser,
 } from "./user.service";
 
 const router = express.Router();
 
-// GET /users - List users with optional filtering and pagination (Admin only)
+// GET /users - List users with optional filtering and pagination
 router.get(
   "/",
   validateQuery(ListUsersQuerySchema),
@@ -51,7 +48,7 @@ router.get(
   }),
 );
 
-// GET /users/stats - Get user statistics (Admin only)
+// GET /users/stats - Get user statistics
 router.get(
   "/stats",
   asyncHandler(async (req: Request, res: Response) => {
@@ -60,7 +57,7 @@ router.get(
   }),
 );
 
-// GET /users/:id - Get user by ID (Admin only)
+// GET /users/:id - Get user by ID
 router.get(
   "/:id",
   validateObjectId(),
@@ -101,67 +98,7 @@ router.post(
   }),
 );
 
-// GET /users/supabase/:supabaseUserId - Get user by Supabase ID
-router.get(
-  "/supabase/:supabaseUserId",
-  asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-    const { supabaseUserId } = req.params;
-
-    if (!supabaseUserId) {
-      res.status(400).json({
-        error: "Bad Request",
-        message: "Supabase user ID is required",
-      });
-      return;
-    }
-
-    // Admin can access any user profile
-
-    const user = await getUserBySupabaseId(supabaseUserId);
-
-    if (!user) {
-      res.status(404).json({
-        error: "Not found",
-        message: "User not found",
-      });
-      return;
-    }
-
-    res.json(user);
-  }),
-);
-
-// POST /users/sync/:supabaseUserId - Sync user with Supabase
-router.post(
-  "/sync/:supabaseUserId",
-  asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-    const { supabaseUserId } = req.params;
-
-    if (!supabaseUserId) {
-      res.status(400).json({
-        error: "Bad Request",
-        message: "Supabase user ID is required",
-      });
-      return;
-    }
-
-    // Admin can sync any user profile
-
-    const user = await syncUserWithAuthProvider(supabaseUserId);
-
-    if (!user) {
-      res.status(404).json({
-        error: "Not found",
-        message: "User not found in Supabase",
-      });
-      return;
-    }
-
-    res.json(user);
-  }),
-);
-
-// PUT /users/:id - Update user (Admin only)
+// PUT /users/:id - Update user
 router.put(
   "/:id",
   validateObjectId(),
@@ -184,7 +121,7 @@ router.put(
   }),
 );
 
-// DELETE /users/:id - Soft delete user (Admin only)
+// DELETE /users/:id - Soft delete user
 router.delete(
   "/:id",
   validateObjectId(),
@@ -203,7 +140,7 @@ router.delete(
   }),
 );
 
-// POST /users/:id/restore - Restore deleted user (Admin only)
+// POST /users/:id/restore - Restore deleted user
 router.post(
   "/:id/restore",
   validateObjectId(),

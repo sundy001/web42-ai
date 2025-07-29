@@ -159,13 +159,10 @@ export const ErrorResponseSchema = z.object({
   error: z
     .string()
     .openapi({ example: "Validation failed", description: "Error type" }),
-  message: z
-    .string()
-    .optional()
-    .openapi({
-      example: "Project name is required",
-      description: "Error message",
-    }),
+  message: z.string().optional().openapi({
+    example: "Project name is required",
+    description: "Error message",
+  }),
   details: z
     .array(
       z.object({

@@ -11,7 +11,6 @@ export {
   getUserStats,
   listUsers,
   restoreUser,
-  syncUserWithAuthProvider,
   updateUser,
   userExists,
 } from "./user.service";

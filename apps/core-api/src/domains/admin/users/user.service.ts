@@ -180,37 +180,3 @@ export async function getUserStats(): Promise<{
 }> {
   return userStore.getUserStats();
 }
-
-// Sync function for creating user from auth provider (for OAuth flows)
-export async function syncUserWithAuthProvider(
-  authUserId: string,
-): Promise<CombinedUser | null> {
-  const authProvider = getAuthProvider();
-
-  try {
-    const authUser = await authProvider.getUserById(authUserId);
-    if (!authUser) {
-      return null;
-    }
-
-    // Check if user already exists
-    const existingUser = await userStore.getUserBySupabaseId(authUserId);
-    if (existingUser) {
-      // User exists, return combined data using existing authUser to avoid API call
-      return combineUserData(existingUser, authUser);
-    }
-
-    // Create new user in MongoDB from auth provider data
-    const mongoUser = await userStore.createUser({
-      supabaseUserId: authUserId,
-      email: authUser.email!,
-      role: (authUser.appMetadata?.role as "admin" | "user") || "user",
-      status: "active",
-    });
-
-    return combineUserData(mongoUser, authUser);
-  } catch (error) {
-    console.error("Error syncing user with auth provider:", error);
-    return null;
-  }
-}
