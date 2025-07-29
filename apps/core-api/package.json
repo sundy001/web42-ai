@@ -13,13 +13,14 @@
     "check-types": "tsc --noEmit",
     "test": "vitest",
     "test:run": "vitest run",
-    "migrate": "bun scripts/migrations/cli.ts up",
-    "migrate:down": "bun scripts/migrations/cli.ts down",
-    "migrate:status": "bun scripts/migrations/cli.ts status"
+    "migrate": "bun run ../../packages/migrations/dist/cli.js up",
+    "migrate:down": "bun run ../../packages/migrations/dist/cli.js down",
+    "migrate:status": "bun run ../../packages/migrations/dist/cli.js status"
   },
   "dependencies": {
     "@anatine/zod-openapi": "^2.2.8",
     "@supabase/supabase-js": "^2.45.0",
+    "@web42-ai/migrations": "workspace:*",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.19.2",

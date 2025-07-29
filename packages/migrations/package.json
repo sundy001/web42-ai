@@ -1,0 +1,44 @@
+{
+  "name": "@web42-ai/migrations",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "Database migration tools for web42-ai platform",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "web42-migrate": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./cli": {
+      "types": "./dist/cli.d.ts",
+      "import": "./dist/cli.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "test": "vitest",
+    "test:run": "vitest run"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "mongodb": "^6.18.0",
+    "umzug": "^3.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "@web42-ai/eslint-config": "workspace:*",
+    "@web42-ai/typescript-config": "workspace:*",
+    "eslint": "^9.31.0",
+    "tsx": "^4.19.2",
+    "typescript": "5.8.2",
+    "vitest": "^2.1.8"
+  }
+}

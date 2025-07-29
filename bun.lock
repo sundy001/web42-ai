@@ -116,6 +116,7 @@
       "dependencies": {
         "@anatine/zod-openapi": "^2.2.8",
         "@supabase/supabase-js": "^2.45.0",
+        "@web42-ai/migrations": "workspace:*",
         "cors": "^2.8.5",
         "dotenv": "^16.4.7",
         "express": "^4.19.2",
@@ -161,6 +162,24 @@
         "globals": "^16.3.0",
         "typescript": "^5.8.2",
         "typescript-eslint": "^8.37.0",
+      },
+    },
+    "packages/migrations": {
+      "name": "@web42-ai/migrations",
+      "version": "0.1.0",
+      "dependencies": {
+        "dotenv": "^16.4.7",
+        "mongodb": "^6.18.0",
+        "umzug": "^3.8.2",
+      },
+      "devDependencies": {
+        "@types/node": "^22.15.3",
+        "@web42-ai/eslint-config": "workspace:*",
+        "@web42-ai/typescript-config": "workspace:*",
+        "eslint": "^9.31.0",
+        "tsx": "^4.19.2",
+        "typescript": "5.8.2",
+        "vitest": "^2.1.8",
       },
     },
     "packages/typescript-config": {
@@ -682,6 +701,8 @@
     "@web42-ai/core-api": ["@web42-ai/core-api@workspace:apps/core-api"],
 
     "@web42-ai/eslint-config": ["@web42-ai/eslint-config@workspace:packages/eslint-config"],
+
+    "@web42-ai/migrations": ["@web42-ai/migrations@workspace:packages/migrations"],
 
     "@web42-ai/typescript-config": ["@web42-ai/typescript-config@workspace:packages/typescript-config"],
 
@@ -1676,6 +1697,8 @@
     "@web42-ai/consumer-web/typescript": ["typescript@5.8.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="],
 
     "@web42-ai/core-api/typescript": ["typescript@5.8.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="],
+
+    "@web42-ai/migrations/typescript": ["typescript@5.8.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="],
 
     "@web42-ai/ui/typescript": ["typescript@5.8.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="],
 

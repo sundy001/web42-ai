@@ -1,4 +1,4 @@
-import type { MigrationContext } from "../scripts/migrations/migrator";
+import type { MigrationContext } from "@web42-ai/migrations";
 
 export async function up({ db }: MigrationContext): Promise<void> {
   console.log("Creating indexes for users collection...");

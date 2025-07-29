@@ -40,8 +40,11 @@ export async function createUser(userData: CreateUserData): Promise<User> {
     };
   } catch (error) {
     // Handle duplicate key error for email
-    if ((error as { code?: number; keyPattern?: { email?: number } }).code === 11000 && 
-        (error as { keyPattern?: { email?: number } }).keyPattern?.email) {
+    if (
+      (error as { code?: number; keyPattern?: { email?: number } }).code ===
+        11000 &&
+      (error as { keyPattern?: { email?: number } }).keyPattern?.email
+    ) {
       throw new Error(`User with email ${userData.email} already exists`);
     }
     throw error;
