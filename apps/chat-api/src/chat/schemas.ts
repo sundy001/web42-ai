@@ -1,4 +1,8 @@
+import { extendZodWithOpenApi } from "@anatine/zod-openapi";
 import { z } from "zod";
+
+// Extend Zod with OpenAPI support
+extendZodWithOpenApi(z);
 
 export const messageSchema = z.object({
   id: z.string(),

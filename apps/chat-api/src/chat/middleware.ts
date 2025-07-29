@@ -6,7 +6,12 @@ export interface ApiError extends Error {
   code?: string;
 }
 
-export function errorHandler(err: ApiError, req: Request, res: Response, _next: NextFunction): void {
+export function errorHandler(
+  err: ApiError,
+  req: Request,
+  res: Response,
+  _next: NextFunction,
+): void {
   console.error("API Error:", err);
 
   const status = err.status || 500;

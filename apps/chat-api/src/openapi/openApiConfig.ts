@@ -1,11 +1,11 @@
-import { createDocument } from "@anatine/zod-openapi";
+import { generateSchema } from "@anatine/zod-openapi";
 import {
   chatSessionSchema,
   sendMessageRequestSchema,
   sendMessageResponseSchema,
 } from "../chat/schemas.js";
 
-export const openApiDocument = createDocument({
+export const openApiDocument = {
   openapi: "3.0.0",
   info: {
     title: "Chat API",
@@ -27,7 +27,7 @@ export const openApiDocument = createDocument({
           required: true,
           content: {
             "application/json": {
-              schema: sendMessageRequestSchema,
+              schema: generateSchema(sendMessageRequestSchema),
             },
           },
         },
@@ -36,7 +36,7 @@ export const openApiDocument = createDocument({
             description: "Message sent successfully",
             content: {
               "application/json": {
-                schema: sendMessageResponseSchema,
+                schema: generateSchema(sendMessageResponseSchema),
               },
             },
           },
@@ -70,7 +70,7 @@ export const openApiDocument = createDocument({
             description: "Chat session retrieved successfully",
             content: {
               "application/json": {
-                schema: chatSessionSchema,
+                schema: generateSchema(chatSessionSchema),
               },
             },
           },
@@ -119,7 +119,7 @@ export const openApiDocument = createDocument({
                   properties: {
                     sessions: {
                       type: "array",
-                      items: chatSessionSchema,
+                      items: generateSchema(chatSessionSchema),
                     },
                     count: {
                       type: "number",
@@ -151,9 +151,9 @@ export const openApiDocument = createDocument({
   },
   components: {
     schemas: {
-      SendMessageRequest: sendMessageRequestSchema,
-      SendMessageResponse: sendMessageResponseSchema,
-      ChatSession: chatSessionSchema,
+      SendMessageRequest: generateSchema(sendMessageRequestSchema),
+      SendMessageResponse: generateSchema(sendMessageResponseSchema),
+      ChatSession: generateSchema(chatSessionSchema),
     },
   },
   tags: [
@@ -166,4 +166,4 @@ export const openApiDocument = createDocument({
       description: "Health check operations",
     },
   ],
-});
+};
