@@ -151,7 +151,6 @@ export const UserListResponseSchema = z.object({
     .openapi({ example: 10, description: "Total number of pages" }),
 });
 
-
 export const ErrorResponseSchema = z.object({
   error: z
     .string()

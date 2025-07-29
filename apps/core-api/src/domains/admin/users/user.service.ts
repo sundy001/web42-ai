@@ -170,4 +170,3 @@ export async function listUsers(
 export async function userExists(email: string): Promise<boolean> {
   return userStore.userExists(email);
 }
-

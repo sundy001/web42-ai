@@ -1,6 +1,12 @@
 import { generateSchema } from "@anatine/zod-openapi";
 import { z } from "zod";
 import {
+  CreateProjectSchema,
+  ListProjectsQuerySchema,
+  ProjectListResponseSchema,
+  ProjectSchema,
+} from "../domains/admin/projects/project.schemas";
+import {
   CreateUserSchema,
   ErrorResponseSchema,
   ListUsersQuerySchema,
@@ -9,12 +15,6 @@ import {
   UserListResponseSchema,
   UserSchema,
 } from "../domains/admin/users";
-import {
-  CreateProjectSchema,
-  ListProjectsQuerySchema,
-  ProjectListResponseSchema,
-  ProjectSchema,
-} from "../domains/admin/projects/project.schemas";
 import {
   LoginResponseSchema,
   LoginSchema,
@@ -495,7 +495,8 @@ export function generateOpenApiDocument() {
               in: "query",
               name: "name",
               schema: { type: "string" },
-              description: "Filter by project name (case-insensitive partial match)",
+              description:
+                "Filter by project name (case-insensitive partial match)",
             },
             {
               in: "query",

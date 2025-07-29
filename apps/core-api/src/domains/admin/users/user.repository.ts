@@ -249,7 +249,6 @@ export async function userExists(email: string): Promise<boolean> {
   return count > 0;
 }
 
-
 // Re-export repository types for external use (if needed)
 export type {
   CreateUserData,
