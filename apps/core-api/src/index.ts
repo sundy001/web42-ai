@@ -107,6 +107,7 @@ async function startServer() {
       console.log(`🚀 Core API server running on port ${PORT}`);
       console.log(`📍 Health check: http://localhost:${PORT}/health`);
       console.log(`🔗 API status: http://localhost:${PORT}/api/v1/status`);
+      console.log(`📖 API docs: http://localhost:${PORT}/api-docs`);
       console.log(`💾 Database: ${config.databaseName} on ${config.uri}`);
     });
   } catch (error) {

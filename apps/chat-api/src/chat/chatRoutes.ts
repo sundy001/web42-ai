@@ -25,7 +25,7 @@ function generateAIResponse(userMessage: string): string {
     `Perfect! I can definitely help you build something like "${userMessage}".`,
   ];
 
-  return responses[Math.floor(Math.random() * responses.length)];
+  return responses[Math.floor(Math.random() * responses.length)]!;
 }
 
 // POST /api/v1/chat/send - Send a message and get AI response
@@ -93,7 +93,7 @@ chatRoutes.get(
     try {
       const { sessionId } = req.params;
 
-      if (!chatSessions.has(sessionId)) {
+      if (!sessionId || !chatSessions.has(sessionId)) {
         return res.status(404).json({
           error: {
             code: "SESSION_NOT_FOUND",
@@ -103,7 +103,7 @@ chatRoutes.get(
         });
       }
 
-      const session = chatSessions.get(sessionId)!;
+      const session = chatSessions.get(sessionId!)!;
       res.json(session);
     } catch (error) {
       next(error);
@@ -124,7 +124,7 @@ chatRoutes.get("/sessions", (req: Request, res: Response) => {
 chatRoutes.delete("/session/:sessionId", (req: Request, res: Response) => {
   const { sessionId } = req.params;
 
-  if (!chatSessions.has(sessionId)) {
+  if (!sessionId || !chatSessions.has(sessionId)) {
     return res.status(404).json({
       error: {
         code: "SESSION_NOT_FOUND",
@@ -134,6 +134,6 @@ chatRoutes.delete("/session/:sessionId", (req: Request, res: Response) => {
     });
   }
 
-  chatSessions.delete(sessionId);
+  chatSessions.delete(sessionId!);
   res.status(204).send();
 });
