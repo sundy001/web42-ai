@@ -162,6 +162,7 @@ export function generateOpenApiDocument() {
           summary: "User signout",
           description: "Sign out user by invalidating their access token",
           tags: ["Authentication"],
+          security: [{ bearerAuth: [] }],
           requestBody: {
             required: true,
             content: createResponseContent(SignoutSchema),
@@ -188,6 +189,7 @@ export function generateOpenApiDocument() {
           description:
             "Retrieve a paginated list of users with optional filtering",
           tags: ["Users"],
+          security: [{ bearerAuth: [] }],
           parameters: [
             {
               in: "query",
@@ -256,6 +258,7 @@ export function generateOpenApiDocument() {
           summary: "Create a new user",
           description: "Create a new user with the provided information",
           tags: ["Users"],
+          security: [{ bearerAuth: [] }],
           requestBody: {
             required: true,
             content: createResponseContent(CreateUserSchema),
@@ -286,6 +289,7 @@ export function generateOpenApiDocument() {
           description:
             "Retrieve statistics about users including counts by status and auth provider",
           tags: ["Users"],
+          security: [{ bearerAuth: [] }],
           responses: {
             "200": {
               description: "User statistics retrieved successfully",
@@ -303,6 +307,7 @@ export function generateOpenApiDocument() {
           summary: "Get user by ID",
           description: "Retrieve a specific user by their MongoDB ObjectId",
           tags: ["Users"],
+          security: [{ bearerAuth: [] }],
           parameters: [
             {
               in: "path",
@@ -335,6 +340,7 @@ export function generateOpenApiDocument() {
           summary: "Update user",
           description: "Update an existing user's information",
           tags: ["Users"],
+          security: [{ bearerAuth: [] }],
           parameters: [
             {
               in: "path",
@@ -376,6 +382,7 @@ export function generateOpenApiDocument() {
           description:
             "Soft delete a user by setting their status to 'deleted'",
           tags: ["Users"],
+          security: [{ bearerAuth: [] }],
           parameters: [
             {
               in: "path",
@@ -410,6 +417,7 @@ export function generateOpenApiDocument() {
           description:
             "Restore a soft-deleted user by setting their status back to 'active'",
           tags: ["Users"],
+          security: [{ bearerAuth: [] }],
           parameters: [
             {
               in: "path",
@@ -452,6 +460,14 @@ export function generateOpenApiDocument() {
         SignoutRequest: generateSchema(SignoutSchema),
         SignoutResponse: generateSchema(SignoutResponseSchema),
         ErrorResponse: generateSchema(ErrorResponseSchema),
+      },
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+          description: "JWT token obtained from Supabase authentication",
+        },
       },
     },
     tags: [

@@ -44,7 +44,7 @@ export async function authenticateUser(
     req.user = {
       id: user.id,
       email: user.email,
-      role: user.role,
+      role: user.app_metadata.role,
     };
 
     next();
