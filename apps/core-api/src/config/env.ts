@@ -1,0 +1,68 @@
+import { z } from "zod";
+
+// Environment validation schema
+const envSchema = z.object({
+  // Server configuration
+  NODE_ENV: z
+    .enum(["development", "production", "test"])
+    .default("development"),
+  PORT: z
+    .string()
+    .transform(Number)
+    .pipe(z.number().int().min(1).max(65535))
+    .default("3002"),
+
+  // Database configuration
+  MONGODB_URI: z.string().url().default("mongodb://localhost:27017"),
+  DATABASE_NAME: z.string().min(1).default("web42-ai"),
+
+  // Supabase authentication
+  SUPABASE_URL: z.string().url(),
+  SUPABASE_ANON_KEY: z.string().min(1),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+});
+
+// Validate environment variables
+function validateEnv() {
+  try {
+    return envSchema.parse(process.env);
+  } catch (error) {
+    console.error("❌ Invalid environment variables:");
+    if (error instanceof z.ZodError) {
+      error.errors.forEach((err) => {
+        console.error(`  - ${err.path.join(".")}: ${err.message}`);
+      });
+    }
+    process.exit(1);
+  }
+}
+
+// Validated environment configuration
+const env = validateEnv();
+
+// Derived configuration objects
+export const config = {
+  // Server
+  server: {
+    port: env.PORT,
+    nodeEnv: env.NODE_ENV,
+    isDevelopment: env.NODE_ENV === "development",
+    isProduction: env.NODE_ENV === "production",
+    isTest: env.NODE_ENV === "test",
+  },
+
+  // Database
+  database: {
+    uri: env.MONGODB_URI,
+    name: env.DATABASE_NAME,
+  },
+
+  // Authentication
+  auth: {
+    supabase: {
+      url: env.SUPABASE_URL,
+      anonKey: env.SUPABASE_ANON_KEY,
+      serviceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY,
+    },
+  },
+} as const;

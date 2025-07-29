@@ -4,14 +4,15 @@ import helmet from "helmet";
 import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
 
-import authRoutes from "./auth/authRoutes.js";
-import { openApiDocument } from "./openapi/openApiConfig.js";
-import { databaseStore, getHealthStatus } from "./stores/index.js";
-import { userRoutes } from "./users/index.js";
-import { errorHandler } from "./users/middleware.js";
+import authRoutes from "./auth/authRoutes";
+import { config } from "./config";
+import { openApiDocument } from "./openapi/openApiConfig";
+import { databaseStore, getHealthStatus } from "./stores";
+import { userRoutes } from "./users";
+import { errorHandler } from "./users/middleware";
 
 const app = express();
-const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3002;
+const PORT = config.server.port;
 
 // Middleware
 app.use(helmet());

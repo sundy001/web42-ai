@@ -1,5 +1,7 @@
 import { Db, MongoClient } from "mongodb";
 
+import { config as systemConfig } from "../config";
+
 export interface DatabaseConfig {
   uri: string;
   databaseName: string;
@@ -12,10 +14,8 @@ class DatabaseStore {
 
   constructor(config?: Partial<DatabaseConfig>) {
     this.config = {
-      uri:
-        config?.uri || process.env.MONGODB_URI || "mongodb://localhost:27017",
-      databaseName:
-        config?.databaseName || process.env.DATABASE_NAME || "web42-ai",
+      uri: config?.uri || systemConfig.database.uri,
+      databaseName: config?.databaseName || systemConfig.database.name,
     };
   }
 
