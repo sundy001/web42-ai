@@ -21,7 +21,7 @@ export async function getHealthStatus(): Promise<HealthStatus> {
         },
       },
     };
-  } catch (error) {
+  } catch (_error) {
     return {
       status: "error",
       timestamp: new Date().toISOString(),

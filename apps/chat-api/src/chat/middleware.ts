@@ -1,16 +1,12 @@
 import type { NextFunction, Request, Response } from "express";
+import type { ZodSchema } from "zod";
 
 export interface ApiError extends Error {
   status?: number;
   code?: string;
 }
 
-export function errorHandler(
-  err: ApiError,
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void {
+export function errorHandler(err: ApiError, req: Request, res: Response, _next: NextFunction): void {
   console.error("API Error:", err);
 
   const status = err.status || 500;
@@ -27,12 +23,12 @@ export function errorHandler(
   });
 }
 
-export function validateRequest(schema: any) {
+export function validateRequest(schema: ZodSchema) {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       req.body = schema.parse(req.body);
       next();
-    } catch (error) {
+    } catch (_error) {
       const apiError: ApiError = new Error("Validation failed");
       apiError.status = 400;
       apiError.code = "VALIDATION_ERROR";

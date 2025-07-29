@@ -1,3 +1,3 @@
-import baseConfig from "@web42-ai/eslint-config/base.js";
+import { config } from "@web42-ai/eslint-config/base";
 
-export default [...baseConfig];
+export default [...config];

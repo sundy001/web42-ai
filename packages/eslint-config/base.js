@@ -31,6 +31,16 @@ export const config = [
       onlyWarn,
     },
     rules: {
+      // TypeScript rules
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+
       // Turbo rules
       "turbo/no-undeclared-env-vars": "warn",
 

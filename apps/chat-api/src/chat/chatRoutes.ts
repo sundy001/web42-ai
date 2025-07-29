@@ -18,11 +18,11 @@ const chatSessions = new Map<string, ChatSession>();
 // Simulate AI response generation
 function generateAIResponse(userMessage: string): string {
   const responses = [
-    "That's an interesting idea! Let me help you build that.",
-    "Great concept! I can help you create that website.",
-    "I understand what you're looking for. Let me work on that for you.",
-    "Excellent! I'll start working on your website right away.",
-    "Perfect! I can definitely help you build something like that.",
+    `That's an interesting idea about "${userMessage}"! Let me help you build that.`,
+    `Great concept! I can help you create that website based on: "${userMessage}"`,
+    `I understand what you're looking for with "${userMessage}". Let me work on that for you.`,
+    `Excellent! I'll start working on your website right away for: "${userMessage}"`,
+    `Perfect! I can definitely help you build something like "${userMessage}".`,
   ];
 
   return responses[Math.floor(Math.random() * responses.length)];
