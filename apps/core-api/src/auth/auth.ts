@@ -1,5 +1,5 @@
 import { login, signout } from "../lib/authProvider";
-import { getUserBySupabaseId } from "../stores/userStore";
+import { getUserBySupabaseId } from "../users/userService";
 import type { LoginRequest, LoginResponse } from "./types";
 
 // Login with email and password

@@ -16,7 +16,7 @@ import {
   restoreUser,
   syncUserWithAuthProvider,
   updateUser,
-} from "../stores/userStore";
+} from "./userService";
 import {
   asyncHandler,
   validateBody,
