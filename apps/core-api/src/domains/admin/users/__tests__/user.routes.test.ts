@@ -14,140 +14,26 @@ import {
   putRequest,
 } from "../../../../testUtils/apiTestHelpers";
 import type { AuthProvider } from "../../../auth/types";
-import type {
-  CombinedUser,
-  CreateUserRequest,
-  UpdateUserRequest,
-  User,
-  UserListResponse,
-} from "../types";
+import {
+  createMockCombinedUser,
+  createMockCreateUserRequest,
+  createMockUpdateUserRequest,
+  createMockUserListResponse,
+} from "./userTestFixtures";
+import {
+  BAD_REQUEST_ERROR,
+  INVALID_ID_FORMAT,
+  setupAuthProviderMocks,
+  setupMiddlewareMocks,
+  setupUserRepositoryMocks,
+  setupUserServiceMocks,
+} from "./userTestMocks";
 
-/* eslint-disable @typescript-eslint/no-explicit-any -- Mocks require any types for flexible testing */
-// Mock middleware to handle validation properly
-const VALIDATION_ERROR = "Validation failed";
-const BAD_REQUEST_ERROR = "Bad Request";
-const INTERNAL_SERVER_ERROR = "Internal Server Error";
-const INVALID_ID_FORMAT = "Invalid ID format";
-const MOCK_EMAIL = "test@example.com";
-const MOCK_TIMESTAMP = "2024-01-01T00:00:00.000Z";
-const TEST_USER_NAME = "Test User";
-
-vi.mock("../../../../middleware", () => ({
-  validateQuery: vi.fn(() => (req: any, res: any, next: any) => {
-    // Extract and parse query params
-    res.locals = res.locals || {};
-    const query = req.query;
-
-    // Parse specific fields that need type conversion
-    const parsedQuery: Record<string, unknown> = {};
-    if (query.page !== undefined)
-      parsedQuery.page = parseInt(query.page as string, 10);
-    if (query.limit !== undefined)
-      parsedQuery.limit = parseInt(query.limit as string, 10);
-    if (query.includeDeleted !== undefined)
-      parsedQuery.includeDeleted = query.includeDeleted === "true";
-    if (query.email !== undefined) parsedQuery.email = query.email;
-    if (query.role !== undefined) parsedQuery.role = query.role;
-    if (query.status !== undefined) parsedQuery.status = query.status;
-    if (query.supabaseUserId !== undefined)
-      parsedQuery.supabaseUserId = query.supabaseUserId;
-
-    res.locals.validatedQuery = parsedQuery;
-    next();
-  }),
-  validateBody: vi.fn(() => {
-    const validateCreateUser = (body: any) => {
-      const errors: { field: string }[] = [];
-      if (!body.email || !/\S+@\S+\.\S+/.test(body.email))
-        errors.push({ field: "email" });
-      if (!body.password) errors.push({ field: "password" });
-      if (!body.name) errors.push({ field: "name" });
-      if (!body.role || !["admin", "user"].includes(body.role))
-        errors.push({ field: "role" });
-      return errors;
-    };
-
-    const validateUpdateUser = (body: any) => {
-      const errors: { field: string }[] = [];
-      if (body.role && !["admin", "user"].includes(body.role))
-        errors.push({ field: "role" });
-      if (body.status && !["active", "inactive"].includes(body.status))
-        errors.push({ field: "status" });
-      return errors;
-    };
-
-    return (req: any, res: any, next: any) => {
-      res.locals = res.locals || {};
-      const body = req.body;
-
-      let errors: Array<{ field: string }> = [];
-      if (req.method === "POST" && req.path === "/") {
-        errors = validateCreateUser(body);
-      } else if (req.method === "PUT") {
-        errors = validateUpdateUser(body);
-      }
-
-      if (errors.length > 0) {
-        return res.status(400).json({
-          error: VALIDATION_ERROR,
-          details: errors,
-        });
-      }
-
-      res.locals.validatedBody = body;
-      next();
-    };
-  }),
-  validateObjectId: vi.fn(() => (req: any, res: any, next: any) => {
-    res.locals = res.locals || {};
-    const id = req.params.id;
-    if (!id || !/^[0-9a-fA-F]{24}$/.test(id)) {
-      return res.status(400).json({
-        error: BAD_REQUEST_ERROR,
-        message: INVALID_ID_FORMAT,
-      });
-    }
-    res.locals.validatedId = id;
-    next();
-  }),
-  asyncHandler: vi.fn((fn: any) => (req: any, res: any, next: any) => {
-    Promise.resolve(fn(req, res, next)).catch((error) => {
-      res.status(500).json({
-        error: INTERNAL_SERVER_ERROR,
-        message: error.message,
-      });
-    });
-  }),
-}));
-
-// Mock the auth provider
-vi.mock("../../../auth", () => ({
-  getAuthProvider: vi.fn(),
-}));
-
-// Mock the user repository
-vi.mock("../user.repository", () => ({
-  createUser: vi.fn(),
-  getUserById: vi.fn(),
-  getUserByEmail: vi.fn(),
-  updateUser: vi.fn(),
-  deleteUser: vi.fn(),
-  restoreUser: vi.fn(),
-  listUsers: vi.fn(),
-  userExists: vi.fn(),
-}));
-
-// Mock the user service
-vi.mock("../user.service", () => ({
-  createUser: vi.fn(),
-  getUserById: vi.fn(),
-  getUserByEmail: vi.fn(),
-  updateUser: vi.fn(),
-  deleteUser: vi.fn(),
-  restoreUser: vi.fn(),
-  listUsers: vi.fn(),
-  userExists: vi.fn(),
-}));
+// Setup mocks
+setupMiddlewareMocks();
+setupAuthProviderMocks();
+setupUserRepositoryMocks();
+setupUserServiceMocks();
 
 import { getAuthProvider } from "../../../auth";
 import userRoutes from "../user.routes";
@@ -156,37 +42,6 @@ import * as userService from "../user.service";
 // Type the mocked modules
 const mockGetAuthProvider = vi.mocked(getAuthProvider);
 const mockUserService = vi.mocked(userService);
-
-// Mock data factories
-const createMockUser = (overrides: Partial<User> = {}): User => ({
-  _id: new ObjectId(),
-  supabaseUserId: "supabase-123",
-  email: MOCK_EMAIL,
-  role: "user",
-  status: "active",
-  createdAt: MOCK_TIMESTAMP,
-  updatedAt: MOCK_TIMESTAMP,
-  ...overrides,
-});
-
-const createMockCombinedUser = (
-  overrides: Partial<CombinedUser> = {},
-): CombinedUser => ({
-  ...createMockUser(),
-  name: TEST_USER_NAME,
-  avatarUrl: "https://example.com/avatar.png",
-  authProvider: "supabase",
-  lastSignInAt: MOCK_TIMESTAMP,
-  emailConfirmedAt: MOCK_TIMESTAMP,
-  ...overrides,
-});
-
-const createMockAuthProvider = (): Partial<AuthProvider> => ({
-  createUser: vi.fn(),
-  updateUser: vi.fn(),
-  deleteUser: vi.fn(),
-  getUserById: vi.fn(),
-});
 
 describe("User Routes Integration Tests", () => {
   let app: Application;
@@ -202,7 +57,12 @@ describe("User Routes Integration Tests", () => {
     app.use("/users", userRoutes);
 
     // Set up mock auth provider
-    mockAuthProvider = createMockAuthProvider();
+    mockAuthProvider = {
+      createUser: vi.fn(),
+      updateUser: vi.fn(),
+      deleteUser: vi.fn(),
+      getUserById: vi.fn(),
+    };
     mockGetAuthProvider.mockReturnValue(mockAuthProvider as AuthProvider);
   });
 
@@ -212,13 +72,10 @@ describe("User Routes Integration Tests", () => {
         createMockCombinedUser(),
         createMockCombinedUser({ email: "user2@example.com" }),
       ];
-      const mockResponse: UserListResponse = {
-        users: mockUsers,
+      const mockResponse = createMockUserListResponse(mockUsers, {
         total: 2,
-        page: 1,
-        limit: 10,
         totalPages: 1,
-      };
+      });
 
       mockUserService.listUsers.mockResolvedValue(mockResponse);
 
@@ -234,13 +91,12 @@ describe("User Routes Integration Tests", () => {
 
     it("should list users with custom pagination", async () => {
       const mockUsers = [createMockCombinedUser()];
-      const mockResponse: UserListResponse = {
-        users: mockUsers,
+      const mockResponse = createMockUserListResponse(mockUsers, {
         total: 1,
         page: 2,
         limit: 5,
         totalPages: 1,
-      };
+      });
 
       mockUserService.listUsers.mockResolvedValue(mockResponse);
 
@@ -257,13 +113,7 @@ describe("User Routes Integration Tests", () => {
       const mockUsers = [
         createMockCombinedUser({ email: "specific@example.com" }),
       ];
-      const mockResponse: UserListResponse = {
-        users: mockUsers,
-        total: 1,
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-      };
+      const mockResponse = createMockUserListResponse(mockUsers);
 
       mockUserService.listUsers.mockResolvedValue(mockResponse);
 
@@ -283,13 +133,7 @@ describe("User Routes Integration Tests", () => {
       const mockUsers = [
         createMockCombinedUser({ role: "admin", status: "inactive" }),
       ];
-      const mockResponse: UserListResponse = {
-        users: mockUsers,
-        total: 1,
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-      };
+      const mockResponse = createMockUserListResponse(mockUsers);
 
       mockUserService.listUsers.mockResolvedValue(mockResponse);
 
@@ -307,13 +151,7 @@ describe("User Routes Integration Tests", () => {
 
     it("should include deleted users when requested", async () => {
       const mockUsers = [createMockCombinedUser({ status: "deleted" })];
-      const mockResponse: UserListResponse = {
-        users: mockUsers,
-        total: 1,
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-      };
+      const mockResponse = createMockUserListResponse(mockUsers);
 
       mockUserService.listUsers.mockResolvedValue(mockResponse);
 
@@ -360,12 +198,7 @@ describe("User Routes Integration Tests", () => {
 
   describe("POST /users", () => {
     it("should create new user successfully", async () => {
-      const createUserData: CreateUserRequest = {
-        email: "newuser@example.com",
-        password: "securePassword123",
-        name: "New User",
-        role: "user",
-      };
+      const createUserData = createMockCreateUserRequest();
 
       const mockCreatedUser = createMockCombinedUser({
         email: createUserData.email,
@@ -379,7 +212,6 @@ describe("User Routes Integration Tests", () => {
       const response = await postRequest(app, "/users", createUserData);
 
       const body = expectSuccess(response, 201);
-      console.log("body", body);
       expectCombinedUserStructure(body);
       expect(body.email).toBe(createUserData.email);
       expect(body.name).toBe(createUserData.name);
@@ -393,12 +225,9 @@ describe("User Routes Integration Tests", () => {
     });
 
     it("should return 409 for duplicate email", async () => {
-      const createUserData: CreateUserRequest = {
+      const createUserData = createMockCreateUserRequest({
         email: "existing@example.com",
-        password: "securePassword123",
-        name: "New User",
-        role: "user",
-      };
+      });
 
       const existingUser = createMockCombinedUser({
         email: createUserData.email,
@@ -448,10 +277,7 @@ describe("User Routes Integration Tests", () => {
   describe("PUT /users/:id", () => {
     it("should update user successfully", async () => {
       const userId = new ObjectId().toString();
-      const updateData: UpdateUserRequest = {
-        role: "admin",
-        status: "inactive",
-      };
+      const updateData = createMockUpdateUserRequest();
 
       const mockUpdatedUser = createMockCombinedUser({
         _id: new ObjectId(userId),
@@ -476,7 +302,10 @@ describe("User Routes Integration Tests", () => {
 
     it("should return 404 for non-existent user", async () => {
       const userId = new ObjectId().toString();
-      const updateData: UpdateUserRequest = { role: "admin" };
+      const updateData = createMockUpdateUserRequest({
+        role: "admin",
+        status: undefined,
+      });
 
       mockUserService.updateUser.mockResolvedValue(null);
 
@@ -490,7 +319,10 @@ describe("User Routes Integration Tests", () => {
     });
 
     it("should return 400 for invalid ObjectId", async () => {
-      const updateData: UpdateUserRequest = { role: "admin" };
+      const updateData = createMockUpdateUserRequest({
+        role: "admin",
+        status: undefined,
+      });
 
       const response = await putRequest(app, "/users/invalid-id", updateData);
 
@@ -594,12 +426,10 @@ describe("User Routes Integration Tests", () => {
     });
 
     it("should handle auth provider errors during user creation", async () => {
-      const createUserData: CreateUserRequest = {
+      const createUserData = createMockCreateUserRequest({
         email: "test@example.com",
-        password: "securePassword123",
         name: "Test User",
-        role: "user",
-      };
+      });
 
       mockUserService.getUserByEmail.mockResolvedValue(null);
       mockUserService.createUser.mockRejectedValue(
