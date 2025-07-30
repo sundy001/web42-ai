@@ -10,7 +10,7 @@ vi.mock("./src/middleware", () => ({
   errorHandler: vi.fn((err: any, req: any, res: any, next: any) => next()),
 }));
 
-// Mock auth middleware globally  
+// Mock auth middleware globally
 vi.mock("./src/domains/auth/middleware/auth", () => ({
   authenticateToken: vi.fn((req: any, res: any, next: any) => next()),
   requireRole: vi.fn(() => (req: any, res: any, next: any) => next()),

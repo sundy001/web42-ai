@@ -1,17 +1,9 @@
-import { ObjectId } from "mongodb";
 import type { Application } from "express";
 import express from "express";
+import { ObjectId } from "mongodb";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { AuthUser } from "../../../auth/types";
-import type { AuthProvider } from "../../../auth/types";
-import type {
-  CombinedUser,
-  CreateUserRequest,
-  UpdateUserRequest,
-  User,
-  UserListResponse,
-} from "../types";
 import {
+  deleteRequest,
   expectCombinedUserStructure,
   expectError,
   expectPaginatedResponse,
@@ -20,8 +12,15 @@ import {
   getRequest,
   postRequest,
   putRequest,
-  deleteRequest,
 } from "../../../../testUtils/apiTestHelpers";
+import type { AuthProvider, AuthUser } from "../../../auth/types";
+import type {
+  CombinedUser,
+  CreateUserRequest,
+  UpdateUserRequest,
+  User,
+  UserListResponse,
+} from "../types";
 
 /* eslint-disable @typescript-eslint/no-explicit-any -- Mocks require any types for flexible testing */
 // Mock middleware to handle validation properly
@@ -38,55 +37,63 @@ vi.mock("../../../../middleware", () => ({
     // Extract and parse query params
     res.locals = res.locals || {};
     const query = req.query;
-    
+
     // Parse specific fields that need type conversion
     const parsedQuery: Record<string, unknown> = {};
-    if (query.page !== undefined) parsedQuery.page = parseInt(query.page as string, 10);
-    if (query.limit !== undefined) parsedQuery.limit = parseInt(query.limit as string, 10);
-    if (query.includeDeleted !== undefined) parsedQuery.includeDeleted = query.includeDeleted === 'true';
+    if (query.page !== undefined)
+      parsedQuery.page = parseInt(query.page as string, 10);
+    if (query.limit !== undefined)
+      parsedQuery.limit = parseInt(query.limit as string, 10);
+    if (query.includeDeleted !== undefined)
+      parsedQuery.includeDeleted = query.includeDeleted === "true";
     if (query.email !== undefined) parsedQuery.email = query.email;
     if (query.role !== undefined) parsedQuery.role = query.role;
     if (query.status !== undefined) parsedQuery.status = query.status;
-    if (query.supabaseUserId !== undefined) parsedQuery.supabaseUserId = query.supabaseUserId;
-    
+    if (query.supabaseUserId !== undefined)
+      parsedQuery.supabaseUserId = query.supabaseUserId;
+
     res.locals.validatedQuery = parsedQuery;
     next();
   }),
   validateBody: vi.fn(() => {
     const validateCreateUser = (body: any) => {
       const errors = [];
-      if (!body.email || !/\S+@\S+\.\S+/.test(body.email)) errors.push({ field: 'email' });
-      if (!body.password) errors.push({ field: 'password' });
-      if (!body.name) errors.push({ field: 'name' });
-      if (!body.role || !['admin', 'user'].includes(body.role)) errors.push({ field: 'role' });
+      if (!body.email || !/\S+@\S+\.\S+/.test(body.email))
+        errors.push({ field: "email" });
+      if (!body.password) errors.push({ field: "password" });
+      if (!body.name) errors.push({ field: "name" });
+      if (!body.role || !["admin", "user"].includes(body.role))
+        errors.push({ field: "role" });
       return errors;
     };
 
     const validateUpdateUser = (body: any) => {
       const errors = [];
-      if (body.role && !['admin', 'user'].includes(body.role)) errors.push({ field: 'role' });
-      if (body.status && !['active', 'inactive'].includes(body.status)) errors.push({ field: 'status' });
+      if (body.role && !["admin", "user"].includes(body.role))
+        errors.push({ field: "role" });
+      if (body.status && !["active", "inactive"].includes(body.status))
+        errors.push({ field: "status" });
       return errors;
     };
 
     return (req: any, res: any, next: any) => {
       res.locals = res.locals || {};
       const body = req.body;
-      
+
       let errors: Array<{ field: string }> = [];
-      if (req.method === 'POST' && req.path === '/') {
+      if (req.method === "POST" && req.path === "/") {
         errors = validateCreateUser(body);
-      } else if (req.method === 'PUT') {
+      } else if (req.method === "PUT") {
         errors = validateUpdateUser(body);
       }
-      
+
       if (errors.length > 0) {
         return res.status(400).json({
           error: VALIDATION_ERROR,
           details: errors,
         });
       }
-      
+
       res.locals.validatedBody = body;
       next();
     };
@@ -143,8 +150,8 @@ vi.mock("../user.service", () => ({
 }));
 
 import { getAuthProvider } from "../../../auth";
-import * as userService from "../user.service";
 import userRoutes from "../user.routes";
+import * as userService from "../user.service";
 
 // Type the mocked modules
 const mockGetAuthProvider = vi.mocked(getAuthProvider);
@@ -162,7 +169,9 @@ const createMockUser = (overrides: Partial<User> = {}): User => ({
   ...overrides,
 });
 
-const createMockCombinedUser = (overrides: Partial<CombinedUser> = {}): CombinedUser => ({
+const createMockCombinedUser = (
+  overrides: Partial<CombinedUser> = {},
+): CombinedUser => ({
   ...createMockUser(),
   name: TEST_USER_NAME,
   avatarUrl: "https://example.com/avatar.png",
@@ -210,7 +219,10 @@ describe("User Routes Integration Tests", () => {
 
   describe("GET /users", () => {
     it("should list users with default pagination", async () => {
-      const mockUsers = [createMockCombinedUser(), createMockCombinedUser({ email: "user2@example.com" })];
+      const mockUsers = [
+        createMockCombinedUser(),
+        createMockCombinedUser({ email: "user2@example.com" }),
+      ];
       const mockResponse: UserListResponse = {
         users: mockUsers,
         total: 2,
@@ -225,7 +237,7 @@ describe("User Routes Integration Tests", () => {
 
       expectPaginatedResponse(response, 1, 10);
       expect(mockUserService.listUsers).toHaveBeenCalledWith({}, {});
-      
+
       const body = response.body;
       expect(body.users).toHaveLength(2);
       body.users.forEach(expectCombinedUserStructure);
@@ -248,12 +260,14 @@ describe("User Routes Integration Tests", () => {
       expectPaginatedResponse(response, 2, 5);
       expect(mockUserService.listUsers).toHaveBeenCalledWith(
         {},
-        { page: 2, limit: 5 }
+        { page: 2, limit: 5 },
       );
     });
 
     it("should filter users by email", async () => {
-      const mockUsers = [createMockCombinedUser({ email: "specific@example.com" })];
+      const mockUsers = [
+        createMockCombinedUser({ email: "specific@example.com" }),
+      ];
       const mockResponse: UserListResponse = {
         users: mockUsers,
         total: 1,
@@ -264,17 +278,22 @@ describe("User Routes Integration Tests", () => {
 
       mockUserService.listUsers.mockResolvedValue(mockResponse);
 
-      const response = await getRequest(app, "/users?email=specific@example.com");
+      const response = await getRequest(
+        app,
+        "/users?email=specific@example.com",
+      );
 
       expectPaginatedResponse(response, 1, 10);
       expect(mockUserService.listUsers).toHaveBeenCalledWith(
         { email: "specific@example.com" },
-        {}
+        {},
       );
     });
 
     it("should filter users by role and status", async () => {
-      const mockUsers = [createMockCombinedUser({ role: "admin", status: "inactive" })];
+      const mockUsers = [
+        createMockCombinedUser({ role: "admin", status: "inactive" }),
+      ];
       const mockResponse: UserListResponse = {
         users: mockUsers,
         total: 1,
@@ -285,12 +304,15 @@ describe("User Routes Integration Tests", () => {
 
       mockUserService.listUsers.mockResolvedValue(mockResponse);
 
-      const response = await getRequest(app, "/users?role=admin&status=inactive");
+      const response = await getRequest(
+        app,
+        "/users?role=admin&status=inactive",
+      );
 
       expectPaginatedResponse(response, 1, 10);
       expect(mockUserService.listUsers).toHaveBeenCalledWith(
         { role: "admin", status: "inactive" },
-        {}
+        {},
       );
     });
 
@@ -311,7 +333,7 @@ describe("User Routes Integration Tests", () => {
       expectPaginatedResponse(response, 1, 10);
       expect(mockUserService.listUsers).toHaveBeenCalledWith(
         { includeDeleted: true },
-        {}
+        {},
       );
     });
   });
@@ -373,7 +395,10 @@ describe("User Routes Integration Tests", () => {
       expect(body.name).toBe(createUserData.name);
       expect(body.role).toBe(createUserData.role);
 
-      expect(mockUserService.getUserByEmail).toHaveBeenCalledWith(createUserData.email, true);
+      expect(mockUserService.getUserByEmail).toHaveBeenCalledWith(
+        createUserData.email,
+        true,
+      );
       expect(mockUserService.createUser).toHaveBeenCalledWith(createUserData);
     });
 
@@ -385,13 +410,23 @@ describe("User Routes Integration Tests", () => {
         role: "user",
       };
 
-      const existingUser = createMockCombinedUser({ email: createUserData.email });
+      const existingUser = createMockCombinedUser({
+        email: createUserData.email,
+      });
       mockUserService.getUserByEmail.mockResolvedValue(existingUser);
 
       const response = await postRequest(app, "/users", createUserData);
 
-      expectError(response, 409, "Conflict", "User with this email already exists");
-      expect(mockUserService.getUserByEmail).toHaveBeenCalledWith(createUserData.email, true);
+      expectError(
+        response,
+        409,
+        "Conflict",
+        "User with this email already exists",
+      );
+      expect(mockUserService.getUserByEmail).toHaveBeenCalledWith(
+        createUserData.email,
+        true,
+      );
       expect(mockUserService.createUser).not.toHaveBeenCalled();
     });
 
@@ -443,7 +478,10 @@ describe("User Routes Integration Tests", () => {
       expect(body.role).toBe(updateData.role);
       expect(body.status).toBe(updateData.status);
 
-      expect(mockUserService.updateUser).toHaveBeenCalledWith(userId, updateData);
+      expect(mockUserService.updateUser).toHaveBeenCalledWith(
+        userId,
+        updateData,
+      );
     });
 
     it("should return 404 for non-existent user", async () => {
@@ -455,7 +493,10 @@ describe("User Routes Integration Tests", () => {
       const response = await putRequest(app, `/users/${userId}`, updateData);
 
       expectError(response, 404, "Not found", "User not found");
-      expect(mockUserService.updateUser).toHaveBeenCalledWith(userId, updateData);
+      expect(mockUserService.updateUser).toHaveBeenCalledWith(
+        userId,
+        updateData,
+      );
     });
 
     it("should return 400 for invalid ObjectId", async () => {
@@ -548,13 +589,18 @@ describe("User Routes Integration Tests", () => {
 
   describe("Error handling", () => {
     it("should handle service layer errors gracefully", async () => {
-      mockUserService.listUsers.mockRejectedValue(new Error("Database connection failed"));
+      mockUserService.listUsers.mockRejectedValue(
+        new Error("Database connection failed"),
+      );
 
       const response = await getRequest(app, "/users");
 
       expect(response.status).toBe(500);
       expect(response.body).toHaveProperty("error", "Internal Server Error");
-      expect(response.body).toHaveProperty("message", "Database connection failed");
+      expect(response.body).toHaveProperty(
+        "message",
+        "Database connection failed",
+      );
     });
 
     it("should handle auth provider errors during user creation", async () => {
@@ -566,7 +612,9 @@ describe("User Routes Integration Tests", () => {
       };
 
       mockUserService.getUserByEmail.mockResolvedValue(null);
-      mockUserService.createUser.mockRejectedValue(new Error("Auth provider error"));
+      mockUserService.createUser.mockRejectedValue(
+        new Error("Auth provider error"),
+      );
 
       const response = await postRequest(app, "/users", createUserData);
 
