@@ -13,7 +13,7 @@ import {
   postRequest,
   putRequest,
 } from "../../../../testUtils/apiTestHelpers";
-import type { AuthProvider, AuthUser } from "../../../auth/types";
+import type { AuthProvider } from "../../../auth/types";
 import type {
   CombinedUser,
   CreateUserRequest,
@@ -178,17 +178,6 @@ const createMockCombinedUser = (
   authProvider: "supabase",
   lastSignInAt: MOCK_TIMESTAMP,
   emailConfirmedAt: MOCK_TIMESTAMP,
-  ...overrides,
-});
-
-const _createMockAuthUser = (overrides: Partial<AuthUser> = {}): AuthUser => ({
-  id: "supabase-123",
-  email: MOCK_EMAIL,
-  name: TEST_USER_NAME,
-  role: "user",
-  avatarUrl: "https://example.com/avatar.png",
-  emailConfirmedAt: MOCK_TIMESTAMP,
-  lastSignInAt: MOCK_TIMESTAMP,
   ...overrides,
 });
 
@@ -390,6 +379,7 @@ describe("User Routes Integration Tests", () => {
       const response = await postRequest(app, "/users", createUserData);
 
       const body = expectSuccess(response, 201);
+      console.log("body", body);
       expectCombinedUserStructure(body);
       expect(body.email).toBe(createUserData.email);
       expect(body.name).toBe(createUserData.name);

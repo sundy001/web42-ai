@@ -52,7 +52,7 @@ describe("User Schemas", () => {
       expect(result.success).toBe(true);
     });
 
-    it("should apply default role when not specified", () => {
+    it("should require role to be specified", () => {
       const userWithoutRole = {
         supabaseUserId: VALID_UUID,
         email: VALID_EMAIL,
@@ -60,9 +60,11 @@ describe("User Schemas", () => {
       };
 
       const result = UserSchema.safeParse(userWithoutRole);
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.role).toBe("user");
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(
+          result.error.issues.some((issue) => issue.path.includes("role")),
+        ).toBe(true);
       }
     });
 
