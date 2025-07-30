@@ -73,7 +73,7 @@ This worker handles incoming plan step execution requests for the AI site genera
 bun install
 
 # Run tests
-bun test
+bun run test
 
 # Deploy
 wrangler deploy

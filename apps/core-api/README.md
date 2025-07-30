@@ -39,7 +39,7 @@ bun build
 bun start
 
 # Run tests
-bun test
+bun run test
 
 # Lint code
 bun lint
@@ -98,7 +98,7 @@ apps/core-api/
 - `bun dev` - Start development server with hot reload
 - `bun build` - Build TypeScript to dist/
 - `bun start` - Start production server
-- `bun test` - Run tests with Vitest
+- `bun run test` - Run tests with Vitest
 - `bun lint` - Lint code with ESLint
 - `bun check-types` - Type check with TypeScript
 

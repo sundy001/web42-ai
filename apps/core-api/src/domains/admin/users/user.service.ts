@@ -18,6 +18,7 @@ export async function createUser(
   const authProvider = getAuthProvider();
 
   try {
+    console.log(">>>> createUser");
     // Create user in auth provider first
     const authUser = await authProvider.createUser({
       email: userData.email,

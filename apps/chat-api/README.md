@@ -43,7 +43,7 @@ bun build
 bun start
 
 # Run tests
-bun test
+bun run test
 
 # Run linting
 bun lint

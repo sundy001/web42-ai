@@ -85,13 +85,12 @@ bun format
 bun check-types
 
 # Run tests
-bun test
+bun run test
 
 # Run specific test file
-bun test stringUtils
+bun run test stringUtils
 
 # Run tests with Vitest UI (if configured)
-# bun test:ui
 
 # Run all checks before committing
 bun lint && bun check-types
