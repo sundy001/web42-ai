@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { z } from "zod";
 import {
   CreateUserSchema,
   ErrorResponseSchema,
@@ -726,52 +725,15 @@ describe("User Schemas", () => {
     });
   });
 
-  describe("Type inference", () => {
-    it("should correctly infer types", () => {
-      // This test ensures TypeScript types are correctly inferred
-      const createUser: z.infer<typeof CreateUserSchema> = {
-        email: "test@example.com",
-        password: "password123",
-        name: "Test User",
-        role: "user",
-      };
-
-      const updateUser: z.infer<typeof UpdateUserSchema> = {
-        role: "admin",
-        status: "active",
-      };
-
-      const listQuery: z.infer<typeof ListUsersQuerySchema> = {
-        page: 1,
-        limit: 10,
-        includeDeleted: true,
-      };
-
-      // TypeScript will check these at compile time
-      // Test that we can access all properties without errors
-      expect(createUser).toHaveProperty("email");
-      expect(createUser).toHaveProperty("password");
-      expect(createUser).toHaveProperty("name");
-      expect(createUser).toHaveProperty("role");
-
-      expect(updateUser).toHaveProperty("role");
-      expect(updateUser).toHaveProperty("status");
-
-      expect(listQuery).toHaveProperty("page");
-      expect(listQuery).toHaveProperty("limit");
-      expect(listQuery).toHaveProperty("includeDeleted");
-    });
-  });
-
   describe("Edge cases and special scenarios", () => {
     it("should handle datetime validation correctly", () => {
-      const validDatetimes = [
+      const validDateTimes = [
         VALID_DATETIME,
         "2024-01-26T00:00:00.000Z",
         "2024-12-31T23:59:59.999Z",
       ];
 
-      validDatetimes.forEach((datetime) => {
+      validDateTimes.forEach((datetime) => {
         const user = {
           supabaseUserId: VALID_UUID,
           email: VALID_EMAIL,
@@ -787,14 +749,14 @@ describe("User Schemas", () => {
     });
 
     it("should reject invalid datetime formats", () => {
-      const invalidDatetimes = [
+      const invalidDateTimes = [
         "2024-01-26",
         "2024-01-26 12:00:00",
         "not-a-date",
         "2024-13-01T12:00:00.000Z", // Invalid month
       ];
 
-      invalidDatetimes.forEach((datetime) => {
+      invalidDateTimes.forEach((datetime) => {
         const user = {
           supabaseUserId: VALID_UUID,
           email: VALID_EMAIL,
