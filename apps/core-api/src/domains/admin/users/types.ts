@@ -30,6 +30,8 @@ export interface CombinedUser extends User {
   emailConfirmedAt?: string;
   phoneConfirmedAt?: string;
   phone?: string;
+  userMetadata?: Record<string, unknown>;
+  appMetadata?: Record<string, unknown>;
 }
 
 // =============================================================================

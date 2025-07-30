@@ -26,8 +26,8 @@ vi.mock("./src/middleware", () => ({
 
 // Mock auth middleware globally
 vi.mock("./src/domains/auth/middleware/auth", () => ({
-  authenticateToken: vi.fn(
-    (req: Request, res: Response, next: NextFunction) => next(),
+  authenticateToken: vi.fn((req: Request, res: Response, next: NextFunction) =>
+    next(),
   ),
   requireRole: vi.fn(
     () => (req: Request, res: Response, next: NextFunction) => next(),

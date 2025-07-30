@@ -1,6 +1,7 @@
 import type { Application } from "express";
 import type { Response } from "supertest";
 import request from "supertest";
+import { expect } from "vitest";
 
 /**
  * Helper for making GET requests with supertest
