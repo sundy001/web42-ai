@@ -113,9 +113,9 @@ export function expectPaginatedResponse(
 }
 
 /**
- * Assertion helper for user object structure
+ * Internal assertion helper for user object structure
  */
-export function expectUserStructure(user: unknown) {
+function expectUserStructure(user: unknown) {
   expect(user).toHaveProperty("_id");
   expect(user).toHaveProperty("supabaseUserId");
   expect(user).toHaveProperty("email");
