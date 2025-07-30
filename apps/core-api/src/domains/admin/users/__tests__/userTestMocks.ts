@@ -1,5 +1,5 @@
+import type { AuthProvider } from "@/domains/auth/types";
 import { vi } from "vitest";
-import type { AuthProvider } from "../../../auth/types";
 
 /* eslint-disable @typescript-eslint/no-explicit-any -- Mocks require any types for flexible testing */
 
@@ -123,11 +123,11 @@ export const createUserServiceMocks = () => ({
 
 // Module mock setup functions
 export const setupMiddlewareMocks = () => {
-  vi.mock("../../../../middleware", () => createMiddlewareMocks());
+  vi.mock("@/middleware", () => createMiddlewareMocks());
 };
 
 export const setupAuthProviderMocks = () => {
-  vi.mock("../../../auth", () => ({
+  vi.mock("@/domains/auth", () => ({
     getAuthProvider: vi.fn(),
   }));
 };

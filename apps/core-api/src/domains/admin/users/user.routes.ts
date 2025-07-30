@@ -1,11 +1,11 @@
-import type { Request, Response } from "express";
-import express from "express";
 import {
   asyncHandler,
   validateBody,
   validateObjectId,
   validateQuery,
-} from "../../../middleware";
+} from "@/middleware";
+import type { Request, Response } from "express";
+import express from "express";
 import type { CreateUserRequest, UpdateUserRequest } from "./types";
 import {
   CreateUserSchema,

@@ -1,5 +1,5 @@
+import { databaseStore } from "@/stores/database";
 import { ObjectId } from "mongodb";
-import { databaseStore } from "../../../stores/database";
 import type {
   User,
   UserRepositoryCreateData,

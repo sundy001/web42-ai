@@ -1,5 +1,11 @@
 import { ObjectId } from "mongodb";
-import type { CombinedUser, CreateUserRequest, UpdateUserRequest, User, UserListResponse } from "../types";
+import type {
+  CombinedUser,
+  CreateUserRequest,
+  UpdateUserRequest,
+  User,
+  UserListResponse,
+} from "../types";
 
 // Test constants
 export const MOCK_EMAIL = "test@example.com";
@@ -49,10 +55,10 @@ export const createMockUpdateUserRequest = (
     status: "inactive",
     ...overrides,
   };
-  
+
   // Remove undefined values to maintain proper UpdateUserRequest shape
   return Object.fromEntries(
-    Object.entries(baseData).filter(([, value]) => value !== undefined)
+    Object.entries(baseData).filter(([, value]) => value !== undefined),
   ) as UpdateUserRequest;
 };
 

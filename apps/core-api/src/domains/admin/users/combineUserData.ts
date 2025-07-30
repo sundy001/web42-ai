@@ -1,5 +1,5 @@
-import { getAuthProvider } from "../../auth";
-import type { AuthUser } from "../../auth/types";
+import { getAuthProvider } from "@/domains/auth";
+import type { AuthUser } from "@/domains/auth/types";
 import type { CombinedUser, User } from "./types";
 
 // Helper function to merge MongoDB user with auth provider user data

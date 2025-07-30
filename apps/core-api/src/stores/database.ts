@@ -1,6 +1,6 @@
 import { Db, MongoClient } from "mongodb";
 
-import { config as systemConfig } from "../config";
+import { config as systemConfig } from "@/config";
 
 export interface DatabaseConfig {
   uri: string;

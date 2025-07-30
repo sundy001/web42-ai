@@ -1,7 +1,4 @@
-import type { Application } from "express";
-import express from "express";
-import { ObjectId } from "mongodb";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { AuthProvider } from "@/domains/auth/types";
 import {
   deleteRequest,
   expectCombinedUserStructure,
@@ -12,8 +9,11 @@ import {
   getRequest,
   postRequest,
   putRequest,
-} from "../../../../testUtils/apiTestHelpers";
-import type { AuthProvider } from "../../../auth/types";
+} from "@/testUtils/apiTestHelpers";
+import type { Application } from "express";
+import express from "express";
+import { ObjectId } from "mongodb";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createMockCombinedUser,
   createMockCreateUserRequest,
@@ -35,7 +35,7 @@ setupAuthProviderMocks();
 setupUserRepositoryMocks();
 setupUserServiceMocks();
 
-import { getAuthProvider } from "../../../auth";
+import { getAuthProvider } from "@/domains/auth";
 import userRoutes from "../user.routes";
 import * as userService from "../user.service";
 

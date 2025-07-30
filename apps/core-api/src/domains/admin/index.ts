@@ -1,5 +1,5 @@
+import { authenticateUser, requireAdmin } from "@/domains/auth";
 import express from "express";
-import { authenticateUser, requireAdmin } from "../auth";
 import projectRoutes from "./projects";
 import userRoutes from "./users";
 
