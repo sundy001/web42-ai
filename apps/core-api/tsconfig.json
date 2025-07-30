@@ -14,8 +14,10 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "types": ["node", "bun-types"]
+    "incremental": true,
+    "types": ["node"]
   },
   "include": ["src/**/*", "scripts/**/*", "migrations/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
+  "references": [{ "path": "./tsconfig.test.json" }]
 }
