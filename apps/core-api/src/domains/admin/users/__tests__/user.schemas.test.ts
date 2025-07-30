@@ -78,7 +78,7 @@ describe("User Schemas", () => {
       const result = UserSchema.safeParse(invalidUser);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe("Invalid email format");
+        expect(result.error.issues[0]?.message).toBe("Invalid email format");
       }
     });
 
@@ -93,7 +93,7 @@ describe("User Schemas", () => {
       const result = UserSchema.safeParse(invalidUser);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe("Invalid uuid");
+        expect(result.error.issues[0]?.message).toBe("Invalid uuid");
       }
     });
 
@@ -175,7 +175,7 @@ describe("User Schemas", () => {
       const result = CreateUserSchema.safeParse(invalidRequest);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe(
+        expect(result.error.issues[0]?.message).toBe(
           "Password must be at least 6 characters",
         );
       }
@@ -191,7 +191,7 @@ describe("User Schemas", () => {
       const result = CreateUserSchema.safeParse(invalidRequest);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe(
+        expect(result.error.issues[0]?.message).toBe(
           "Name must be at least 2 characters",
         );
       }
@@ -207,7 +207,7 @@ describe("User Schemas", () => {
       const result = CreateUserSchema.safeParse(invalidRequest);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe(
+        expect(result.error.issues[0]?.message).toBe(
           "Name must not exceed 100 characters",
         );
       }
@@ -272,7 +272,7 @@ describe("User Schemas", () => {
       const result = UpdateUserSchema.safeParse(emptyUpdate);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe(
+        expect(result.error.issues[0]?.message).toBe(
           "At least one field must be provided for update",
         );
       }
@@ -362,7 +362,7 @@ describe("User Schemas", () => {
       const result = ListUsersQuerySchema.safeParse(query);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe("Page must be at least 1");
+        expect(result.error.issues[0]?.message).toBe("Page must be at least 1");
       }
     });
 
@@ -377,13 +377,13 @@ describe("User Schemas", () => {
       expect(resultLarge.success).toBe(false);
 
       if (!resultSmall.success) {
-        expect(resultSmall.error.issues[0].message).toBe(
+        expect(resultSmall.error.issues[0]?.message).toBe(
           "Limit must be between 1 and 100",
         );
       }
 
       if (!resultLarge.success) {
-        expect(resultLarge.error.issues[0].message).toBe(
+        expect(resultLarge.error.issues[0]?.message).toBe(
           "Limit must be between 1 and 100",
         );
       }
@@ -453,7 +453,7 @@ describe("User Schemas", () => {
         const result = ObjectIdSchema.safeParse(id);
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0].message).toBe(
+          expect(result.error.issues[0]?.message).toBe(
             "Invalid ObjectId format",
           );
         }
@@ -493,7 +493,7 @@ describe("User Schemas", () => {
       const result = PaginationSchema.safeParse(invalidPagination);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe("Page must be at least 1");
+        expect(result.error.issues[0]?.message).toBe("Page must be at least 1");
       }
     });
 
@@ -508,13 +508,13 @@ describe("User Schemas", () => {
       expect(resultLarge.success).toBe(false);
 
       if (!resultSmall.success) {
-        expect(resultSmall.error.issues[0].message).toBe(
+        expect(resultSmall.error.issues[0]?.message).toBe(
           "Limit must be at least 1",
         );
       }
 
       if (!resultLarge.success) {
-        expect(resultLarge.error.issues[0].message).toBe(
+        expect(resultLarge.error.issues[0]?.message).toBe(
           "Limit must not exceed 100",
         );
       }
