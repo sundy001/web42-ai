@@ -57,7 +57,7 @@ vi.mock("../../../../middleware", () => ({
   }),
   validateBody: vi.fn(() => {
     const validateCreateUser = (body: any) => {
-      const errors = [];
+      const errors: { field: string }[] = [];
       if (!body.email || !/\S+@\S+\.\S+/.test(body.email))
         errors.push({ field: "email" });
       if (!body.password) errors.push({ field: "password" });
@@ -68,7 +68,7 @@ vi.mock("../../../../middleware", () => ({
     };
 
     const validateUpdateUser = (body: any) => {
-      const errors = [];
+      const errors: { field: string }[] = [];
       if (body.role && !["admin", "user"].includes(body.role))
         errors.push({ field: "role" });
       if (body.status && !["active", "inactive"].includes(body.status))
