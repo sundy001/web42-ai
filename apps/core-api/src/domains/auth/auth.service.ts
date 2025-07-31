@@ -1,5 +1,5 @@
 import { getUserBySupabaseId } from "@/domains/admin/users";
-import { login, signout } from "./providers";
+import { getAuthProvider } from "./providers";
 import type { LoginRequest, LoginResponse } from "./types";
 
 // Login with email and password
@@ -7,7 +7,17 @@ export async function loginUser(
   loginData: LoginRequest,
 ): Promise<LoginResponse> {
   try {
-    const data = await login(loginData.email, loginData.password);
+    // Authenticate with auth provider
+    const authProvider = getAuthProvider();
+    const result = await authProvider.signInWithPassword(
+      loginData.email,
+      loginData.password,
+    );
+
+    const data = {
+      user: result.user,
+      session: result.session,
+    };
 
     // Get or create user in MongoDB
     const mongoUser = await getUserBySupabaseId(data.user.id);
@@ -41,7 +51,9 @@ export async function loginUser(
 // Signout user
 export async function signoutUser(): Promise<void> {
   try {
-    await signout();
+    // Sign out from auth provider
+    const authProvider = getAuthProvider();
+    await authProvider.signOut();
   } catch (error) {
     console.warn("Signout error:", error);
   }

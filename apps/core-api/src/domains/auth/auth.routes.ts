@@ -33,10 +33,7 @@ router.post(
   asyncHandler(async (req: Request, res: Response) => {
     try {
       await signoutUser();
-      res.json({
-        message: "Successfully signed out",
-      });
-    } catch {
+    } finally {
       // Always return success for signout, even if there's an error
       res.json({
         message: "Successfully signed out",
