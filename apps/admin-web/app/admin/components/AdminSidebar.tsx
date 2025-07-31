@@ -1,9 +1,12 @@
 "use client";
 
+import { Button } from "@web42-ai/ui/button";
 import { cn } from "@web42-ai/ui/utils";
-import { FolderOpen, Settings, Users } from "lucide-react";
+import { FolderOpen, LogOut, Settings, Users } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
+import { showError, showSuccess } from "../../../lib/utils/toast";
 
 const navigation = [
   { name: "Users", href: "/admin/users", icon: Users },
@@ -13,6 +16,28 @@ const navigation = [
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+      });
+
+      if (response.ok) {
+        showSuccess("Logged out successfully");
+        router.push("/login");
+      } else {
+        throw new Error("Logout failed");
+      }
+    } catch (error) {
+      showError("Failed to logout. Please try again.");
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   return (
     <div className="flex w-64 flex-col bg-white shadow-lg">
@@ -39,6 +64,17 @@ export function AdminSidebar() {
           );
         })}
       </nav>
+      <div className="border-t p-4">
+        <Button
+          onClick={handleLogout}
+          disabled={isLoggingOut}
+          variant="outline"
+          className="w-full justify-start"
+        >
+          <LogOut className="mr-3 h-5 w-5" />
+          {isLoggingOut ? "Logging out..." : "Logout"}
+        </Button>
+      </div>
     </div>
   );
 }

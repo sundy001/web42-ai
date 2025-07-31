@@ -4,6 +4,7 @@ export interface User {
   name: string;
   authProvider: string;
   status: "active" | "inactive" | "deleted";
+  role?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -27,6 +28,16 @@ export interface UpdateUserData {
   email: string;
   authProvider: string;
   status: string;
+}
+
+export interface LoginForm {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  user: User;
+  token?: string;
 }
 
 export interface ApiError {
