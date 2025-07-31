@@ -83,7 +83,7 @@ export const createMockUserListResponse = (
   users: User[] = [],
   overrides: Partial<UserListResponse> = {},
 ): UserListResponse => ({
-  users,
+  items: users,
   total: users.length,
   page: 1,
   limit: 10,

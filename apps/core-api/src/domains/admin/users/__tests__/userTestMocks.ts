@@ -1,3 +1,5 @@
+import { vi } from "vitest";
+
 export const setupAuthProviderMocks = () => {
   const mocks = vi.hoisted(() => ({
     createUser: vi.fn(),

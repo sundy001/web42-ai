@@ -1,9 +1,9 @@
 import { AuthUser, getAuthProvider } from "@/domains/auth";
 import { ConflictError, NotFoundError } from "@/utils/errors";
+import type { PaginationOptions } from "@/utils/types";
 import { combineUserData } from "./combineUserData";
 import type {
   CreateUserRequest,
-  PaginationOptions,
   UpdateUserRequest,
   User,
   UserFilters,
@@ -135,13 +135,13 @@ export async function listUsers(
 
   // TODO: this is a bottleneck, we should fetch all users from auth provider in one go
   // Combine each user with auth provider data
-  const users = await Promise.all(
-    result.users.map((user) => combineUserData(user)),
+  const items = await Promise.all(
+    result.items.map((user) => combineUserData(user)),
   );
 
   return {
     ...result,
-    users,
+    items,
   };
 }
 

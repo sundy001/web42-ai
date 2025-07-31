@@ -22,7 +22,6 @@ export type {
   // Service layer types for API consumers
   CreateUserRequest,
   // Core domain types
-  PaginationOptions,
   UpdateUserRequest,
   User,
   UserFilters,

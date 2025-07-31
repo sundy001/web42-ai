@@ -1,3 +1,4 @@
+import type { PaginatedResponse } from "@/utils/types";
 import type { ObjectId } from "mongodb";
 
 // =============================================================================
@@ -106,44 +107,3 @@ export interface ProjectRepositoryPaginationOptions {
  * Database-level paginated response (returns raw Project entities)
  */
 export type ProjectRepositoryListResponse = PaginatedResponse<Project>;
-
-// =============================================================================
-// SHARED UTILITIES
-// =============================================================================
-
-/**
- * Pagination options for queries
- */
-export interface PaginationOptions {
-  page?: number;
-  limit?: number;
-}
-
-/**
- * Generic paginated response structure
- */
-export interface PaginatedResponse<T> {
-  projects: T[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
-
-// =============================================================================
-// TYPE GUARDS AND UTILITIES
-// =============================================================================
-
-/**
- * Type guard to check if a project is active
- */
-export function isActiveProject(project: Pick<Project, "status">): boolean {
-  return project.status === "active";
-}
-
-/**
- * Type guard to check if a project is deleted
- */
-export function isDeletedProject(project: Pick<Project, "status">): boolean {
-  return project.status === "deleted";
-}

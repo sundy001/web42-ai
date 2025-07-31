@@ -1,3 +1,4 @@
+import type { PaginatedResponse } from "@/utils/types";
 import type { ObjectId } from "mongodb";
 
 // =============================================================================
@@ -129,26 +130,3 @@ export interface UserRepositoryPaginationOptions {
  * Database-level paginated response (returns raw User entities)
  */
 export type UserRepositoryListResponse = PaginatedResponse<MongoUser>;
-
-// =============================================================================
-// SHARED UTILITIES
-// =============================================================================
-
-/**
- * Pagination options for queries
- */
-export interface PaginationOptions {
-  page?: number;
-  limit?: number;
-}
-
-/**
- * Generic paginated response structure
- */
-export interface PaginatedResponse<T> {
-  users: T[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}

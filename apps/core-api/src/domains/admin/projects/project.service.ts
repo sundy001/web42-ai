@@ -1,8 +1,8 @@
 import { userExists } from "@/domains/admin/users";
+import type { PaginationOptions } from "@/utils/types";
 import * as projectStore from "./project.repository";
 import type {
   CreateProjectRequest,
-  PaginationOptions,
   Project,
   ProjectFilters,
   ProjectListResponse,

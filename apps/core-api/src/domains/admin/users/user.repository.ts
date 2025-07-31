@@ -232,7 +232,7 @@ export async function listUsers(
   ]);
 
   return {
-    users,
+    items: users,
     total,
     page,
     limit,

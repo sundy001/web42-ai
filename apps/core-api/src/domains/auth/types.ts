@@ -1,5 +1,4 @@
 import type { User } from "@/domains/admin/users";
-import type { NextFunction, Request, Response } from "express";
 
 // =============================================================================
 // DOMAIN ENTITIES
@@ -134,45 +133,3 @@ export interface AuthProvider {
   ): Promise<AuthProviderSignInResponse>;
   signOut(): Promise<void>;
 }
-
-// =============================================================================
-// MIDDLEWARE CONTRACTS
-// =============================================================================
-
-/**
- * Middleware layer types - for Express.js request handling
- */
-
-/**
- * Authenticated user data attached to request
- */
-export interface AuthenticatedUserData {
-  id: string;
-  email?: string;
-  role?: string;
-}
-
-/**
- * Express request with authenticated user data
- */
-export interface AuthenticatedRequest extends Request {
-  user?: AuthenticatedUserData;
-}
-
-/**
- * Type for authentication middleware functions
- */
-export type AuthMiddlewareFunction = (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction,
-) => Promise<void>;
-
-/**
- * Type for authorization middleware functions
- */
-export type AuthorizationMiddlewareFunction = (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction,
-) => void;
