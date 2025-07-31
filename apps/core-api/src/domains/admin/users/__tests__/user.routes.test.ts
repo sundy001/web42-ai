@@ -245,7 +245,7 @@ describe("User Routes Integration Tests", () => {
       });
     });
 
-    it.only("should return 409 for duplicate email", async () => {
+    it("should return 409 for duplicate email", async () => {
       const createUserData = createMockCreateUserRequest({
         email: "existing@example.com",
       });
@@ -407,7 +407,7 @@ describe("User Routes Integration Tests", () => {
 
       const response = await deleteRequest(app, `/users/${userId}`);
 
-      expectError(response, 404, "Not found", "User not found");
+      expectError(response, 404, "NotFoundError", "User not found");
     });
 
     it("should return 400 for invalid ObjectId", async () => {
@@ -420,12 +420,13 @@ describe("User Routes Integration Tests", () => {
   describe("POST /users/:id/restore", () => {
     it("should restore deleted user successfully", async () => {
       const userId = new ObjectId().toString();
-      const mockRestoredUser = createMockCombinedUser({
+      const mockMongoUser = createMockMongoUser({
         _id: new ObjectId(userId),
         status: "active",
       });
 
-      userRepository.restoreUser.mockResolvedValue(mockRestoredUser);
+      userRepository.restoreUser.mockResolvedValue(mockMongoUser);
+      authProvider.getUserById.mockResolvedValue(createMockAuthUser());
 
       const response = await postRequest(app, `/users/${userId}/restore`);
 
@@ -442,7 +443,7 @@ describe("User Routes Integration Tests", () => {
 
       const response = await postRequest(app, `/users/${userId}/restore`);
 
-      expectError(response, 404, "Not found", "Deleted user not found");
+      expectError(response, 404, "NotFoundError", "User not found");
       expect(userRepository.restoreUser).toHaveBeenCalledWith(userId);
     });
 

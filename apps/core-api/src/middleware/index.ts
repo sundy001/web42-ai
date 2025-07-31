@@ -13,6 +13,7 @@ function handleZodError(error: ZodError, res: Response): void {
     message: err.message,
   }));
 
+  // TODO: use ApiError instead of reply JSON
   res.status(400).json({
     error: VALIDATION_FAILED,
     details,
@@ -27,6 +28,7 @@ export function validateObjectId(paramName = "id") {
     const validationResult = ObjectIdSchema.safeParse(id);
 
     if (!validationResult.success) {
+      // TODO: use ApiError instead of reply JSON
       res.status(400).json({
         error: VALIDATION_FAILED,
         message: "Invalid ObjectId format",
@@ -95,6 +97,8 @@ export function errorHandler(
   // Check if error has a custom status code
   const statusCode = "statusCode" in error ? error.statusCode : 500;
   const isServerError = statusCode >= 500;
+
+  console.debug("error", error);
 
   res.status(statusCode).json({
     error: isServerError ? INTERNAL_SERVER_ERROR : error.name,

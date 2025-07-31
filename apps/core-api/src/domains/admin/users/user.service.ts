@@ -17,7 +17,7 @@ export async function createUser(
   userData: CreateUserRequest,
 ): Promise<CombinedUser> {
   // Check if user already exists by email, including soft deleted users
-  const existingUser = await getUserByEmail(userData.email, true);
+  const existingUser = await getMongoUserByEmail(userData.email, true);
   if (existingUser) {
     throw new ConflictError("User with this email already exists");
   }
@@ -55,17 +55,6 @@ export async function getUserById(
     throw new NotFoundError("User not found");
   }
 
-  return combineUserData(mongoUser);
-}
-
-export async function getUserByEmail(
-  email: string,
-  includeDeleted = false,
-): Promise<CombinedUser | null> {
-  const mongoUser = await userRepository.getUserByEmail(email, includeDeleted);
-  if (!mongoUser) {
-    return null;
-  }
   return combineUserData(mongoUser);
 }
 
@@ -164,4 +153,15 @@ export async function userExistsByEmail(email: string): Promise<boolean> {
 
 export async function userExists(id: string): Promise<boolean> {
   return userRepository.userExists(id);
+}
+
+async function getMongoUserByEmail(
+  email: string,
+  includeDeleted = false,
+): Promise<CombinedUser | null> {
+  const mongoUser = await userRepository.getUserByEmail(email, includeDeleted);
+  if (!mongoUser) {
+    return null;
+  }
+  return mongoUser;
 }
