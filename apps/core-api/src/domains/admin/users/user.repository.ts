@@ -1,5 +1,5 @@
 import { databaseStore } from "@/stores/database";
-import { ObjectId } from "mongodb";
+import { ObjectId, WithoutId } from "mongodb";
 import type {
   CreateUserData,
   MongoUser,
@@ -13,7 +13,8 @@ const COLLECTION_NAME = "users";
 
 function getCollection() {
   const db = databaseStore.getDatabase();
-  return db.collection<MongoUser>(COLLECTION_NAME);
+  // MongoDB's collection type automatically handles _id insertion
+  return db.collection<WithoutId<MongoUser>>(COLLECTION_NAME);
 }
 
 // Database-only operations - no auth provider coordination
@@ -22,7 +23,7 @@ export async function createUser(userData: CreateUserData): Promise<MongoUser> {
   const collection = getCollection();
   const now = new Date().toISOString();
 
-  const mongoUser: Omit<MongoUser, "_id"> = {
+  const mongoUser: WithoutId<MongoUser> = {
     supabaseUserId: userData.supabaseUserId,
     email: userData.email,
     role: userData.role,

@@ -7,9 +7,11 @@ import type { ObjectId } from "mongodb";
 
 /**
  * MongoDB User document - Core domain entity
+ * Note: _id is required by default as most operations work with existing documents
+ * For creation, use WithoutId<MongoUser>
  */
 export interface MongoUser {
-  _id?: ObjectId;
+  _id: ObjectId;
   supabaseUserId: string;
   email: string; // Duplicated for performance
   role: UserRole; // Duplicated for performance

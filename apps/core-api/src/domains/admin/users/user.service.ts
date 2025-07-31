@@ -46,7 +46,7 @@ export async function createUser(userData: CreateUserRequest): Promise<User> {
 export async function getUserById(
   id: string,
   includeDeleted = false,
-): Promise<User | null> {
+): Promise<User> {
   const mongoUser = await userRepository.getUserById(id, includeDeleted);
 
   if (!mongoUser) {
@@ -59,13 +59,13 @@ export async function getUserById(
 export async function getUserBySupabaseId(
   supabaseUserId: string,
   includeDeleted = false,
-): Promise<User | null> {
+): Promise<User> {
   const mongoUser = await userRepository.getUserBySupabaseId(
     supabaseUserId,
     includeDeleted,
   );
   if (!mongoUser) {
-    return null;
+    throw new NotFoundError(`User not found by supabase ID ${supabaseUserId}`);
   }
   return combineUserData(mongoUser);
 }
@@ -73,7 +73,7 @@ export async function getUserBySupabaseId(
 export async function updateUser(
   id: string,
   updateData: UpdateUserRequest,
-): Promise<User | null> {
+): Promise<User> {
   const authProvider = getAuthProvider();
 
   // Update MongoDB document first
@@ -119,7 +119,7 @@ export async function permanentlyDeleteUser(id: string): Promise<boolean> {
   return userRepository.permanentlyDeleteUser(id);
 }
 
-export async function restoreUser(id: string): Promise<User | null> {
+export async function restoreUser(id: string): Promise<User> {
   const mongoUser = await userRepository.restoreUser(id);
 
   if (!mongoUser) {
