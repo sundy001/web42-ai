@@ -5,7 +5,6 @@
 export {
   createUser,
   deleteUser,
-  getUserByEmail,
   getUserById,
   getUserBySupabaseId,
   listUsers,
@@ -16,19 +15,19 @@ export {
 } from "./user.service";
 
 // HTTP routes for application setup
-export { default } from "./user.routes";
+export { userRoutes } from "./user.routes";
 
 // Export all types under a namespace for external consumers
 export type * as UserTypes from "./types";
 
 // Export commonly used types directly for convenience
 export type {
-  CombinedUser,
   // Service layer types for API consumers
   CreateUserRequest,
+  // Core domain types
+  MongoUser,
   PaginationOptions,
   UpdateUserRequest,
-  // Core domain types
   User,
   UserFilters,
   UserListResponse,

@@ -1,8 +1,8 @@
 import { AuthUser } from "@/domains/auth";
 import { ObjectId, WithId } from "mongodb";
 import type {
-  CombinedUser,
   CreateUserRequest,
+  MongoUser,
   UpdateUserRequest,
   User,
   UserListResponse,
@@ -15,8 +15,8 @@ export const TEST_USER_NAME = "Test User";
 
 // Mock data factory functions
 export const createMockMongoUser = (
-  overrides: Partial<User> = {},
-): WithId<User> => ({
+  overrides: Partial<MongoUser> = {},
+): WithId<MongoUser> => ({
   _id: new ObjectId(),
   supabaseUserId: "supabase-123",
   email: MOCK_EMAIL,
@@ -41,8 +41,8 @@ export const createMockAuthUser = (
 });
 
 export const createMockCombinedUser = (
-  overrides: Partial<CombinedUser> = {},
-): WithId<CombinedUser> => ({
+  overrides: Partial<User> = {},
+): WithId<User> => ({
   ...createMockMongoUser(),
   name: TEST_USER_NAME,
   avatarUrl: "https://example.com/avatar.png",
@@ -80,7 +80,7 @@ export const createMockUpdateUserRequest = (
 
 // Mock response data factories
 export const createMockUserListResponse = (
-  users: CombinedUser[] = [],
+  users: User[] = [],
   overrides: Partial<UserListResponse> = {},
 ): UserListResponse => ({
   users,
@@ -92,7 +92,7 @@ export const createMockUserListResponse = (
 });
 
 // Common test data sets
-export const createMockUserCollection = (count: number = 2): CombinedUser[] => {
+export const createMockUserCollection = (count: number = 2): User[] => {
   return Array.from({ length: count }, (_, index) =>
     createMockCombinedUser({
       email: `user${index + 1}@example.com`,

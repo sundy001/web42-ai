@@ -1,7 +1,7 @@
 import { authenticateUser, requireAdmin } from "@/domains/auth";
 import express from "express";
 import projectRoutes from "./projects";
-import userRoutes from "./users";
+import { userRoutes } from "./users";
 
 const router = express.Router();
 

@@ -7,7 +7,7 @@ import type { ObjectId } from "mongodb";
 /**
  * MongoDB User document - Core domain entity
  */
-export interface User {
+export interface MongoUser {
   _id?: ObjectId;
   supabaseUserId: string;
   email: string; // Duplicated for performance
@@ -21,7 +21,7 @@ export interface User {
  * Combined user data (MongoDB + Auth Provider)
  * This represents the complete user view for external consumers
  */
-export interface CombinedUser extends User {
+export interface User extends MongoUser {
   // Auth provider fields
   name?: string;
   avatarUrl?: string;
@@ -77,7 +77,7 @@ export interface UserFilters {
 /**
  * Paginated list response for users (service layer)
  */
-export type UserListResponse = PaginatedResponse<CombinedUser>;
+export type UserListResponse = PaginatedResponse<User>;
 
 // =============================================================================
 // REPOSITORY LAYER CONTRACTS
@@ -128,7 +128,7 @@ export interface UserRepositoryPaginationOptions {
 /**
  * Database-level paginated response (returns raw User entities)
  */
-export type UserRepositoryListResponse = PaginatedResponse<User>;
+export type UserRepositoryListResponse = PaginatedResponse<MongoUser>;
 
 // =============================================================================
 // SHARED UTILITIES
@@ -160,20 +160,20 @@ export interface PaginatedResponse<T> {
 /**
  * Type guard to check if a user has admin privileges
  */
-export function isAdmin(user: Pick<User, "role">): boolean {
+export function isAdmin(user: Pick<MongoUser, "role">): boolean {
   return user.role === "admin";
 }
 
 /**
  * Type guard to check if a user is active
  */
-export function isActiveUser(user: Pick<User, "status">): boolean {
+export function isActiveUser(user: Pick<MongoUser, "status">): boolean {
   return user.status === "active";
 }
 
 /**
  * Type guard to check if a user is deleted
  */
-export function isDeletedUser(user: Pick<User, "status">): boolean {
+export function isDeletedUser(user: Pick<MongoUser, "status">): boolean {
   return user.status === "deleted";
 }

@@ -1,7 +1,7 @@
 import { databaseStore } from "@/stores/database";
 import { ObjectId } from "mongodb";
 import type {
-  User,
+  MongoUser,
   UserRepositoryCreateData,
   UserRepositoryFilters,
   UserRepositoryListResponse,
@@ -20,16 +20,16 @@ const COLLECTION_NAME = "users";
 
 function getCollection() {
   const db = databaseStore.getDatabase();
-  return db.collection<User>(COLLECTION_NAME);
+  return db.collection<MongoUser>(COLLECTION_NAME);
 }
 
 // Database-only operations - no auth provider coordination
 
-export async function createUser(userData: CreateUserData): Promise<User> {
+export async function createUser(userData: CreateUserData): Promise<MongoUser> {
   const collection = getCollection();
   const now = new Date().toISOString();
 
-  const mongoUser: Omit<User, "_id"> = {
+  const mongoUser: Omit<MongoUser, "_id"> = {
     supabaseUserId: userData.supabaseUserId,
     email: userData.email,
     role: userData.role,
@@ -61,7 +61,7 @@ export async function createUser(userData: CreateUserData): Promise<User> {
 export async function getUserById(
   id: string,
   includeDeleted = false,
-): Promise<User | null> {
+): Promise<MongoUser | null> {
   const collection = getCollection();
 
   if (!ObjectId.isValid(id)) {
@@ -80,7 +80,7 @@ export async function getUserById(
 export async function getUserByEmail(
   email: string,
   includeDeleted = false,
-): Promise<User | null> {
+): Promise<MongoUser | null> {
   const collection = getCollection();
 
   const filter: Record<string, unknown> = { email };
@@ -95,7 +95,7 @@ export async function getUserByEmail(
 export async function getUserBySupabaseId(
   supabaseUserId: string,
   includeDeleted = false,
-): Promise<User | null> {
+): Promise<MongoUser | null> {
   const collection = getCollection();
 
   const filter: Record<string, unknown> = { supabaseUserId };
@@ -110,7 +110,7 @@ export async function getUserBySupabaseId(
 export async function updateUser(
   id: string,
   updateData: UpdateUserData,
-): Promise<User | null> {
+): Promise<MongoUser | null> {
   const collection = getCollection();
 
   if (!ObjectId.isValid(id)) {
@@ -165,7 +165,7 @@ export async function permanentlyDeleteUser(id: string): Promise<boolean> {
   return result.deletedCount > 0;
 }
 
-export async function restoreUser(id: string): Promise<User | null> {
+export async function restoreUser(id: string): Promise<MongoUser | null> {
   const collection = getCollection();
 
   if (!ObjectId.isValid(id)) {

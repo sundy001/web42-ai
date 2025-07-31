@@ -1,4 +1,4 @@
-import type { CombinedUser } from "@/domains/admin/users";
+import type { User } from "@/domains/admin/users";
 import type { NextFunction, Request, Response } from "express";
 
 // =============================================================================
@@ -61,7 +61,7 @@ export interface LoginRequest {
  * Response from login operation (service layer)
  */
 export interface LoginResponse {
-  user: CombinedUser;
+  user: User;
   session: AuthSession;
 }
 

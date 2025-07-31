@@ -98,7 +98,7 @@ export function errorHandler(
   const statusCode = "statusCode" in error ? error.statusCode : 500;
   const isServerError = statusCode >= 500;
 
-  console.debug("error", error);
+  // TODO: add error logging later
 
   res.status(statusCode).json({
     error: isServerError ? INTERNAL_SERVER_ERROR : error.name,

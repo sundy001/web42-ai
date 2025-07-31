@@ -2,18 +2,18 @@ import { getAuthProvider } from "@/domains/auth";
 import { AuthError } from "@/domains/auth/authUtils";
 import type { AuthUser } from "@/domains/auth/types";
 import { ApiError, NotFoundError } from "@/utils/errors";
-import type { CombinedUser, User } from "./types";
+import type { MongoUser, User } from "./types";
 
 // Helper function to merge MongoDB user with auth provider user data
-export async function combineUserData(mongoUser: User): Promise<CombinedUser>;
+export async function combineUserData(mongoUser: MongoUser): Promise<User>;
 export async function combineUserData(
-  mongoUser: User,
+  mongoUser: MongoUser,
   authUser: AuthUser | undefined,
-): Promise<CombinedUser>;
+): Promise<User>;
 export async function combineUserData(
-  mongoUser: User,
+  mongoUser: MongoUser,
   authUser?: AuthUser,
-): Promise<CombinedUser> {
+): Promise<User> {
   let resolvedAuthUser = authUser;
 
   // If authUser not provided, fetch from auth provider

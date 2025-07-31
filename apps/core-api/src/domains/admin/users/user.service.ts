@@ -2,10 +2,10 @@ import { AuthUser, getAuthProvider } from "@/domains/auth";
 import { ConflictError, NotFoundError } from "@/utils/errors";
 import { combineUserData } from "./combineUserData";
 import type {
-  CombinedUser,
   CreateUserRequest,
   PaginationOptions,
   UpdateUserRequest,
+  User,
   UserFilters,
   UserListResponse,
 } from "./types";
@@ -13,9 +13,7 @@ import * as userRepository from "./user.repository";
 
 // High-level user service that coordinates between userStore and auth provider
 
-export async function createUser(
-  userData: CreateUserRequest,
-): Promise<CombinedUser> {
+export async function createUser(userData: CreateUserRequest): Promise<User> {
   // Check if user already exists by email, including soft deleted users
   const existingUser = await getMongoUserByEmail(userData.email, true);
   if (existingUser) {
@@ -48,7 +46,7 @@ export async function createUser(
 export async function getUserById(
   id: string,
   includeDeleted = false,
-): Promise<CombinedUser | null> {
+): Promise<User | null> {
   const mongoUser = await userRepository.getUserById(id, includeDeleted);
 
   if (!mongoUser) {
@@ -61,7 +59,7 @@ export async function getUserById(
 export async function getUserBySupabaseId(
   supabaseUserId: string,
   includeDeleted = false,
-): Promise<CombinedUser | null> {
+): Promise<User | null> {
   const mongoUser = await userRepository.getUserBySupabaseId(
     supabaseUserId,
     includeDeleted,
@@ -75,7 +73,7 @@ export async function getUserBySupabaseId(
 export async function updateUser(
   id: string,
   updateData: UpdateUserRequest,
-): Promise<CombinedUser | null> {
+): Promise<User | null> {
   const authProvider = getAuthProvider();
 
   // Update MongoDB document first
@@ -95,7 +93,7 @@ export async function updateUser(
   return combineUserData(mongoUser, authUser);
 }
 
-export async function deleteUser(id: string): Promise<CombinedUser> {
+export async function deleteUser(id: string): Promise<User> {
   const authProvider = getAuthProvider();
 
   // Get the current user to find the auth provider ID
@@ -120,7 +118,7 @@ export async function permanentlyDeleteUser(id: string): Promise<boolean> {
   return userRepository.permanentlyDeleteUser(id);
 }
 
-export async function restoreUser(id: string): Promise<CombinedUser | null> {
+export async function restoreUser(id: string): Promise<User | null> {
   const mongoUser = await userRepository.restoreUser(id);
 
   if (!mongoUser) {
@@ -158,7 +156,7 @@ export async function userExists(id: string): Promise<boolean> {
 async function getMongoUserByEmail(
   email: string,
   includeDeleted = false,
-): Promise<CombinedUser | null> {
+): Promise<User | null> {
   const mongoUser = await userRepository.getUserByEmail(email, includeDeleted);
   if (!mongoUser) {
     return null;
