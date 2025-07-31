@@ -4,6 +4,9 @@ import { z } from "zod";
 // Extend Zod with OpenAPI support
 extendZodWithOpenApi(z);
 
+// Schema constants
+const EXAMPLE_TIMESTAMP = "2024-01-26T12:00:00.000Z";
+
 // Login request schema
 export const LoginSchema = z.object({
   email: z.string().email("Invalid email format").openapi({
@@ -49,11 +52,11 @@ export const LoginResponseSchema = z.object({
         description: "User avatar URL",
       }),
       createdAt: z.string().datetime().optional().openapi({
-        example: "2024-01-26T12:00:00.000Z",
+        example: EXAMPLE_TIMESTAMP,
         description: "User creation timestamp",
       }),
       updatedAt: z.string().datetime().optional().openapi({
-        example: "2024-01-26T12:00:00.000Z",
+        example: EXAMPLE_TIMESTAMP,
         description: "User last update timestamp",
       }),
       // Auth provider fields
@@ -62,15 +65,15 @@ export const LoginResponseSchema = z.object({
         description: "Authentication provider",
       }),
       lastSignInAt: z.string().optional().openapi({
-        example: "2024-01-26T12:00:00.000Z",
+        example: EXAMPLE_TIMESTAMP,
         description: "Last sign in timestamp",
       }),
       emailConfirmedAt: z.string().optional().openapi({
-        example: "2024-01-26T12:00:00.000Z",
+        example: EXAMPLE_TIMESTAMP,
         description: "Email confirmation timestamp",
       }),
       phoneConfirmedAt: z.string().optional().openapi({
-        example: "2024-01-26T12:00:00.000Z",
+        example: EXAMPLE_TIMESTAMP,
         description: "Phone confirmation timestamp",
       }),
       phone: z.string().optional().openapi({
@@ -89,19 +92,19 @@ export const LoginResponseSchema = z.object({
     }),
   session: z
     .object({
-      access_token: z.string().optional().openapi({
+      access_token: z.string().openapi({
         example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
         description: "JWT access token",
       }),
-      refresh_token: z.string().optional().openapi({
+      refresh_token: z.string().openapi({
         example: "refresh_token_string",
         description: "Refresh token for obtaining new access tokens",
       }),
-      expires_in: z.number().optional().openapi({
+      expires_in: z.number().openapi({
         example: 3600,
         description: "Token expiration time in seconds",
       }),
-      token_type: z.string().optional().openapi({
+      token_type: z.string().openapi({
         example: "bearer",
         description: "Token type",
       }),

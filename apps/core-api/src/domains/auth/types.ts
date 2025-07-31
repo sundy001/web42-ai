@@ -27,10 +27,10 @@ export interface AuthUser {
  * Authentication session data
  */
 export interface AuthSession {
-  access_token?: string;
-  refresh_token?: string;
-  expires_in?: number;
-  token_type?: string;
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  token_type: string;
 }
 
 // =============================================================================

@@ -26,19 +26,19 @@ export async function loginUser(loginData: LoginInput): Promise<LoginResponse> {
     }
 
     const session = data.session as {
-      access_token?: string;
-      refresh_token?: string;
-      expires_in?: number;
-      token_type?: string;
-    } | null;
+      access_token: string;
+      refresh_token: string;
+      expires_in: number;
+      token_type: string;
+    };
 
     return {
       user: mongoUser,
       session: {
-        access_token: session?.access_token,
-        refresh_token: session?.refresh_token,
-        expires_in: session?.expires_in,
-        token_type: session?.token_type,
+        access_token: session.access_token,
+        refresh_token: session.refresh_token,
+        expires_in: session.expires_in,
+        token_type: session.token_type,
       },
     };
   } catch (error) {

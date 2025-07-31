@@ -114,8 +114,9 @@ describe("combineUserData", () => {
       const authError = new AuthError("User not found", 404, "user_not_found");
       mockAuthProvider.getUserById.mockRejectedValue(authError);
 
+      await expect(combineUserData(mongoUser)).rejects.toThrow(NotFoundError);
       await expect(combineUserData(mongoUser)).rejects.toThrow(
-        new NotFoundError("Auth user not found (nonexistent-user)"),
+        "Auth user not found (nonexistent-user)",
       );
 
       expect(mockAuthProvider.getUserById).toHaveBeenCalledWith(
@@ -131,8 +132,9 @@ describe("combineUserData", () => {
       const authError = new AuthError("Access denied", 403, "access_denied");
       mockAuthProvider.getUserById.mockRejectedValue(authError);
 
+      await expect(combineUserData(mongoUser)).rejects.toThrow(ApiError);
       await expect(combineUserData(mongoUser)).rejects.toThrow(
-        new ApiError("Auth provider error (error-user)"),
+        "Auth provider error (error-user)",
       );
 
       expect(mockAuthProvider.getUserById).toHaveBeenCalledWith("error-user");
@@ -146,8 +148,9 @@ describe("combineUserData", () => {
       const networkError = new Error("Network timeout");
       mockAuthProvider.getUserById.mockRejectedValue(networkError);
 
+      await expect(combineUserData(mongoUser)).rejects.toThrow(ApiError);
       await expect(combineUserData(mongoUser)).rejects.toThrow(
-        new ApiError("Auth user fetch failed (network-error-user)"),
+        "Auth user fetch failed (network-error-user)",
       );
 
       expect(mockAuthProvider.getUserById).toHaveBeenCalledWith(
