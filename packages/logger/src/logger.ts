@@ -29,11 +29,27 @@ const getLogLevel = (config: LoggerConfig): string => {
 // CloudFlare-optimized Pino configuration
 const createPinoConfig = (config: LoggerConfig) => ({
   level: getLogLevel(config),
-  // CloudFlare Workers Logs prefers structured JSON
-  formatters: {
-    level: (label: string) => ({ level: label.toUpperCase() }),
-    log: (object: Record<string, unknown>) => object,
-  },
+  // Use pino-pretty in development for better readability
+  transport:
+    config.nodeEnv === "development"
+      ? {
+          target: "pino-pretty",
+          options: {
+            colorize: true,
+            translateTime: "HH:MM:ss.l",
+            ignore: "pid,hostname",
+            levelFirst: true,
+          },
+        }
+      : undefined,
+  // CloudFlare Workers Logs prefers structured JSON (production)
+  formatters:
+    config.nodeEnv !== "development"
+      ? {
+          level: (label: string) => ({ level: label.toUpperCase() }),
+          log: (object: Record<string, unknown>) => object,
+        }
+      : undefined,
   // Use ISO timestamps for CloudFlare compatibility
   timestamp: pino.stdTimeFunctions.isoTime,
   // Optimize for CloudFlare container environment
