@@ -1,3 +1,4 @@
+import { projectLogger } from "@/config/logger";
 import { userExists } from "@/domains/admin/users";
 import type { PaginationOptions } from "@/utils/types";
 import * as projectStore from "./project.repository";
@@ -30,7 +31,10 @@ export async function createProject(
 
     return mongoProject;
   } catch (error) {
-    console.error("Error creating project:", error);
+    projectLogger.error(
+      { err: error, userId: projectData.userId, projectName: projectData.name },
+      "Failed to create project",
+    );
     throw error;
   }
 }
@@ -46,7 +50,10 @@ export async function deleteProject(id: string): Promise<boolean> {
   try {
     return projectStore.deleteProject(id);
   } catch (error) {
-    console.error("Error deleting project:", error);
+    projectLogger.error(
+      { err: error, projectId: id },
+      "Failed to delete project",
+    );
     throw error;
   }
 }
@@ -55,6 +62,6 @@ export async function listProjects(
   filters: ProjectFilters = {},
   pagination: PaginationOptions = {},
 ): Promise<ProjectListResponse> {
-  console.log("checkpoint 1");
+  projectLogger.debug({ filters, pagination }, "Listing projects");
   return projectStore.listProjects(filters, pagination);
 }

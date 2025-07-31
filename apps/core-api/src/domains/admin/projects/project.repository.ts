@@ -1,3 +1,4 @@
+import { dbLogger } from "@/config/logger";
 import { databaseStore } from "@/stores/database";
 import { ObjectId } from "mongodb";
 import type {
@@ -47,7 +48,7 @@ export async function createProject(
       ...mongoProject,
     };
   } catch (error) {
-    console.error("Error creating project:", error);
+    dbLogger.error({ err: error, projectData }, "Failed to create project");
     throw error;
   }
 }

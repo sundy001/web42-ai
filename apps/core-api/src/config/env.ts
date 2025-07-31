@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { createBootstrapLogger } from "./bootstrap-logger";
+
 // Environment validation schema
 const envSchema = z.object({
   // Server configuration
@@ -11,6 +13,9 @@ const envSchema = z.object({
     .transform(Number)
     .pipe(z.number().int().min(1).max(65535))
     .default("3002"),
+  LOG_LEVEL: z
+    .enum(["error", "warn", "info", "debug", "trace", "silent"])
+    .optional(),
 
   // Database configuration
   MONGODB_URI: z.string().url().default("mongodb://localhost:27017"),
@@ -27,10 +32,15 @@ function validateEnv() {
   try {
     return envSchema.parse(process.env);
   } catch (error) {
-    console.error("❌ Invalid environment variables:");
+    // Use bootstrap logger for env validation errors since main logger isn't available yet
+    const bootstrapLogger = createBootstrapLogger();
+    bootstrapLogger.error({ err: error }, "❌ Invalid environment variables");
+
     if (error instanceof z.ZodError) {
       error.errors.forEach((err) => {
-        console.error(`  - ${err.path.join(".")}: ${err.message}`);
+        bootstrapLogger.error(
+          `Environment validation error: ${err.path.join(".")} - ${err.message}`,
+        );
       });
     }
     process.exit(1);
@@ -46,6 +56,7 @@ export const config = {
   server: {
     port: env.PORT,
     nodeEnv: env.NODE_ENV,
+    logLevel: env.LOG_LEVEL,
     isDevelopment: env.NODE_ENV === "development",
     isProduction: env.NODE_ENV === "production",
     isTest: env.NODE_ENV === "test",

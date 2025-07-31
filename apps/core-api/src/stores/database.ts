@@ -1,6 +1,7 @@
 import { Db, MongoClient } from "mongodb";
 
 import { config as systemConfig } from "@/config";
+import { dbLogger } from "@/config/logger";
 
 export interface DatabaseConfig {
   uri: string;
@@ -24,9 +25,18 @@ class DatabaseStore {
       this.client = new MongoClient(this.config.uri);
       await this.client.connect();
       this.database = this.client.db(this.config.databaseName);
-      console.log(`✅ Connected to MongoDB: ${this.config.databaseName}`);
+      dbLogger.info(
+        {
+          database: this.config.databaseName,
+          uri: this.config.uri.replace(/\/\/[^:]+:[^@]+@/, "//***:***@"),
+        },
+        "✅ Connected to MongoDB",
+      );
     } catch (error) {
-      console.error("❌ Failed to connect to MongoDB:", error);
+      dbLogger.error(
+        { err: error, database: this.config.databaseName },
+        "❌ Failed to connect to MongoDB",
+      );
       throw error;
     }
   }
@@ -37,10 +47,10 @@ class DatabaseStore {
         await this.client.close();
         this.client = null;
         this.database = null;
-        console.log("✅ MongoDB connection closed");
+        dbLogger.info("✅ MongoDB connection closed");
       }
     } catch (error) {
-      console.error("❌ Error closing MongoDB connection:", error);
+      dbLogger.error({ err: error }, "❌ Error closing MongoDB connection");
       throw error;
     }
   }
@@ -79,7 +89,7 @@ class DatabaseStore {
       await this.database.admin().ping();
       return true;
     } catch (error) {
-      console.error("❌ Database ping failed:", error);
+      dbLogger.error({ err: error }, "❌ Database ping failed");
       return false;
     }
   }

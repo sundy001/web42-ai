@@ -1,10 +1,10 @@
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
-import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
 
 import { config } from "@/config";
+import { httpLogger, logger } from "@/config/logger";
 import adminRoutes from "@/domains/admin";
 import { authRoutes } from "@/domains/auth";
 import { errorHandler } from "@/middleware";
@@ -17,7 +17,7 @@ const PORT = config.server.port;
 // Middleware
 app.use(helmet());
 app.use(cors());
-app.use(morgan("combined"));
+app.use(httpLogger);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -88,12 +88,13 @@ app.use(errorHandler);
 
 // Graceful shutdown handler
 process.on("SIGINT", async () => {
-  console.log("\n🛑 Shutting down Core API server...");
+  logger.info("🛑 Shutting down Core API server...");
   try {
     await databaseStore.disconnect();
+    logger.info("✅ Server shutdown complete");
     process.exit(0);
   } catch (error) {
-    console.error("❌ Error during shutdown:", error);
+    logger.error({ err: error }, "❌ Error during shutdown");
     process.exit(1);
   }
 });
@@ -105,14 +106,22 @@ async function startServer() {
 
     app.listen(PORT, () => {
       const config = databaseStore.getConfig();
-      console.log(`🚀 Core API server running on port ${PORT}`);
-      console.log(`📍 Health check: http://localhost:${PORT}/health`);
-      console.log(`🔗 API status: http://localhost:${PORT}/api/v1/status`);
-      console.log(`📖 API docs: http://localhost:${PORT}/api-docs`);
-      console.log(`💾 Database: ${config.databaseName} on ${config.uri}`);
+      logger.info(
+        {
+          port: PORT,
+          environment: process.env.NODE_ENV || "development",
+          database: config.databaseName,
+          uri: config.uri,
+        },
+        "🚀 Core API server started",
+      );
+
+      logger.info(`📍 Health check: http://localhost:${PORT}/health`);
+      logger.info(`🔗 API status: http://localhost:${PORT}/api/v1/status`);
+      logger.info(`📖 API docs: http://localhost:${PORT}/api-docs`);
     });
   } catch (error) {
-    console.error("❌ Failed to start server:", error);
+    logger.error({ err: error }, "❌ Failed to start server");
     process.exit(1);
   }
 }

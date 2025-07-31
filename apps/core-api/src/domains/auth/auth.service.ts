@@ -1,3 +1,4 @@
+import { authLogger } from "@/config/logger";
 import { getUserBySupabaseId } from "@/domains/admin/users";
 import { getAuthProvider } from "./providers";
 import type { LoginRequest, LoginResponse } from "./types";
@@ -43,7 +44,7 @@ export async function loginUser(
       },
     };
   } catch (error) {
-    console.error("Login error:", error);
+    authLogger.error({ err: error, email: loginData.email }, "Login failed");
     throw error;
   }
 }
@@ -55,6 +56,6 @@ export async function signoutUser(): Promise<void> {
     const authProvider = getAuthProvider();
     await authProvider.signOut();
   } catch (error) {
-    console.warn("Signout error:", error);
+    authLogger.warn({ err: error }, "Signout error");
   }
 }

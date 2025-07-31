@@ -1,3 +1,4 @@
+import { authLogger } from "@/config/logger";
 import type { NextFunction, Response } from "express";
 import { supabaseClient } from "../providers/supabase";
 import type { AuthRequest } from "../types";
@@ -46,7 +47,7 @@ export async function authenticateUser(
 
     next();
   } catch (error) {
-    console.error("Authentication error:", error);
+    authLogger.error({ err: error }, "Authentication failed");
     res.status(500).json({
       error: "Internal Server Error",
       message: "Authentication failed",
@@ -89,7 +90,7 @@ export async function optionalAuthentication(
 
     next();
   } catch (error) {
-    console.error("Optional authentication error:", error);
+    authLogger.warn({ err: error }, "Optional authentication error");
     // Continue without authentication on error
     next();
   }
