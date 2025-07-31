@@ -210,14 +210,18 @@ describe("User Service Unit Tests", () => {
       );
     });
 
-    it("should return null for non-existent supabase user", async () => {
+    it("should throw NotFoundError for non-existent supabase user", async () => {
       const supabaseUserId = "non-existent-id";
 
       mockUserRepository.getUserBySupabaseId.mockResolvedValue(null);
 
-      const result = await userService.getUserBySupabaseId(supabaseUserId);
+      await expect(
+        userService.getUserBySupabaseId(supabaseUserId),
+      ).rejects.toThrow(NotFoundError);
+      await expect(
+        userService.getUserBySupabaseId(supabaseUserId),
+      ).rejects.toThrow(`User not found by supabase ID ${supabaseUserId}`);
 
-      expect(result).toBeNull();
       expect(mockUserRepository.getUserBySupabaseId).toHaveBeenCalledWith(
         supabaseUserId,
         false,
