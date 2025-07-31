@@ -31,10 +31,9 @@ import {
 
 // Setup mocks
 const authProvider = setupAuthProviderMocks();
-setupUserRepositoryMocks();
+const userRepository = setupUserRepositoryMocks();
 
 import { AuthError } from "@/domains/auth/authUtils";
-import * as userRepository from "../user.repository";
 import { userRoutes } from "../user.routes";
 
 describe("User Routes Integration Tests", () => {

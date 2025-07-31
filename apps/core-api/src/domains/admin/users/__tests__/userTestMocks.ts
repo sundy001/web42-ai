@@ -1,34 +1,36 @@
 export const setupAuthProviderMocks = () => {
-  const mocks = vi.hoisted(() => {
-    return {
-      authProviderMock: {
-        createUser: vi.fn(),
-        updateUser: vi.fn(),
-        deleteUser: vi.fn(),
-        getUserById: vi.fn(),
-        signInWithPassword: vi.fn(),
-        signOut: vi.fn(),
-      },
-    };
-  });
-
-  vi.mock("@/domains/auth", () => ({
-    getAuthProvider: () => mocks.authProviderMock,
+  const mocks = vi.hoisted(() => ({
+    createUser: vi.fn(),
+    updateUser: vi.fn(),
+    deleteUser: vi.fn(),
+    getUserById: vi.fn(),
+    signInWithPassword: vi.fn(),
+    signOut: vi.fn(),
   }));
 
-  return mocks.authProviderMock;
+  vi.mock("@/domains/auth", () => ({
+    getAuthProvider: () => mocks,
+  }));
+
+  return mocks;
 };
 
 export const setupUserRepositoryMocks = () => {
-  vi.mock("../user.repository", () => ({
-    createUser: vi.fn(),
-    getUserById: vi.fn(),
-    getUserByEmail: vi.fn(),
-    updateUser: vi.fn(),
-    deleteUser: vi.fn(),
-    restoreUser: vi.fn(),
-    listUsers: vi.fn(),
-    userExists: vi.fn(),
-    userExistsByEmail: vi.fn(),
-  }));
+  const userRepoMocks = vi.hoisted(() => {
+    return {
+      createUser: vi.fn(),
+      getUserById: vi.fn(),
+      getUserByEmail: vi.fn(),
+      updateUser: vi.fn(),
+      deleteUser: vi.fn(),
+      restoreUser: vi.fn(),
+      listUsers: vi.fn(),
+      userExists: vi.fn(),
+      userExistsByEmail: vi.fn(),
+    };
+  });
+
+  vi.mock("../user.repository", () => userRepoMocks);
+
+  return userRepoMocks;
 };
