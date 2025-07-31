@@ -18,21 +18,19 @@ export const setupAuthProviderMocks = () => {
 };
 
 export const setupUserRepositoryMocks = () => {
-  const userRepoMocks = vi.hoisted(() => {
-    return {
-      createUser: vi.fn(),
-      getUserById: vi.fn(),
-      getUserByEmail: vi.fn(),
-      getUserBySupabaseId: vi.fn(),
-      updateUser: vi.fn(),
-      deleteUser: vi.fn(),
-      restoreUser: vi.fn(),
-      listUsers: vi.fn(),
-      userExists: vi.fn(),
-      userExistsByEmail: vi.fn(),
-      permanentlyDeleteUser: vi.fn(),
-    };
-  });
+  const userRepoMocks = vi.hoisted(() => ({
+    createUser: vi.fn(),
+    getUserById: vi.fn(),
+    getUserByEmail: vi.fn(),
+    getUserBySupabaseId: vi.fn(),
+    updateUser: vi.fn(),
+    deleteUser: vi.fn(),
+    restoreUser: vi.fn(),
+    listUsers: vi.fn(),
+    userExists: vi.fn(),
+    userExistsByEmail: vi.fn(),
+    permanentlyDeleteUser: vi.fn(),
+  }));
 
   vi.mock("../user.repository", () => userRepoMocks);
 
