@@ -1,7 +1,13 @@
 // Users Domain - Public API
 
-// Main service functions for external consumption
-// External consumers should only interact through the service layer
+// =============================================================================
+// SERVICE LAYER - Core business logic
+// =============================================================================
+
+/**
+ * Main service functions for external consumption
+ * These provide the core user management business logic
+ */
 export {
   createUser,
   deleteUser,
@@ -14,11 +20,24 @@ export {
   userExistsByEmail,
 } from "./user.service";
 
-// HTTP routes for application setup
+// =============================================================================
+// PRESENTATION LAYER - HTTP interface
+// =============================================================================
+
+/**
+ * HTTP routes for application setup
+ * Handles incoming user-related HTTP requests
+ */
 export { userRoutes } from "./user.routes";
 
-// Export commonly used types directly for convenience
-// Note: Repository namespace types are kept internal to the domain
+// =============================================================================
+// TYPE CONTRACTS - External interfaces
+// =============================================================================
+
+/**
+ * Export commonly used types for external consumers
+ * Note: Repository namespace types are kept internal to the domain
+ */
 export type {
   // Service layer types for API consumers
   CreateUserRequest,
@@ -31,7 +50,9 @@ export type {
   UserStatus,
 } from "./types";
 
-// Schema exports for validation and OpenAPI
+/**
+ * Schema exports for validation and OpenAPI documentation
+ */
 export {
   CreateUserSchema,
   ErrorResponseSchema,
