@@ -1,15 +1,12 @@
 import type { NextFunction, Response } from "express";
 import { supabaseClient } from "../providers/supabase";
-import type { AuthenticatedRequest as AuthReq } from "../types";
-
-// Re-export for backwards compatibility
-export type AuthenticatedRequest = AuthReq;
+import type { AuthRequest } from "../types";
 
 /**
  * Middleware to verify Supabase JWT tokens
  */
 export async function authenticateUser(
-  req: AuthenticatedRequest,
+  req: AuthRequest,
   res: Response,
   next: NextFunction,
 ): Promise<void> {
@@ -61,7 +58,7 @@ export async function authenticateUser(
  * Middleware to optionally authenticate user (doesn't fail if no token)
  */
 export async function optionalAuthentication(
-  req: AuthenticatedRequest,
+  req: AuthRequest,
   res: Response,
   next: NextFunction,
 ): Promise<void> {
@@ -102,7 +99,7 @@ export async function optionalAuthentication(
  * Middleware to check if user is an admin
  */
 export function requireAdmin(
-  req: AuthenticatedRequest,
+  req: AuthRequest,
   res: Response,
   next: NextFunction,
 ): void {

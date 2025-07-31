@@ -1,20 +1,13 @@
 import { databaseStore } from "@/stores/database";
 import { ObjectId } from "mongodb";
 import type {
+  CreateUserData,
   MongoUser,
-  UserRepositoryCreateData,
-  UserRepositoryFilters,
-  UserRepositoryListResponse,
-  UserRepositoryPaginationOptions,
-  UserRepositoryUpdateData,
+  PaginationOptionsDb,
+  UpdateUserData,
+  UserFiltersDb,
+  UserListResponseDb,
 } from "./types";
-
-// Type aliases for cleaner code
-type CreateUserData = UserRepositoryCreateData;
-type UpdateUserData = UserRepositoryUpdateData;
-type UserFiltersDb = UserRepositoryFilters;
-type PaginationOptionsDb = UserRepositoryPaginationOptions;
-type UserListResponseDb = UserRepositoryListResponse;
 
 const COLLECTION_NAME = "users";
 
@@ -264,12 +257,3 @@ export async function userExists(id: string): Promise<boolean> {
   const count = await collection.countDocuments(filter);
   return count > 0;
 }
-
-// Re-export repository types for external use (if needed)
-export type {
-  CreateUserData,
-  PaginationOptionsDb,
-  UpdateUserData,
-  UserFiltersDb,
-  UserListResponseDb,
-};

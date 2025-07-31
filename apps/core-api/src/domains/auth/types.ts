@@ -1,4 +1,5 @@
 import type { User } from "@/domains/admin/users";
+import type { Request } from "express";
 
 // =============================================================================
 // DOMAIN ENTITIES
@@ -132,4 +133,19 @@ export interface AuthProvider {
     password: string,
   ): Promise<AuthProviderSignInResponse>;
   signOut(): Promise<void>;
+}
+
+// =============================================================================
+// EXPRESS REQUEST EXTENSIONS
+// =============================================================================
+
+/**
+ * Express request with authenticated user information
+ */
+export interface AuthRequest extends Request {
+  user?: {
+    id: string;
+    email?: string;
+    role?: string;
+  };
 }

@@ -92,7 +92,7 @@ export type UserListResponse = PaginatedResponse<User>;
 /**
  * Data structure for creating user in database
  */
-export interface UserRepositoryCreateData {
+export interface CreateUserData {
   supabaseUserId: string;
   email: string;
   role: UserRole;
@@ -102,7 +102,7 @@ export interface UserRepositoryCreateData {
 /**
  * Data structure for updating user in database
  */
-export interface UserRepositoryUpdateData {
+export interface UpdateUserData {
   role?: UserRole;
   status?: UserStatus;
 }
@@ -110,7 +110,7 @@ export interface UserRepositoryUpdateData {
 /**
  * Database-level filters for user queries
  */
-export interface UserRepositoryFilters {
+export interface UserFiltersDb {
   supabaseUserId?: string;
   email?: string;
   role?: UserRole;
@@ -121,7 +121,7 @@ export interface UserRepositoryFilters {
 /**
  * Database-level pagination options
  */
-export interface UserRepositoryPaginationOptions {
+export interface PaginationOptionsDb {
   page?: number;
   limit?: number;
 }
@@ -129,4 +129,4 @@ export interface UserRepositoryPaginationOptions {
 /**
  * Database-level paginated response (returns raw User entities)
  */
-export type UserRepositoryListResponse = PaginatedResponse<MongoUser>;
+export type UserListResponseDb = PaginatedResponse<MongoUser>;
