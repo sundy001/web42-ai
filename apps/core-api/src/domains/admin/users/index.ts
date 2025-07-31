@@ -17,15 +17,11 @@ export {
 // HTTP routes for application setup
 export { userRoutes } from "./user.routes";
 
-// Export all types under a namespace for external consumers
-export type * as UserTypes from "./types";
-
 // Export commonly used types directly for convenience
 export type {
   // Service layer types for API consumers
   CreateUserRequest,
   // Core domain types
-  MongoUser,
   PaginationOptions,
   UpdateUserRequest,
   User,
@@ -33,10 +29,6 @@ export type {
   UserListResponse,
   UserRole,
   UserStatus,
-  isActiveUser,
-  // Utility functions
-  isAdmin,
-  isDeletedUser,
 } from "./types";
 
 // Note: Repository namespace types are kept internal to the domain

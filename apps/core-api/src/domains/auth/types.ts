@@ -91,7 +91,7 @@ export interface SignoutResponse {
 /**
  * Input for creating a user in the auth provider
  */
-export interface AuthProviderCreateUserInput {
+export interface CreateAuthUserInput {
   email: string;
   password?: string;
   name: string;
@@ -102,7 +102,7 @@ export interface AuthProviderCreateUserInput {
 /**
  * Input for updating a user in the auth provider
  */
-export interface AuthProviderUpdateUserInput {
+export interface UpdateAuthUserInput {
   email?: string;
   password?: string;
   userMetadata?: Record<string, unknown>;
@@ -120,11 +120,11 @@ export interface AuthProviderSignInResponse {
 /**
  * Abstract interface that all auth providers must implement
  */
-export interface AuthProviderInterface {
+export interface AuthProvider {
   // User management operations
-  createUser(input: AuthProviderCreateUserInput): Promise<AuthUser>;
+  createUser(input: CreateAuthUserInput): Promise<AuthUser>;
   getUserById(id: string): Promise<AuthUser>;
-  updateUser(id: string, input: AuthProviderUpdateUserInput): Promise<AuthUser>;
+  updateUser(id: string, input: UpdateAuthUserInput): Promise<AuthUser>;
   deleteUser(id: string, softDelete?: boolean): Promise<AuthUser>;
 
   // Authentication operations
@@ -155,7 +155,7 @@ export interface AuthenticatedUserData {
 /**
  * Express request with authenticated user data
  */
-export interface AuthenticatedRequestInterface extends Request {
+export interface AuthenticatedRequest extends Request {
   user?: AuthenticatedUserData;
 }
 
@@ -163,7 +163,7 @@ export interface AuthenticatedRequestInterface extends Request {
  * Type for authentication middleware functions
  */
 export type AuthMiddlewareFunction = (
-  req: AuthenticatedRequestInterface,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
 ) => Promise<void>;
@@ -172,51 +172,7 @@ export type AuthMiddlewareFunction = (
  * Type for authorization middleware functions
  */
 export type AuthorizationMiddlewareFunction = (
-  req: AuthenticatedRequestInterface,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
 ) => void;
-
-// =============================================================================
-// TYPE GUARDS AND UTILITIES
-// =============================================================================
-
-/**
- * Type guard to check if an error is an authentication error
- */
-export function isAuthError(error: unknown): error is AuthError {
-  return error instanceof Error && "code" in error;
-}
-
-/**
- * Type guard to check if a request is authenticated
- */
-export function isAuthenticatedRequest(
-  req: Request,
-): req is AuthenticatedRequestInterface {
-  return "user" in req && req.user !== undefined;
-}
-
-/**
- * Type guard to check if user has admin role
- */
-export function isAdminUser(user: AuthenticatedUserData): boolean {
-  return user.role === "admin";
-}
-
-/**
- * Utility to extract user ID from authenticated request
- */
-export function getUserId(req: AuthenticatedRequestInterface): string | null {
-  return req.user?.id ?? null;
-}
-
-// =============================================================================
-// TYPE ALIASES FOR BACKWARDS COMPATIBILITY
-// =============================================================================
-
-// Create type aliases for cleaner imports and backwards compatibility
-export type CreateAuthUserInput = AuthProviderCreateUserInput;
-export type UpdateAuthUserInput = AuthProviderUpdateUserInput;
-export type AuthProvider = AuthProviderInterface;
-export type AuthenticatedRequest = AuthenticatedRequestInterface;

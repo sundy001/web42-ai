@@ -152,28 +152,3 @@ export interface PaginatedResponse<T> {
   limit: number;
   totalPages: number;
 }
-
-// =============================================================================
-// TYPE GUARDS AND UTILITIES
-// =============================================================================
-
-/**
- * Type guard to check if a user has admin privileges
- */
-export function isAdmin(user: Pick<MongoUser, "role">): boolean {
-  return user.role === "admin";
-}
-
-/**
- * Type guard to check if a user is active
- */
-export function isActiveUser(user: Pick<MongoUser, "status">): boolean {
-  return user.status === "active";
-}
-
-/**
- * Type guard to check if a user is deleted
- */
-export function isDeletedUser(user: Pick<MongoUser, "status">): boolean {
-  return user.status === "deleted";
-}
