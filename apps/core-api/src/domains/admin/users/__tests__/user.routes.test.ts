@@ -3,10 +3,10 @@ import { vi } from "vitest";
 import { errorHandler } from "@/middleware";
 import {
   deleteRequest,
-  expectUserStructure,
   expectError,
   expectPaginatedResponse,
   expectSuccess,
+  expectUserStructure,
   expectValidationError,
   getRequest,
   postRequest,
@@ -18,10 +18,10 @@ import { ObjectId } from "mongodb";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   createMockAuthUser,
-  createMockUser,
   createMockCreateUserRequest,
   createMockMongoUser,
   createMockUpdateUserRequest,
+  createMockUser,
   createMockUserListResponse,
 } from "./userTestFixtures";
 import {
