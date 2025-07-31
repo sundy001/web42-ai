@@ -66,7 +66,6 @@ router.post(
     const userData: CreateUserRequest = res.locals.validatedBody;
 
     const user = await createUser(userData);
-
     res.status(201).json(user);
   }),
 );
@@ -81,7 +80,6 @@ router.put(
     const updateData: UpdateUserRequest = res.locals.validatedBody;
 
     const user = await updateUser(id, updateData);
-
     res.json(user);
   }),
 );
@@ -92,7 +90,6 @@ router.delete(
   validateObjectId(),
   asyncHandler(async (req: Request, res: Response) => {
     const user = await deleteUser(res.locals.validatedId);
-
     res.json(user);
   }),
 );
@@ -103,7 +100,6 @@ router.post(
   validateObjectId(),
   asyncHandler(async (req: Request, res: Response) => {
     const user = await restoreUser(res.locals.validatedId);
-
     res.json(user);
   }),
 );
