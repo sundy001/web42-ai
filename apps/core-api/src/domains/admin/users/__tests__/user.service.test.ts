@@ -444,9 +444,9 @@ describe("User Service Unit Tests", () => {
         },
       );
       const mockAuthUsers = [
-        createMockAuthUser({ id: mockMongoUsers[0].supabaseUserId }),
+        createMockAuthUser({ id: mockMongoUsers[0]!.supabaseUserId }),
         createMockAuthUser({
-          id: mockMongoUsers[1].supabaseUserId,
+          id: mockMongoUsers[1]!.supabaseUserId,
           email: "user2@example.com",
         }),
       ];
@@ -461,12 +461,12 @@ describe("User Service Unit Tests", () => {
       expect(result.items).toHaveLength(2);
       expect(result.total).toBe(2);
       expect(result.totalPages).toBe(1);
-      expect(result.items[0].email).toBe(mockAuthUsers[0].email);
-      expect(result.items[0].name).toBe(mockAuthUsers[0].name);
-      expect(result.items[0].role).toBe(mockMongoUsers[0].role);
-      expect(result.items[1].email).toBe(mockAuthUsers[1].email);
-      expect(result.items[1].name).toBe(mockAuthUsers[1].name);
-      expect(result.items[1].role).toBe(mockMongoUsers[1].role);
+      expect(result.items[0]!.email).toBe(mockAuthUsers[0]!.email);
+      expect(result.items[0]!.name).toBe(mockAuthUsers[0]!.name);
+      expect(result.items[0]!.role).toBe(mockMongoUsers[0]!.role);
+      expect(result.items[1]!.email).toBe(mockAuthUsers[1]!.email);
+      expect(result.items[1]!.name).toBe(mockAuthUsers[1]!.name);
+      expect(result.items[1]!.role).toBe(mockMongoUsers[1]!.role);
       expect(mockUserRepository.listUsers).toHaveBeenCalledWith({}, {});
     });
 
@@ -495,9 +495,9 @@ describe("User Service Unit Tests", () => {
       expect(result.items).toHaveLength(1);
       expect(result.page).toBe(2);
       expect(result.limit).toBe(5);
-      expect(result.items[0].email).toBe(mockAuthUser.email);
-      expect(result.items[0].name).toBe(mockAuthUser.name);
-      expect(result.items[0].role).toBe(mockMongoUser.role);
+      expect(result.items[0]!.email).toBe(mockAuthUser.email);
+      expect(result.items[0]!.name).toBe(mockAuthUser.name);
+      expect(result.items[0]!.role).toBe(mockMongoUser.role);
       expect(mockUserRepository.listUsers).toHaveBeenCalledWith(
         filters,
         pagination,
