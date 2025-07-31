@@ -1,9 +1,9 @@
+import { ObjectIdSchema } from "@/utils/schemas";
 import { describe, expect, it } from "vitest";
 import {
   CreateUserSchema,
   ErrorResponseSchema,
   ListUsersQuerySchema,
-  ObjectIdSchema,
   PaginationSchema,
   UpdateUserSchema,
   UserFiltersSchema,

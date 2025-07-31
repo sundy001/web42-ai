@@ -9,9 +9,9 @@ import type {
 } from "../types";
 
 // Test constants
-export const MOCK_EMAIL = "test@example.com";
-export const MOCK_TIMESTAMP = "2024-01-01T00:00:00.000Z";
-export const TEST_USER_NAME = "Test User";
+const MOCK_EMAIL = "test@example.com";
+const MOCK_TIMESTAMP = "2024-01-01T00:00:00.000Z";
+const TEST_USER_NAME = "Test User";
 
 // Mock data factory functions
 export const createMockMongoUser = (
@@ -90,13 +90,3 @@ export const createMockUserListResponse = (
   totalPages: Math.ceil(users.length / 10),
   ...overrides,
 });
-
-// Common test data sets
-export const createMockUserCollection = (count: number = 2): User[] => {
-  return Array.from({ length: count }, (_, index) =>
-    createMockUser({
-      email: `user${index + 1}@example.com`,
-      name: `User ${index + 1}`,
-    }),
-  );
-};
