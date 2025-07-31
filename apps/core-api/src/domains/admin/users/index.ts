@@ -1,7 +1,7 @@
 // Users Domain - Public API
-// Only expose what external consumers need, hide internal implementation
 
 // Main service functions for external consumption
+// External consumers should only interact through the service layer
 export {
   createUser,
   deleteUser,
@@ -18,19 +18,18 @@ export {
 export { userRoutes } from "./user.routes";
 
 // Export commonly used types directly for convenience
+// Note: Repository namespace types are kept internal to the domain
 export type {
   // Service layer types for API consumers
   CreateUserRequest,
-  // Core domain types
   UpdateUserRequest,
+  // Core domain types
   User,
   UserFilters,
   UserListResponse,
   UserRole,
   UserStatus,
 } from "./types";
-
-// Note: Repository namespace types are kept internal to the domain
 
 // Schema exports for validation and OpenAPI
 export {
@@ -41,6 +40,3 @@ export {
   UserListResponseSchema,
   UserSchema,
 } from "./user.schemas";
-
-// Note: Repository layer, internal types, and combineUserData are kept private
-// External consumers should only interact through the service layer
