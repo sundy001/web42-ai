@@ -100,13 +100,13 @@ export function expectPaginatedResponse(
 ) {
   const body = expectSuccess(response);
 
-  expect(body).toHaveProperty("users");
+  expect(body).toHaveProperty("items");
   expect(body).toHaveProperty("total");
   expect(body).toHaveProperty("page", expectedPage);
   expect(body).toHaveProperty("limit", expectedLimit);
   expect(body).toHaveProperty("totalPages");
 
-  expect(Array.isArray(body.users)).toBe(true);
+  expect(Array.isArray(body.items)).toBe(true);
   expect(typeof body.total).toBe("number");
   expect(typeof body.totalPages).toBe("number");
 

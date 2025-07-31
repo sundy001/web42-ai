@@ -15,7 +15,7 @@ import {
 import type { Application } from "express";
 import express from "express";
 import { ObjectId } from "mongodb";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   createMockAuthUser,
   createMockCreateUserRequest,
@@ -73,8 +73,8 @@ describe("User Routes Integration Tests", () => {
       expect(userRepository.listUsers).toHaveBeenCalledWith({}, {});
 
       const body = response.body;
-      expect(body.users).toHaveLength(2);
-      body.users.forEach(expectUserStructure);
+      expect(body.items).toHaveLength(2);
+      body.items.forEach(expectUserStructure);
     });
 
     it("should list users with custom pagination", async () => {
@@ -179,7 +179,12 @@ describe("User Routes Integration Tests", () => {
 
       const response = await getRequest(app, `/users/${userId}`);
 
-      expectError(response, 404, "NotFoundError", "User not found");
+      expectError(
+        response,
+        404,
+        "NotFoundError",
+        `User not found by ID ${userId}`,
+      );
       expect(userRepository.getUserById).toHaveBeenCalledWith(userId, false);
     });
 
@@ -193,7 +198,12 @@ describe("User Routes Integration Tests", () => {
 
       const response = await getRequest(app, `/users/${userId}`);
 
-      expectError(response, 404, "NotFoundError", "Auth provider error");
+      expectError(
+        response,
+        404,
+        "NotFoundError",
+        "Auth user not found (supabase-123)",
+      );
       expect(userRepository.getUserById).toHaveBeenCalledWith(userId, false);
     });
 
@@ -260,7 +270,7 @@ describe("User Routes Integration Tests", () => {
         response,
         409,
         "ConflictError",
-        "User with this email already exists",
+        "Email already registered (existing@example.com)",
       );
       expect(userRepository.getUserByEmail).toHaveBeenCalledWith(
         createUserData.email,
@@ -338,7 +348,12 @@ describe("User Routes Integration Tests", () => {
 
       const response = await putRequest(app, `/users/${userId}`, updateData);
 
-      expectError(response, 404, "NotFoundError", "User not found in MongoDB");
+      expectError(
+        response,
+        404,
+        "NotFoundError",
+        `User not found for update ${userId}`,
+      );
       expect(userRepository.updateUser).toHaveBeenCalledWith(
         userId,
         updateData,
@@ -406,7 +421,12 @@ describe("User Routes Integration Tests", () => {
 
       const response = await deleteRequest(app, `/users/${userId}`);
 
-      expectError(response, 404, "NotFoundError", "User not found");
+      expectError(
+        response,
+        404,
+        "NotFoundError",
+        `User not found for deletion ${userId}`,
+      );
     });
 
     it("should return 400 for invalid ObjectId", async () => {
@@ -442,7 +462,12 @@ describe("User Routes Integration Tests", () => {
 
       const response = await postRequest(app, `/users/${userId}/restore`);
 
-      expectError(response, 404, "NotFoundError", "User not found");
+      expectError(
+        response,
+        404,
+        "NotFoundError",
+        `User not found for restoration ${userId}`,
+      );
       expect(userRepository.restoreUser).toHaveBeenCalledWith(userId);
     });
 
