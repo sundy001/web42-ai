@@ -25,13 +25,17 @@ export async function combineUserData(
       );
     } catch (error) {
       if (error instanceof AuthError && error.code === "user_not_found") {
-        throw new NotFoundError(error.message);
+        throw new NotFoundError(
+          `Auth user not found (${mongoUser.supabaseUserId})`,
+        );
       }
       if (error instanceof AuthError) {
-        throw new ApiError(error.message);
+        throw new ApiError(`Auth provider error (${mongoUser.supabaseUserId})`);
       }
 
-      throw new ApiError("Failed to fetch auth user");
+      throw new ApiError(
+        `Auth user fetch failed (${mongoUser.supabaseUserId})`,
+      );
     }
   }
 

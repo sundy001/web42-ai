@@ -45,7 +45,7 @@ export async function createUser(userData: CreateUserData): Promise<MongoUser> {
         11000 &&
       (error as { keyPattern?: { email?: number } }).keyPattern?.email
     ) {
-      throw new Error(`User with email ${userData.email} already exists`);
+      throw new Error(`Email already registered (${userData.email})`);
     }
     throw error;
   }

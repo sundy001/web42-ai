@@ -1,0 +1,30 @@
+## Error Message Pattern
+
+[Action description] [Context/Identifier]
+
+Examples
+
+// Conflict errors - include the conflicting value
+throw new ConflictError(`Email already registered (${userData.email})`);
+
+// Not found errors - include operation context and identifier
+throw new NotFoundError(`User not found by ID ${id}`);
+throw new NotFoundError(`User not found for update ${id}`);
+throw new NotFoundError(`User not found for deletion ${id}`);
+throw new NotFoundError(`User not found for restoration ${id}`);
+
+Key Characteristics
+
+- No colons - Use spaces and parentheses for separation
+- Include identifiers - Always show the ID/email that caused the error
+- Operation context - Specify what operation failed (update, deletion, etc.)
+- Template literals - Use backticks for variable interpolation
+- Concise but precise - Short messages with maximum debugging value
+- Internal focus - Technical clarity for developers, not user-friendly
+- Consistent format - Similar structure across all error types
+
+Pattern Variations
+
+- Conflict: [Resource] already [state] ([identifier])
+- Not Found: [Resource] not found [context] [identifier]
+- Operation-specific: Include operation type when relevant

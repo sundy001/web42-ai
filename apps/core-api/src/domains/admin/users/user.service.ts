@@ -17,7 +17,7 @@ export async function createUser(userData: CreateUserRequest): Promise<User> {
   // Check if user already exists by email, including soft deleted users
   const existingUser = await getMongoUserByEmail(userData.email, true);
   if (existingUser) {
-    throw new ConflictError("User with this email already exists");
+    throw new ConflictError(`Email already registered (${userData.email})`);
   }
 
   const authProvider = getAuthProvider();
@@ -50,7 +50,7 @@ export async function getUserById(
   const mongoUser = await userRepository.getUserById(id, includeDeleted);
 
   if (!mongoUser) {
-    throw new NotFoundError("User not found");
+    throw new NotFoundError(`User not found by ID ${id}`);
   }
 
   return combineUserData(mongoUser);
@@ -79,7 +79,7 @@ export async function updateUser(
   // Update MongoDB document first
   const mongoUser = await userRepository.updateUser(id, updateData);
   if (!mongoUser) {
-    throw new NotFoundError("User not found in MongoDB");
+    throw new NotFoundError(`User not found for update ${id}`);
   }
 
   // Update auth provider user if role changed
@@ -99,7 +99,7 @@ export async function deleteUser(id: string): Promise<User> {
   // Get the current user to find the auth provider ID
   const currentUser = await userRepository.getUserById(id);
   if (!currentUser) {
-    throw new NotFoundError("User not found");
+    throw new NotFoundError(`User not found for deletion ${id}`);
   }
 
   // Delete from auth provider first
@@ -122,7 +122,7 @@ export async function restoreUser(id: string): Promise<User | null> {
   const mongoUser = await userRepository.restoreUser(id);
 
   if (!mongoUser) {
-    throw new NotFoundError("User not found");
+    throw new NotFoundError(`User not found for restoration ${id}`);
   }
   return combineUserData(mongoUser);
 }
