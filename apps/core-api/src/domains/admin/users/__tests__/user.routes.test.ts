@@ -17,23 +17,17 @@ import express from "express";
 import { ObjectId } from "mongodb";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
-  createMockAuthUser,
   createMockCreateUserRequest,
-  createMockMongoUser,
   createMockUpdateUserRequest,
   createMockUser,
   createMockUserListResponse,
 } from "./userTestFixtures";
-import {
-  setupAuthProviderMocks,
-  setupUserRepositoryMocks,
-} from "./userTestMocks";
+import { setupUserServiceMocks } from "./userTestMocks";
 
 // Setup mocks
-const authProvider = setupAuthProviderMocks();
-const userRepository = setupUserRepositoryMocks();
+const mockUserService = setupUserServiceMocks();
 
-import { AuthError } from "@/domains/auth/authUtils";
+import { ConflictError, NotFoundError } from "@/utils/errors";
 import { userRoutes } from "../user.routes";
 
 describe("User Routes Integration Tests", () => {
@@ -54,23 +48,19 @@ describe("User Routes Integration Tests", () => {
   describe("GET /users", () => {
     it("should list users with default pagination", async () => {
       const mockResponse = createMockUserListResponse(
-        [
-          createMockMongoUser(),
-          createMockMongoUser({ email: "user2@example.com" }),
-        ],
+        [createMockUser(), createMockUser({ email: "user2@example.com" })],
         {
           total: 2,
           totalPages: 1,
         },
       );
 
-      userRepository.listUsers.mockResolvedValue(mockResponse);
-      authProvider.getUserById.mockResolvedValue(createMockAuthUser());
+      mockUserService.listUsers.mockResolvedValue(mockResponse);
 
       const response = await getRequest(app, "/users");
 
       expectPaginatedResponse(response, 1, 10);
-      expect(userRepository.listUsers).toHaveBeenCalledWith({}, {});
+      expect(mockUserService.listUsers).toHaveBeenCalledWith({}, {});
 
       const body = response.body;
       expect(body.items).toHaveLength(2);
@@ -78,20 +68,19 @@ describe("User Routes Integration Tests", () => {
     });
 
     it("should list users with custom pagination", async () => {
-      const mockResponse = createMockUserListResponse([createMockMongoUser()], {
+      const mockResponse = createMockUserListResponse([createMockUser()], {
         total: 1,
         page: 2,
         limit: 5,
         totalPages: 1,
       });
 
-      userRepository.listUsers.mockResolvedValue(mockResponse);
-      authProvider.getUserById.mockResolvedValue(createMockAuthUser());
+      mockUserService.listUsers.mockResolvedValue(mockResponse);
 
       const response = await getRequest(app, "/users?page=2&limit=5");
 
       expectPaginatedResponse(response, 2, 5);
-      expect(userRepository.listUsers).toHaveBeenCalledWith(
+      expect(mockUserService.listUsers).toHaveBeenCalledWith(
         {},
         { page: 2, limit: 5 },
       );
@@ -99,11 +88,10 @@ describe("User Routes Integration Tests", () => {
 
     it("should filter users by email", async () => {
       const mockResponse = createMockUserListResponse([
-        createMockMongoUser({ email: "specific@example.com" }),
+        createMockUser({ email: "specific@example.com" }),
       ]);
 
-      userRepository.listUsers.mockResolvedValue(mockResponse);
-      authProvider.getUserById.mockResolvedValue(createMockAuthUser());
+      mockUserService.listUsers.mockResolvedValue(mockResponse);
 
       const response = await getRequest(
         app,
@@ -111,7 +99,7 @@ describe("User Routes Integration Tests", () => {
       );
 
       expectPaginatedResponse(response, 1, 10);
-      expect(userRepository.listUsers).toHaveBeenCalledWith(
+      expect(mockUserService.listUsers).toHaveBeenCalledWith(
         { email: "specific@example.com" },
         {},
       );
@@ -119,11 +107,10 @@ describe("User Routes Integration Tests", () => {
 
     it("should filter users by role and status", async () => {
       const mockResponse = createMockUserListResponse([
-        createMockMongoUser({ role: "admin", status: "inactive" }),
+        createMockUser({ role: "admin", status: "inactive" }),
       ]);
 
-      userRepository.listUsers.mockResolvedValue(mockResponse);
-      authProvider.getUserById.mockResolvedValue(createMockAuthUser());
+      mockUserService.listUsers.mockResolvedValue(mockResponse);
 
       const response = await getRequest(
         app,
@@ -131,7 +118,7 @@ describe("User Routes Integration Tests", () => {
       );
 
       expectPaginatedResponse(response, 1, 10);
-      expect(userRepository.listUsers).toHaveBeenCalledWith(
+      expect(mockUserService.listUsers).toHaveBeenCalledWith(
         { role: "admin", status: "inactive" },
         {},
       );
@@ -139,16 +126,15 @@ describe("User Routes Integration Tests", () => {
 
     it("should include deleted users when requested", async () => {
       const mockResponse = createMockUserListResponse([
-        createMockMongoUser({ status: "deleted" }),
+        createMockUser({ status: "deleted" }),
       ]);
 
-      userRepository.listUsers.mockResolvedValue(mockResponse);
-      authProvider.getUserById.mockResolvedValue(createMockAuthUser());
+      mockUserService.listUsers.mockResolvedValue(mockResponse);
 
       const response = await getRequest(app, "/users?includeDeleted=true");
 
       expectPaginatedResponse(response, 1, 10);
-      expect(userRepository.listUsers).toHaveBeenCalledWith(
+      expect(mockUserService.listUsers).toHaveBeenCalledWith(
         { includeDeleted: true },
         {},
       );
@@ -157,54 +143,31 @@ describe("User Routes Integration Tests", () => {
 
   describe("GET /users/:id", () => {
     it("should get user by valid ID", async () => {
-      const mockMongoUser = createMockMongoUser();
-      const userId = mockMongoUser._id.toString();
+      const mockUser = createMockUser();
+      const userId = mockUser._id;
 
-      userRepository.getUserById.mockResolvedValue(mockMongoUser);
-      authProvider.getUserById.mockResolvedValue(createMockAuthUser());
+      mockUserService.getUserById.mockResolvedValue(mockUser);
 
       const response = await getRequest(app, `/users/${userId}`);
 
       const body = expectSuccess(response);
       expectUserStructure(body);
-      expect(userRepository.getUserById).toHaveBeenCalledWith(userId, false);
-      expect(authProvider.getUserById).toHaveBeenCalledWith(
-        mockMongoUser.supabaseUserId,
+      expect(mockUserService.getUserById).toHaveBeenCalledWith(
+        expect.any(String),
       );
     });
 
-    it("should return 404 for non-existent user", async () => {
+    it("should return 500 for service layer errors", async () => {
       const userId = new ObjectId().toString();
-      userRepository.getUserById.mockResolvedValue(null);
-
-      const response = await getRequest(app, `/users/${userId}`);
-
-      expectError(
-        response,
-        404,
-        "NotFoundError",
-        `User not found by ID ${userId}`,
-      );
-      expect(userRepository.getUserById).toHaveBeenCalledWith(userId, false);
-    });
-
-    it("should return 404 for missing auth provider user", async () => {
-      const userId = new ObjectId().toString();
-
-      userRepository.getUserById.mockResolvedValue(createMockMongoUser());
-      authProvider.getUserById.mockRejectedValue(
-        new AuthError("Auth provider error", 404, "user_not_found"),
+      mockUserService.getUserById.mockRejectedValue(
+        new Error("Service layer error"),
       );
 
       const response = await getRequest(app, `/users/${userId}`);
 
-      expectError(
-        response,
-        404,
-        "NotFoundError",
-        "Auth user not found (supabase-123)",
-      );
-      expect(userRepository.getUserById).toHaveBeenCalledWith(userId, false);
+      expect(response.status).toBe(500);
+      expect(response.body).toHaveProperty("error", "Internal Server Error");
+      expect(mockUserService.getUserById).toHaveBeenCalledWith(userId);
     });
 
     it("should return 400 for invalid ObjectId", async () => {
@@ -217,18 +180,13 @@ describe("User Routes Integration Tests", () => {
   describe("POST /users", () => {
     it("should create new user successfully", async () => {
       const createUserData = createMockCreateUserRequest();
-      const mockMongoUser = createMockMongoUser({
-        email: createUserData.email,
-        role: createUserData.role,
-      });
-      const mockAuthUser = createMockAuthUser({
+      const mockUser = createMockUser({
         email: createUserData.email,
         name: createUserData.name,
+        role: createUserData.role,
       });
 
-      userRepository.getUserByEmail.mockResolvedValue(null);
-      userRepository.createUser.mockResolvedValue(mockMongoUser);
-      authProvider.createUser.mockResolvedValue(mockAuthUser);
+      mockUserService.createUser.mockResolvedValue(mockUser);
 
       const response = await postRequest(app, "/users", createUserData);
 
@@ -238,20 +196,7 @@ describe("User Routes Integration Tests", () => {
       expect(body.name).toBe(createUserData.name);
       expect(body.role).toBe(createUserData.role);
 
-      expect(userRepository.getUserByEmail).toHaveBeenCalledWith(
-        createUserData.email,
-        true,
-      );
-      expect(authProvider.createUser).toHaveBeenCalledWith({
-        ...createUserData,
-        emailConfirm: true,
-      });
-      expect(userRepository.createUser).toHaveBeenCalledWith({
-        supabaseUserId: mockAuthUser.id,
-        email: createUserData.email,
-        role: createUserData.role,
-        status: "active",
-      });
+      expect(mockUserService.createUser).toHaveBeenCalledWith(createUserData);
     });
 
     it("should return 409 for duplicate email", async () => {
@@ -259,10 +204,10 @@ describe("User Routes Integration Tests", () => {
         email: "existing@example.com",
       });
 
-      const existingUser = createMockUser({
-        email: createUserData.email,
-      });
-      userRepository.getUserByEmail.mockResolvedValue(existingUser);
+      const error = new ConflictError(
+        "Email already registered (existing@example.com)",
+      );
+      mockUserService.createUser.mockRejectedValue(error);
 
       const response = await postRequest(app, "/users", createUserData);
 
@@ -272,11 +217,7 @@ describe("User Routes Integration Tests", () => {
         "ConflictError",
         "Email already registered (existing@example.com)",
       );
-      expect(userRepository.getUserByEmail).toHaveBeenCalledWith(
-        createUserData.email,
-        true,
-      );
-      expect(userRepository.createUser).not.toHaveBeenCalled();
+      expect(mockUserService.createUser).toHaveBeenCalledWith(createUserData);
     });
 
     it("should return validation error for missing required fields", async () => {
@@ -308,16 +249,13 @@ describe("User Routes Integration Tests", () => {
     it("should update user successfully", async () => {
       const userId = new ObjectId().toString();
       const updateData = createMockUpdateUserRequest();
-      const mockAuthUser = createMockAuthUser();
-
-      const mockMongoUser = createMockMongoUser({
-        _id: new ObjectId(userId),
+      const mockUser = createMockUser({
         role: updateData.role!,
         status: updateData.status!,
       });
+      mockUser._id = new ObjectId(userId);
 
-      userRepository.updateUser.mockResolvedValue(mockMongoUser);
-      authProvider.updateUser.mockResolvedValue(mockAuthUser);
+      mockUserService.updateUser.mockResolvedValue(mockUser);
 
       const response = await putRequest(app, `/users/${userId}`, updateData);
 
@@ -326,15 +264,10 @@ describe("User Routes Integration Tests", () => {
       expect(body.role).toBe(updateData.role);
       expect(body.status).toBe(updateData.status);
 
-      expect(userRepository.updateUser).toHaveBeenCalledWith(
+      expect(mockUserService.updateUser).toHaveBeenCalledWith(
         userId,
         updateData,
       );
-      expect(authProvider.updateUser).toHaveBeenCalledWith(mockAuthUser.id, {
-        appMetadata: {
-          role: updateData.role,
-        },
-      });
     });
 
     it("should return 404 for non-existent user", async () => {
@@ -344,7 +277,8 @@ describe("User Routes Integration Tests", () => {
         status: undefined,
       });
 
-      userRepository.updateUser.mockResolvedValue(null);
+      const error = new NotFoundError(`User not found for update ${userId}`);
+      mockUserService.updateUser.mockRejectedValue(error);
 
       const response = await putRequest(app, `/users/${userId}`, updateData);
 
@@ -354,7 +288,7 @@ describe("User Routes Integration Tests", () => {
         "NotFoundError",
         `User not found for update ${userId}`,
       );
-      expect(userRepository.updateUser).toHaveBeenCalledWith(
+      expect(mockUserService.updateUser).toHaveBeenCalledWith(
         userId,
         updateData,
       );
@@ -387,37 +321,23 @@ describe("User Routes Integration Tests", () => {
   describe("DELETE /users/:id", () => {
     it("should soft delete user successfully", async () => {
       const userId = new ObjectId().toString();
-      const mockMongoUser = createMockMongoUser();
-      const mockAuthUser = createMockAuthUser();
+      const mockUser = createMockUser();
+      mockUser._id = new ObjectId(userId);
 
-      userRepository.deleteUser.mockResolvedValue(true);
-      userRepository.getUserById.mockResolvedValue(mockMongoUser);
-      authProvider.deleteUser.mockResolvedValue(mockAuthUser);
+      mockUserService.deleteUser.mockResolvedValue(mockUser);
 
       const response = await deleteRequest(app, `/users/${userId}`);
 
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual({
-        _id: mockMongoUser._id.toString(),
-        authProvider: "supabase",
-        avatarUrl: mockAuthUser.avatarUrl,
-        createdAt: mockMongoUser.createdAt,
-        email: mockAuthUser.email,
-        emailConfirmedAt: mockAuthUser.emailConfirmedAt,
-        lastSignInAt: mockAuthUser.lastSignInAt,
-        name: mockAuthUser.name,
-        role: mockMongoUser.role,
-        status: mockMongoUser.status,
-        supabaseUserId: mockAuthUser.id,
-        updatedAt: "2024-01-01T00:00:00.000Z",
-      });
-      expect(userRepository.deleteUser).toHaveBeenCalledWith(userId);
+      const body = expectSuccess(response);
+      expectUserStructure(body);
+      expect(mockUserService.deleteUser).toHaveBeenCalledWith(userId);
     });
 
     it("should return 404 for non-existent user", async () => {
       const userId = new ObjectId().toString();
 
-      userRepository.deleteUser.mockResolvedValue(false);
+      const error = new NotFoundError(`User not found for deletion ${userId}`);
+      mockUserService.deleteUser.mockRejectedValue(error);
 
       const response = await deleteRequest(app, `/users/${userId}`);
 
@@ -427,6 +347,7 @@ describe("User Routes Integration Tests", () => {
         "NotFoundError",
         `User not found for deletion ${userId}`,
       );
+      expect(mockUserService.deleteUser).toHaveBeenCalledWith(userId);
     });
 
     it("should return 400 for invalid ObjectId", async () => {
@@ -439,26 +360,28 @@ describe("User Routes Integration Tests", () => {
   describe("POST /users/:id/restore", () => {
     it("should restore deleted user successfully", async () => {
       const userId = new ObjectId().toString();
-      const mockMongoUser = createMockMongoUser({
-        _id: new ObjectId(userId),
+      const mockUser = createMockUser({
         status: "active",
       });
+      mockUser._id = new ObjectId(userId);
 
-      userRepository.restoreUser.mockResolvedValue(mockMongoUser);
-      authProvider.getUserById.mockResolvedValue(createMockAuthUser());
+      mockUserService.restoreUser.mockResolvedValue(mockUser);
 
       const response = await postRequest(app, `/users/${userId}/restore`);
 
       const body = expectSuccess(response);
       expectUserStructure(body);
       expect(body.status).toBe("active");
-      expect(userRepository.restoreUser).toHaveBeenCalledWith(userId);
+      expect(mockUserService.restoreUser).toHaveBeenCalledWith(userId);
     });
 
     it("should return 404 for non-existent deleted user", async () => {
       const userId = new ObjectId().toString();
 
-      userRepository.restoreUser.mockResolvedValue(null);
+      const error = new NotFoundError(
+        `User not found for restoration ${userId}`,
+      );
+      mockUserService.restoreUser.mockRejectedValue(error);
 
       const response = await postRequest(app, `/users/${userId}/restore`);
 
@@ -468,45 +391,13 @@ describe("User Routes Integration Tests", () => {
         "NotFoundError",
         `User not found for restoration ${userId}`,
       );
-      expect(userRepository.restoreUser).toHaveBeenCalledWith(userId);
+      expect(mockUserService.restoreUser).toHaveBeenCalledWith(userId);
     });
 
     it("should return 400 for invalid ObjectId", async () => {
       const response = await postRequest(app, "/users/invalid-id/restore");
 
       expectError(response, 400);
-    });
-  });
-
-  describe("Error handling", () => {
-    it("should handle service layer errors gracefully", async () => {
-      userRepository.listUsers.mockRejectedValue(
-        new Error("Database connection failed"),
-      );
-
-      const response = await getRequest(app, "/users");
-
-      expect(response.status).toBe(500);
-      expect(response.body).toHaveProperty("error", "Internal Server Error");
-      expect(response.body).toHaveProperty("message", "Something went wrong");
-    });
-
-    it("should handle auth provider errors during user creation", async () => {
-      const createUserData = createMockCreateUserRequest({
-        email: "test@example.com",
-        name: "Test User",
-      });
-
-      userRepository.getUserByEmail.mockResolvedValue(null);
-      userRepository.createUser.mockRejectedValue(
-        new Error("Auth provider error"),
-      );
-
-      const response = await postRequest(app, "/users", createUserData);
-
-      expect(response.status).toBe(500);
-      expect(response.body).toHaveProperty("error", "Internal Server Error");
-      expect(response.body).toHaveProperty("message", "Something went wrong");
     });
   });
 });

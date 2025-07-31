@@ -115,6 +115,7 @@ export async function deleteUser(id: string): Promise<User> {
 }
 
 export async function permanentlyDeleteUser(id: string): Promise<boolean> {
+  // TODO: should remove it from auth provider as well
   return userRepository.permanentlyDeleteUser(id);
 }
 
