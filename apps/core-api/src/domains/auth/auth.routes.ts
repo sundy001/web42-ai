@@ -14,15 +14,8 @@ router.post(
   asyncHandler(async (req: Request, res: Response) => {
     const loginData: LoginRequest = res.locals.validatedBody;
 
-    try {
-      const loginResponse = await loginUser(loginData);
-      res.json(loginResponse);
-    } catch (error) {
-      res.status(401).json({
-        error: "Authentication failed",
-        message: error instanceof Error ? error.message : "Invalid credentials",
-      });
-    }
+    const loginResponse = await loginUser(loginData);
+    res.json(loginResponse);
   }),
 );
 
@@ -31,14 +24,10 @@ router.post(
   "/signout",
   validateBody(SignoutSchema),
   asyncHandler(async (req: Request, res: Response) => {
-    try {
-      await signoutUser();
-    } finally {
-      // Always return success for signout, even if there's an error
-      res.json({
-        message: "Successfully signed out",
-      });
-    }
+    await signoutUser();
+    res.json({
+      message: "Successfully signed out",
+    });
   }),
 );
 

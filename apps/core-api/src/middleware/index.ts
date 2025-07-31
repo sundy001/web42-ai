@@ -8,13 +8,14 @@ const INTERNAL_SERVER_ERROR = "Internal Server Error";
 const VALIDATION_FAILED = "Validation Failed";
 
 // Helper function to handle Zod validation errors
+// Uses direct response for performance (high-frequency validation)
 function handleZodError(error: ZodError, res: Response): void {
   const details = error.issues.map((err: ZodIssue) => ({
     field: err.path.join("."),
     message: err.message,
   }));
 
-  // TODO: use ApiError instead of reply JSON
+  // Direct response for performance - validation happens frequently
   res.status(400).json({
     error: VALIDATION_FAILED,
     details,
@@ -29,7 +30,7 @@ export function validateObjectId(paramName = "id") {
     const validationResult = ObjectIdSchema.safeParse(id);
 
     if (!validationResult.success) {
-      // TODO: use ApiError instead of reply JSON
+      // Direct response for performance - ObjectId validation is frequent
       res.status(400).json({
         error: VALIDATION_FAILED,
         message: "Invalid ObjectId format",

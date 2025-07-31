@@ -1,5 +1,6 @@
 import { authLogger } from "@/config/logger";
 import { getUserBySupabaseId } from "@/domains/admin/users";
+import { UnauthorizedError } from "@/utils/errors";
 import { getAuthProvider } from "./providers";
 import type { LoginRequest, LoginResponse } from "./types";
 
@@ -44,8 +45,10 @@ export async function loginUser(
       },
     };
   } catch (error) {
-    authLogger.error({ err: error, email: loginData.email }, "Login failed");
-    throw error;
+    // Always throw UnauthorizedError to prevent information disclosure
+    throw new UnauthorizedError("Invalid credentials", {
+      cause: error as Error,
+    });
   }
 }
 

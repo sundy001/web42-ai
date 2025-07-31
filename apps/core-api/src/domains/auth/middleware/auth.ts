@@ -1,4 +1,5 @@
 import { authLogger } from "@/config/logger";
+import { ForbiddenError, UnauthorizedError } from "@/utils/errors";
 import type { NextFunction, Response } from "express";
 import { supabaseClient } from "../providers/supabase";
 import type { AuthRequest } from "../types";
@@ -16,11 +17,8 @@ export async function authenticateUser(
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      res.status(401).json({
-        error: "Unauthorized",
-        message: "Missing or invalid authorization header",
-      });
-      return;
+      // Always same message to prevent information disclosure
+      throw new UnauthorizedError("Invalid credentials");
     }
 
     const token = authHeader.substring(7); // Remove "Bearer " prefix
@@ -28,11 +26,8 @@ export async function authenticateUser(
     const { data, error } = await supabaseClient.auth.getClaims(token);
 
     if (error || !data) {
-      res.status(401).json({
-        error: "Unauthorized",
-        message: "Invalid or expired token",
-      });
-      return;
+      // Always same message to prevent information disclosure
+      throw new UnauthorizedError("Invalid credentials");
     }
 
     // Extract user info from JWT claims
@@ -44,10 +39,17 @@ export async function authenticateUser(
 
     next();
   } catch (error) {
+    // Log the actual error for debugging
     authLogger.error({ err: error }, "Authentication failed");
-    res.status(500).json({
-      error: "Internal Server Error",
-      message: "Authentication failed",
+
+    // Re-throw if it's already an UnauthorizedError (from our checks above)
+    if (error instanceof UnauthorizedError) {
+      throw error;
+    }
+
+    // For unexpected errors, still throw UnauthorizedError to prevent info disclosure
+    throw new UnauthorizedError("Invalid credentials", {
+      cause: error as Error,
     });
   }
 }
@@ -95,23 +97,15 @@ export async function optionalAuthentication(
  */
 export function requireAdmin(
   req: AuthRequest,
-  res: Response,
+  _res: Response,
   next: NextFunction,
 ): void {
   if (!req.user) {
-    res.status(401).json({
-      error: "Unauthorized",
-      message: "Authentication required",
-    });
-    return;
+    throw new UnauthorizedError("Authentication required");
   }
 
   if (req.user.role !== "admin") {
-    res.status(403).json({
-      error: "Forbidden",
-      message: "Admin access required",
-    });
-    return;
+    throw new ForbiddenError("Admin access required");
   }
 
   next();
