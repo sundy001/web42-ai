@@ -32,24 +32,12 @@ export async function createUser(userData: CreateUserData): Promise<MongoUser> {
     updatedAt: now,
   };
 
-  try {
-    const result = await collection.insertOne(mongoUser);
+  const result = await collection.insertOne(mongoUser);
 
-    return {
-      _id: result.insertedId,
-      ...mongoUser,
-    };
-  } catch (error) {
-    // Handle duplicate key error for email
-    if (
-      (error as { code?: number; keyPattern?: { email?: number } }).code ===
-        11000 &&
-      (error as { keyPattern?: { email?: number } }).keyPattern?.email
-    ) {
-      throw new Error(`Email already registered (${userData.email})`);
-    }
-    throw error;
-  }
+  return {
+    _id: result.insertedId,
+    ...mongoUser,
+  };
 }
 
 export async function getUserById(
