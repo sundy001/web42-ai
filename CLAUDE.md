@@ -87,8 +87,11 @@ bun check-types
 # Run tests
 bun run test
 
-# Run specific test file
-bun run test stringUtils
+# Run specific project
+bun run test --filter=@web42-ai/core-api
+
+# Run specific file
+bun run test --filter=@web42-ai/core-api -- user.routes.test.ts
 
 # Run tests with Vitest UI (if configured)
 
