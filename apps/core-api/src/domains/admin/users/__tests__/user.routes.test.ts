@@ -3,7 +3,7 @@ import { vi } from "vitest";
 import { errorHandler } from "@/middleware";
 import {
   deleteRequest,
-  expectCombinedUserStructure,
+  expectUserStructure,
   expectError,
   expectPaginatedResponse,
   expectSuccess,
@@ -18,7 +18,7 @@ import { ObjectId } from "mongodb";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   createMockAuthUser,
-  createMockCombinedUser,
+  createMockUser,
   createMockCreateUserRequest,
   createMockMongoUser,
   createMockUpdateUserRequest,
@@ -35,7 +35,7 @@ setupUserRepositoryMocks();
 
 import { AuthError } from "@/domains/auth/authUtils";
 import * as userRepository from "../user.repository";
-import userRoutes from "../user.routes";
+import { userRoutes } from "../user.routes";
 
 describe("User Routes Integration Tests", () => {
   let app: Application;
@@ -75,7 +75,7 @@ describe("User Routes Integration Tests", () => {
 
       const body = response.body;
       expect(body.users).toHaveLength(2);
-      body.users.forEach(expectCombinedUserStructure);
+      body.users.forEach(expectUserStructure);
     });
 
     it("should list users with custom pagination", async () => {
@@ -167,7 +167,7 @@ describe("User Routes Integration Tests", () => {
       const response = await getRequest(app, `/users/${userId}`);
 
       const body = expectSuccess(response);
-      expectCombinedUserStructure(body);
+      expectUserStructure(body);
       expect(userRepository.getUserById).toHaveBeenCalledWith(userId, false);
       expect(authProvider.getUserById).toHaveBeenCalledWith(
         mockMongoUser.supabaseUserId,
@@ -224,7 +224,7 @@ describe("User Routes Integration Tests", () => {
       const response = await postRequest(app, "/users", createUserData);
 
       const body = expectSuccess(response, 201);
-      expectCombinedUserStructure(body);
+      expectUserStructure(body);
       expect(body.email).toBe(createUserData.email);
       expect(body.name).toBe(createUserData.name);
       expect(body.role).toBe(createUserData.role);
@@ -250,7 +250,7 @@ describe("User Routes Integration Tests", () => {
         email: "existing@example.com",
       });
 
-      const existingUser = createMockCombinedUser({
+      const existingUser = createMockUser({
         email: createUserData.email,
       });
       userRepository.getUserByEmail.mockResolvedValue(existingUser);
@@ -313,7 +313,7 @@ describe("User Routes Integration Tests", () => {
       const response = await putRequest(app, `/users/${userId}`, updateData);
 
       const body = expectSuccess(response);
-      expectCombinedUserStructure(body);
+      expectUserStructure(body);
       expect(body.role).toBe(updateData.role);
       expect(body.status).toBe(updateData.status);
 
@@ -431,7 +431,7 @@ describe("User Routes Integration Tests", () => {
       const response = await postRequest(app, `/users/${userId}/restore`);
 
       const body = expectSuccess(response);
-      expectCombinedUserStructure(body);
+      expectUserStructure(body);
       expect(body.status).toBe("active");
       expect(userRepository.restoreUser).toHaveBeenCalledWith(userId);
     });

@@ -114,9 +114,9 @@ export function expectPaginatedResponse(
 }
 
 /**
- * Internal assertion helper for user object structure
+ * Internal assertion helper for base user object structure (MongoDB fields)
  */
-function expectUserStructure(user: unknown) {
+function expectBaseUserStructure(user: unknown) {
   expect(user).toHaveProperty("_id");
   expect(user).toHaveProperty("supabaseUserId");
   expect(user).toHaveProperty("email");
@@ -129,10 +129,10 @@ function expectUserStructure(user: unknown) {
 }
 
 /**
- * Assertion helper for combined user object structure
+ * Assertion helper for user object structure (including auth provider data)
  */
-export function expectCombinedUserStructure(user: unknown) {
-  expectUserStructure(user);
+export function expectUserStructure(user: unknown) {
+  expectBaseUserStructure(user);
 
   // Auth provider fields that might be present
   const userObj = user as Record<string, unknown>;

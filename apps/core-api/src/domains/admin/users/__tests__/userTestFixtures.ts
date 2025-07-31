@@ -40,7 +40,7 @@ export const createMockAuthUser = (
   ...overrides,
 });
 
-export const createMockCombinedUser = (
+export const createMockUser = (
   overrides: Partial<User> = {},
 ): WithId<User> => ({
   ...createMockMongoUser(),
@@ -94,7 +94,7 @@ export const createMockUserListResponse = (
 // Common test data sets
 export const createMockUserCollection = (count: number = 2): User[] => {
   return Array.from({ length: count }, (_, index) =>
-    createMockCombinedUser({
+    createMockUser({
       email: `user${index + 1}@example.com`,
       name: `User ${index + 1}`,
     }),
