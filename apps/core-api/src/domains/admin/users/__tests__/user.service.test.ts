@@ -11,42 +11,34 @@ import {
   createMockUpdateUserRequest,
   createMockUserListResponse,
 } from "./userTestFixtures";
-import {
-  setupAuthProviderMocks,
-  setupUserRepositoryMocks,
-} from "./userTestMocks";
 
-// Setup hoisted mocks
-const mockAuthProvider = setupAuthProviderMocks();
-const mockUserRepository = setupUserRepositoryMocks();
+const mockAuthProvider = vi.hoisted(() => ({
+  createUser: vi.fn(),
+  updateUser: vi.fn(),
+  deleteUser: vi.fn(),
+  getUserById: vi.fn(),
+}));
 
-// const mockAuthProvider = vi.hoisted(() => ({
-//   createUser: vi.fn(),
-//   updateUser: vi.fn(),
-//   deleteUser: vi.fn(),
-//   getUserById: vi.fn(),
-// }));
+const mockUserRepository = vi.hoisted(() => ({
+  createUser: vi.fn(),
+  getUserById: vi.fn(),
+  getUserByEmail: vi.fn(),
+  getUserBySupabaseId: vi.fn(),
+  updateUser: vi.fn(),
+  deleteUser: vi.fn(),
+  restoreUser: vi.fn(),
+  listUsers: vi.fn(),
+  userExists: vi.fn(),
+  userExistsByEmail: vi.fn(),
+  permanentlyDeleteUser: vi.fn(),
+}));
 
-// const mockUserRepository = vi.hoisted(() => ({
-//   createUser: vi.fn(),
-//   getUserById: vi.fn(),
-//   getUserByEmail: vi.fn(),
-//   getUserBySupabaseId: vi.fn(),
-//   updateUser: vi.fn(),
-//   deleteUser: vi.fn(),
-//   restoreUser: vi.fn(),
-//   listUsers: vi.fn(),
-//   userExists: vi.fn(),
-//   userExistsByEmail: vi.fn(),
-//   permanentlyDeleteUser: vi.fn(),
-// }));
+// Mock the dependencies
+vi.mock("@/domains/auth", () => ({
+  getAuthProvider: () => mockAuthProvider,
+}));
 
-// // Mock the dependencies
-// vi.mock("@/domains/auth", () => ({
-//   getAuthProvider: () => mockAuthProvider,
-// }));
-
-// vi.mock("../user.repository", () => mockUserRepository);
+vi.mock("../user.repository", () => mockUserRepository);
 
 // Use actual combineUserData implementation
 

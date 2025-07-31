@@ -12,23 +12,33 @@ import {
   postRequest,
   putRequest,
 } from "@/testUtils/apiTestHelpers";
+import { ConflictError, NotFoundError } from "@/utils/errors";
 import type { Application } from "express";
 import express from "express";
 import { ObjectId } from "mongodb";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { userRoutes } from "../user.routes";
 import {
   createMockCreateUserRequest,
   createMockUpdateUserRequest,
   createMockUser,
   createMockUserListResponse,
 } from "./userTestFixtures";
-import { setupUserServiceMocks } from "./userTestMocks";
 
-// Setup mocks
-const mockUserService = setupUserServiceMocks();
+const mockUserService = vi.hoisted(() => ({
+  createUser: vi.fn(),
+  getUserById: vi.fn(),
+  getUserBySupabaseId: vi.fn(),
+  updateUser: vi.fn(),
+  deleteUser: vi.fn(),
+  permanentlyDeleteUser: vi.fn(),
+  restoreUser: vi.fn(),
+  listUsers: vi.fn(),
+  userExistsByEmail: vi.fn(),
+  userExists: vi.fn(),
+}));
 
-import { ConflictError, NotFoundError } from "@/utils/errors";
-import { userRoutes } from "../user.routes";
+vi.mock("../user.service", () => mockUserService);
 
 describe("User Routes Integration Tests", () => {
   let app: Application;
