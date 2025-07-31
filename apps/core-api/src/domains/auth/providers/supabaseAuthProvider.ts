@@ -1,4 +1,4 @@
-import { createAuthError, withErrorHandling } from "../authUtils";
+import { createAuthError } from "../authUtils";
 import type { AuthProvider, AuthUser } from "../types";
 import { getSupabaseAdmin, supabaseClient } from "./supabase";
 
@@ -31,50 +31,41 @@ function mapSupabaseUser(supabaseUser: {
 }
 
 export const supabaseAuthProvider = {
-  createUser: withErrorHandling("Failed to create user", async (input) => {
+  createUser: async (input) => {
     const supabaseAdmin = getSupabaseAdmin();
 
-    const { data: supabaseUser, error } =
-      await supabaseAdmin.auth.admin.createUser({
-        email: input.email,
-        password: input.password,
-        user_metadata: {
-          name: input.name,
-        },
-        app_metadata: {
-          role: input.role,
-        },
-        email_confirm: input.emailConfirm ?? true,
-      });
-
-    if (error || !supabaseUser.user) {
-      throw createAuthError(
-        `Failed to create user: ${error?.message}`,
-        error?.code,
-      );
-    }
-
-    return mapSupabaseUser(supabaseUser.user);
-  }),
-
-  getUserById: withErrorHandling("Failed to get user", async (id) => {
-    const supabaseAdmin = getSupabaseAdmin();
-
-    const { data: supabaseUser, error } =
-      await supabaseAdmin.auth.admin.getUserById(id);
+    const { data, error } = await supabaseAdmin.auth.admin.createUser({
+      email: input.email,
+      password: input.password,
+      user_metadata: {
+        name: input.name,
+      },
+      app_metadata: {
+        role: input.role,
+      },
+      email_confirm: input.emailConfirm ?? true,
+    });
 
     if (error) {
-      throw createAuthError(`Failed to get user: ${error.message}`, error.code);
+      throw createAuthError(error);
     }
 
-    if (!supabaseUser.user) {
-      return null;
+    return mapSupabaseUser(data.user);
+  },
+
+  getUserById: async (id) => {
+    const supabaseAdmin = getSupabaseAdmin();
+
+    const { data, error } = await supabaseAdmin.auth.admin.getUserById(id);
+
+    if (error) {
+      throw createAuthError(error);
     }
 
-    return mapSupabaseUser(supabaseUser.user);
-  }),
+    return mapSupabaseUser(data.user);
+  },
 
-  updateUser: withErrorHandling("Failed to update user", async (id, input) => {
+  updateUser: async (id, input) => {
     const supabaseAdmin = getSupabaseAdmin();
 
     const updateData: {
@@ -100,59 +91,54 @@ export const supabaseAuthProvider = {
       updateData.app_metadata = input.appMetadata;
     }
 
-    const { data: supabaseUser, error } =
-      await supabaseAdmin.auth.admin.updateUserById(id, updateData);
-
-    if (error || !supabaseUser.user) {
-      throw createAuthError(
-        `Failed to update user: ${error?.message}`,
-        error?.code,
-      );
-    }
-
-    return mapSupabaseUser(supabaseUser.user);
-  }),
-
-  deleteUser: withErrorHandling("Failed to delete user", async (id) => {
-    const supabaseAdmin = getSupabaseAdmin();
-
-    const { error } = await supabaseAdmin.auth.admin.deleteUser(id);
+    const { data, error } = await supabaseAdmin.auth.admin.updateUserById(
+      id,
+      updateData,
+    );
 
     if (error) {
-      throw createAuthError(
-        `Failed to delete user: ${error.message}`,
-        error.code,
-      );
+      throw createAuthError(error);
     }
-  }),
 
-  signInWithPassword: withErrorHandling(
-    "Login failed",
-    async (email, password) => {
-      const { data, error } = await supabaseClient.auth.signInWithPassword({
-        email,
-        password,
-      });
+    return mapSupabaseUser(data.user);
+  },
 
-      if (error || !data.user || !data.session) {
-        throw createAuthError(
-          `Login failed: ${error?.message || "Invalid credentials"}`,
-          error?.code,
-        );
-      }
+  deleteUser: async (id, softDelete) => {
+    const supabaseAdmin = getSupabaseAdmin();
 
-      return {
-        user: mapSupabaseUser(data.user),
-        session: data.session,
-      };
-    },
-  ),
+    const { data, error } = await supabaseAdmin.auth.admin.deleteUser(
+      id,
+      softDelete,
+    );
 
-  signOut: withErrorHandling("Sign out failed", async () => {
+    if (error) {
+      throw createAuthError(error!);
+    }
+
+    return mapSupabaseUser(data.user);
+  },
+
+  signInWithPassword: async (email, password) => {
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      throw createAuthError(error!);
+    }
+
+    return {
+      user: mapSupabaseUser(data.user),
+      session: data.session,
+    };
+  },
+
+  signOut: async () => {
     const { error } = await supabaseClient.auth.signOut();
 
     if (error) {
-      throw createAuthError(`Sign out failed: ${error.message}`, error.code);
+      throw createAuthError(error!);
     }
-  }),
+  },
 } as AuthProvider;

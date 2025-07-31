@@ -1,9 +1,10 @@
-import { ObjectIdSchema } from "@/domains/admin/users";
+import type { ApiError } from "@/utils/errors";
+import { ObjectIdSchema } from "@/utils/schemas";
 import type { NextFunction, Request, Response } from "express";
 import { ZodError, type ZodIssue, type ZodSchema } from "zod";
 
-const INTERNAL_SERVER_ERROR = "Internal server error";
-const VALIDATION_FAILED = "Validation failed";
+const INTERNAL_SERVER_ERROR = "Internal Server Error";
+const VALIDATION_FAILED = "Validation Failed";
 
 // Helper function to handle Zod validation errors
 function handleZodError(error: ZodError, res: Response): void {
@@ -85,13 +86,19 @@ export function asyncHandler(
 }
 
 // Global error handler middleware
-export function errorHandler(error: Error, req: Request, res: Response) {
-  console.error("Error:", error.message);
-  console.error("Stack:", error.stack);
+export function errorHandler(
+  error: Error | ApiError,
+  _req: Request,
+  res: Response,
+  _next: NextFunction,
+) {
+  // Check if error has a custom status code
+  const statusCode = "statusCode" in error ? error.statusCode : 500;
+  const isServerError = statusCode >= 500;
 
-  res.status(500).json({
-    error: INTERNAL_SERVER_ERROR,
-    message: "Something went wrong",
+  res.status(statusCode).json({
+    error: isServerError ? INTERNAL_SERVER_ERROR : error.name,
+    message: isServerError ? "Something went wrong" : error.message,
     timestamp: new Date().toISOString(),
   });
 }

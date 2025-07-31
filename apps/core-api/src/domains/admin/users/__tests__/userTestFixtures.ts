@@ -1,4 +1,5 @@
-import { ObjectId } from "mongodb";
+import { AuthUser } from "@/domains/auth";
+import { ObjectId, WithId } from "mongodb";
 import type {
   CombinedUser,
   CreateUserRequest,
@@ -13,7 +14,9 @@ export const MOCK_TIMESTAMP = "2024-01-01T00:00:00.000Z";
 export const TEST_USER_NAME = "Test User";
 
 // Mock data factory functions
-export const createMockUser = (overrides: Partial<User> = {}): User => ({
+export const createMockMongoUser = (
+  overrides: Partial<User> = {},
+): WithId<User> => ({
   _id: new ObjectId(),
   supabaseUserId: "supabase-123",
   email: MOCK_EMAIL,
@@ -24,10 +27,23 @@ export const createMockUser = (overrides: Partial<User> = {}): User => ({
   ...overrides,
 });
 
+export const createMockAuthUser = (
+  overrides: Partial<AuthUser> = {},
+): AuthUser => ({
+  id: "supabase-123",
+  email: MOCK_EMAIL,
+  name: TEST_USER_NAME,
+  avatarUrl: "https://example.com/avatar.png",
+  authProvider: "supabase",
+  lastSignInAt: MOCK_TIMESTAMP,
+  emailConfirmedAt: MOCK_TIMESTAMP,
+  ...overrides,
+});
+
 export const createMockCombinedUser = (
   overrides: Partial<CombinedUser> = {},
-): CombinedUser => ({
-  ...createMockUser(),
+): WithId<CombinedUser> => ({
+  ...createMockMongoUser(),
   name: TEST_USER_NAME,
   avatarUrl: "https://example.com/avatar.png",
   authProvider: "supabase",

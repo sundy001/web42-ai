@@ -1,3 +1,4 @@
+import { ObjectIdSchema } from "@/utils/schemas";
 import { generateSchema } from "@anatine/zod-openapi";
 import { z } from "zod";
 import {
@@ -10,7 +11,6 @@ import {
   CreateUserSchema,
   ErrorResponseSchema,
   ListUsersQuerySchema,
-  ObjectIdSchema,
   UpdateUserSchema,
   UserListResponseSchema,
   UserSchema,
@@ -330,9 +330,10 @@ export function generateOpenApiDocument() {
             {
               in: "path",
               name: "id",
-              required: true,
+              // required: true,
               description: "User MongoDB ObjectId",
-              schema: generateSchema(ObjectIdSchema),
+              // TODO: with this, the swagger ui does not allow me to pass the id
+              // schema: generateSchema(ObjectIdSchema),
             },
           ],
           responses: {

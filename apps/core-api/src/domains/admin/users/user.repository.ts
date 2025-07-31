@@ -240,10 +240,26 @@ export async function listUsers(
   };
 }
 
-export async function userExists(email: string): Promise<boolean> {
+export async function userExistsByEmail(email: string): Promise<boolean> {
   const collection = getCollection();
 
   const filter: Record<string, unknown> = { email };
+
+  const count = await collection.countDocuments(filter);
+  return count > 0;
+}
+
+export async function userExists(id: string): Promise<boolean> {
+  const collection = getCollection();
+
+  if (!ObjectId.isValid(id)) {
+    return false;
+  }
+
+  const filter: Record<string, unknown> = { _id: new ObjectId(id) };
+
+  // Don't count deleted users
+  filter.status = { $ne: "deleted" };
 
   const count = await collection.countDocuments(filter);
   return count > 0;

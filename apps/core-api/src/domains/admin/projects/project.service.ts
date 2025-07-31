@@ -1,3 +1,4 @@
+import { userExists } from "@/domains/admin/users";
 import * as projectStore from "./project.repository";
 import type {
   CreateProjectRequest,
@@ -13,6 +14,12 @@ export async function createProject(
   projectData: CreateProjectRequest,
 ): Promise<Project> {
   try {
+    // Check if user exists before creating project
+    const userExistsResult = await userExists(projectData.userId);
+    if (!userExistsResult) {
+      throw new Error("User not found");
+    }
+
     const mongoProject = await projectStore.createProject({
       userId: projectData.userId,
       name: projectData.name,
@@ -48,5 +55,6 @@ export async function listProjects(
   filters: ProjectFilters = {},
   pagination: PaginationOptions = {},
 ): Promise<ProjectListResponse> {
+  console.log("checkpoint 1");
   return projectStore.listProjects(filters, pagination);
 }

@@ -8,31 +8,7 @@ export { loginUser, signoutUser } from "./auth.service";
 export { default as authRoutes } from "./auth.routes";
 
 // Export all types under a namespace for external consumers
-export type * as AuthTypes from "./types";
-
-// Export commonly used types directly for convenience
-export type {
-  AuthError,
-
-  // Provider types (for extensions)
-  AuthSession,
-  // Core domain types
-  AuthUser,
-  // Middleware types
-  AuthenticatedRequest,
-  // Service layer types
-  LoginRequest,
-  LoginResponse,
-  SignoutRequest,
-  SignoutResponse,
-  getUserId,
-  isAdminUser,
-  // Utility functions
-  isAuthError,
-  isAuthenticatedRequest,
-} from "./types";
-
-// Note: Provider and Middleware namespace types are kept internal to the domain
+export type * from "./types";
 
 // Schema exports for validation and OpenAPI
 export {

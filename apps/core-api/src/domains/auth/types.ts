@@ -41,6 +41,7 @@ export interface AuthSession {
  * Authentication error with optional error code
  */
 export interface AuthError extends Error {
+  status?: number;
   code?: string;
 }
 
@@ -122,9 +123,9 @@ export interface AuthProviderSignInResponse {
 export interface AuthProviderInterface {
   // User management operations
   createUser(input: AuthProviderCreateUserInput): Promise<AuthUser>;
-  getUserById(id: string): Promise<AuthUser | null>;
+  getUserById(id: string): Promise<AuthUser>;
   updateUser(id: string, input: AuthProviderUpdateUserInput): Promise<AuthUser>;
-  deleteUser(id: string): Promise<void>;
+  deleteUser(id: string, softDelete?: boolean): Promise<AuthUser>;
 
   // Authentication operations
   signInWithPassword(

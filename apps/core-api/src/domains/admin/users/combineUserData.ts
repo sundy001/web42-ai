@@ -1,53 +1,50 @@
 import { getAuthProvider } from "@/domains/auth";
+import { AuthError } from "@/domains/auth/authUtils";
 import type { AuthUser } from "@/domains/auth/types";
+import { ApiError, NotFoundError } from "@/utils/errors";
 import type { CombinedUser, User } from "./types";
 
 // Helper function to merge MongoDB user with auth provider user data
 export async function combineUserData(mongoUser: User): Promise<CombinedUser>;
 export async function combineUserData(
   mongoUser: User,
-  authUser: AuthUser,
+  authUser: AuthUser | undefined,
 ): Promise<CombinedUser>;
 export async function combineUserData(
   mongoUser: User,
   authUser?: AuthUser,
 ): Promise<CombinedUser> {
-  try {
-    let resolvedAuthUser = authUser;
+  let resolvedAuthUser = authUser;
 
-    // If authUser not provided, fetch from auth provider
-    if (!resolvedAuthUser) {
-      const authProvider = getAuthProvider();
-      const fetchedAuthUser = await authProvider.getUserById(
+  // If authUser not provided, fetch from auth provider
+  if (!resolvedAuthUser) {
+    const authProvider = getAuthProvider();
+    try {
+      resolvedAuthUser = await authProvider.getUserById(
         mongoUser.supabaseUserId,
       );
-      resolvedAuthUser = fetchedAuthUser || undefined;
-    }
+    } catch (error) {
+      if (error instanceof AuthError && error.code === "user_not_found") {
+        throw new NotFoundError(error.message);
+      }
+      if (error instanceof AuthError) {
+        throw new ApiError(error.message);
+      }
 
-    if (!resolvedAuthUser) {
-      console.warn(
-        `Failed to fetch auth user ${mongoUser.supabaseUserId}: User not found`,
-      );
-      return mongoUser as CombinedUser;
+      throw new ApiError("Failed to fetch auth user");
     }
-
-    return {
-      ...mongoUser,
-      name: resolvedAuthUser.name,
-      avatarUrl: resolvedAuthUser.avatarUrl,
-      authProvider: resolvedAuthUser.authProvider,
-      lastSignInAt: resolvedAuthUser.lastSignInAt || undefined,
-      emailConfirmedAt: resolvedAuthUser.emailConfirmedAt || undefined,
-      phoneConfirmedAt: resolvedAuthUser.phoneConfirmedAt || undefined,
-      phone: resolvedAuthUser.phone || undefined,
-      userMetadata: resolvedAuthUser.userMetadata,
-      appMetadata: resolvedAuthUser.appMetadata,
-    };
-  } catch (error) {
-    console.warn(
-      `Error combining user data for ${mongoUser.supabaseUserId}:`,
-      error,
-    );
-    return mongoUser as CombinedUser;
   }
+
+  return {
+    ...mongoUser,
+    name: resolvedAuthUser.name,
+    avatarUrl: resolvedAuthUser.avatarUrl,
+    authProvider: resolvedAuthUser.authProvider,
+    lastSignInAt: resolvedAuthUser.lastSignInAt || undefined,
+    emailConfirmedAt: resolvedAuthUser.emailConfirmedAt || undefined,
+    phoneConfirmedAt: resolvedAuthUser.phoneConfirmedAt || undefined,
+    phone: resolvedAuthUser.phone || undefined,
+    userMetadata: resolvedAuthUser.userMetadata,
+    appMetadata: resolvedAuthUser.appMetadata,
+  };
 }

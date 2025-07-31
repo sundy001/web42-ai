@@ -73,7 +73,7 @@ export function expectValidationError(
   expectedFields?: string[],
 ) {
   expect(response.status).toBe(400);
-  expect(response.body).toHaveProperty("error", "Validation failed");
+  expect(response.body).toHaveProperty("error", "Validation Failed");
 
   if (expectedFields) {
     expect(response.body).toHaveProperty("details");

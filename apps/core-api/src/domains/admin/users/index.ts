@@ -12,6 +12,7 @@ export {
   restoreUser,
   updateUser,
   userExists,
+  userExistsByEmail,
 } from "./user.service";
 
 // HTTP routes for application setup
@@ -46,7 +47,6 @@ export {
   CreateUserSchema,
   ErrorResponseSchema,
   ListUsersQuerySchema,
-  ObjectIdSchema,
   UpdateUserSchema,
   UserListResponseSchema,
   UserSchema,

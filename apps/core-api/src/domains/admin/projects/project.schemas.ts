@@ -107,15 +107,6 @@ export const PaginationSchema = z.object({
     .openapi({ example: 10, description: "Number of items per page" }),
 });
 
-// MongoDB ObjectId validation
-export const ObjectIdSchema = z
-  .string()
-  .regex(/^[0-9a-fA-F]{24}$/, "Invalid ObjectId format")
-  .openapi({
-    example: "6887e12b78d088d6d3d68d10",
-    description: "MongoDB ObjectId",
-  });
-
 // Query parameters schema for list endpoint
 export const ListProjectsQuerySchema = z.object({
   page: z

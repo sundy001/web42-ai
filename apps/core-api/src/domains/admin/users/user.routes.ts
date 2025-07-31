@@ -16,7 +16,6 @@ import {
 import {
   createUser,
   deleteUser,
-  getUserByEmail,
   getUserById,
   listUsers,
   restoreUser,
@@ -43,6 +42,7 @@ router.get(
     const pagination = { page, limit };
 
     const result = await listUsers(filters, pagination);
+
     res.json(result);
   }),
 );
@@ -53,14 +53,6 @@ router.get(
   validateObjectId(),
   asyncHandler(async (req: Request, res: Response) => {
     const user = await getUserById(res.locals.validatedId);
-
-    if (!user) {
-      res.status(404).json({
-        error: "Not found",
-        message: "User not found",
-      });
-      return;
-    }
 
     res.json(user);
   }),
@@ -73,17 +65,8 @@ router.post(
   asyncHandler(async (req: Request, res: Response) => {
     const userData: CreateUserRequest = res.locals.validatedBody;
 
-    // Check if user already exists by email, including soft deleted users
-    const existingUser = await getUserByEmail(userData.email, true);
-    if (existingUser) {
-      res.status(409).json({
-        error: "Conflict",
-        message: "User with this email already exists",
-      });
-      return;
-    }
-
     const user = await createUser(userData);
+
     res.status(201).json(user);
   }),
 );
@@ -99,14 +82,6 @@ router.put(
 
     const user = await updateUser(id, updateData);
 
-    if (!user) {
-      res.status(404).json({
-        error: "Not found",
-        message: "User not found",
-      });
-      return;
-    }
-
     res.json(user);
   }),
 );
@@ -116,17 +91,9 @@ router.delete(
   "/:id",
   validateObjectId(),
   asyncHandler(async (req: Request, res: Response) => {
-    const deleted = await deleteUser(res.locals.validatedId);
+    const user = await deleteUser(res.locals.validatedId);
 
-    if (!deleted) {
-      res.status(404).json({
-        error: "Not found",
-        message: "User not found",
-      });
-      return;
-    }
-
-    res.status(204).send();
+    res.json(user);
   }),
 );
 
@@ -136,14 +103,6 @@ router.post(
   validateObjectId(),
   asyncHandler(async (req: Request, res: Response) => {
     const user = await restoreUser(res.locals.validatedId);
-
-    if (!user) {
-      res.status(404).json({
-        error: "Not found",
-        message: "Deleted user not found",
-      });
-      return;
-    }
 
     res.json(user);
   }),

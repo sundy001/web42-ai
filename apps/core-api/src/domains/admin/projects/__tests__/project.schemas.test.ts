@@ -12,12 +12,14 @@ import {
 } from "../project.schemas";
 
 describe("project.schemas", () => {
+  const VERSION_ID = "version1";
+
   describe("ProjectVersionSchema", () => {
     it("should validate valid project version data", () => {
       const validVersion = {
-        versionId: "version1",
+        versionId: VERSION_ID,
         planId: "plan_abc",
-        r2Path_artifacts: "/builds/version1/",
+        r2Path_artifacts: `/builds/${VERSION_ID}/`,
         triggeringMessageId: "msg_01",
       };
 
@@ -40,10 +42,10 @@ describe("project.schemas", () => {
       _id: "6887e12b78d088d6d3d68d10",
       userId: "688769de279a0fafe82bec23",
       name: "My Math Test App",
-      activeDeploymentId: "version1",
+      activeDeploymentId: VERSION_ID,
       versions: [
         {
-          versionId: "version1",
+          versionId: VERSION_ID,
           planId: "plan_abc",
           r2Path_artifacts: "/builds/version1/",
           triggeringMessageId: "msg_01",
@@ -59,8 +61,12 @@ describe("project.schemas", () => {
     });
 
     it("should validate project without optional fields", () => {
-      const { _id, createdAt, updatedAt, ...projectWithoutOptional } =
-        validProject;
+      const {
+        _id: _objectId,
+        createdAt: _createdAt,
+        updatedAt: _updatedAt,
+        ...projectWithoutOptional
+      } = validProject;
       expect(() => ProjectSchema.parse(projectWithoutOptional)).not.toThrow();
     });
 
@@ -84,10 +90,10 @@ describe("project.schemas", () => {
     const validCreateProject = {
       userId: "688769de279a0fafe82bec23",
       name: "My New Project",
-      activeDeploymentId: "version1",
+      activeDeploymentId: VERSION_ID,
       versions: [
         {
-          versionId: "version1",
+          versionId: VERSION_ID,
           planId: "plan_abc",
           r2Path_artifacts: "/builds/version1/",
           triggeringMessageId: "msg_01",
@@ -101,7 +107,7 @@ describe("project.schemas", () => {
     });
 
     it("should validate create project without optional status", () => {
-      const { status, ...projectWithoutStatus } = validCreateProject;
+      const { status: _status, ...projectWithoutStatus } = validCreateProject;
       const result = CreateProjectSchema.parse(projectWithoutStatus);
       expect(result.status).toBe("active"); // Default value
     });
@@ -262,10 +268,10 @@ describe("project.schemas", () => {
             _id: "6887e12b78d088d6d3d68d10",
             userId: "688769de279a0fafe82bec23",
             name: "My Math Test App",
-            activeDeploymentId: "version1",
+            activeDeploymentId: VERSION_ID,
             versions: [
               {
-                versionId: "version1",
+                versionId: VERSION_ID,
                 planId: "plan_abc",
                 r2Path_artifacts: "/builds/version1/",
                 triggeringMessageId: "msg_01",
