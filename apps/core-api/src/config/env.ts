@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createBootstrapLogger } from "./bootstrap-logger";
+import { createBootstrapLogger } from "@web42-ai/logger";
 
 // Environment validation schema
 const envSchema = z.object({

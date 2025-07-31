@@ -117,6 +117,7 @@
       "dependencies": {
         "@anatine/zod-openapi": "^2.2.8",
         "@supabase/supabase-js": "^2.45.0",
+        "@web42-ai/logger": "workspace:*",
         "@web42-ai/migrations": "workspace:*",
         "cors": "^2.8.5",
         "dotenv": "^16.4.7",
@@ -165,6 +166,18 @@
         "globals": "^16.3.0",
         "typescript": "^5.8.2",
         "typescript-eslint": "^8.37.0",
+      },
+    },
+    "packages/logger": {
+      "name": "@web42-ai/logger",
+      "version": "0.1.0",
+      "dependencies": {
+        "pino": "^9.5.0",
+        "pino-http": "^10.3.0",
+      },
+      "devDependencies": {
+        "@web42-ai/typescript-config": "workspace:*",
+        "typescript": "^5.8.0",
       },
     },
     "packages/migrations": {
@@ -715,6 +728,8 @@
     "@web42-ai/core-api": ["@web42-ai/core-api@workspace:apps/core-api"],
 
     "@web42-ai/eslint-config": ["@web42-ai/eslint-config@workspace:packages/eslint-config"],
+
+    "@web42-ai/logger": ["@web42-ai/logger@workspace:packages/logger"],
 
     "@web42-ai/migrations": ["@web42-ai/migrations@workspace:packages/migrations"],
 

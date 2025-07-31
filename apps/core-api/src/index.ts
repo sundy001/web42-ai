@@ -105,13 +105,13 @@ async function startServer() {
     await databaseStore.connect();
 
     app.listen(PORT, () => {
-      const config = databaseStore.getConfig();
+      const databaseConfig = databaseStore.getConfig();
       logger.info(
         {
           port: PORT,
-          environment: process.env.NODE_ENV || "development",
-          database: config.databaseName,
-          uri: config.uri,
+          environment: config.server.nodeEnv,
+          database: databaseConfig.databaseName,
+          uri: databaseConfig.uri,
         },
         "🚀 Core API server started",
       );

@@ -20,6 +20,7 @@
   "dependencies": {
     "@anatine/zod-openapi": "^2.2.8",
     "@supabase/supabase-js": "^2.45.0",
+    "@web42-ai/logger": "workspace:*",
     "@web42-ai/migrations": "workspace:*",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
