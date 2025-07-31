@@ -7,6 +7,3 @@ export {
 } from "./logger";
 
 export { createBootstrapLogger } from "./bootstrap";
-
-// Re-export pino types for convenience
-export type { Logger } from "pino";
