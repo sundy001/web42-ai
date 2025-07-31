@@ -1,35 +1,63 @@
 // Auth Domain - Public API
-// Only expose what external consumers need, hide internal implementation
 
-// Main service functions for external consumption
+// =============================================================================
+// SERVICE LAYER - Core business logic
+// =============================================================================
+
+/**
+ * Main service functions for external consumption
+ * These provide the core auth business logic
+ */
 export { loginUser, signoutUser } from "./auth.service";
 
-// HTTP routes for application setup
+// =============================================================================
+// PRESENTATION LAYER - HTTP interface
+// =============================================================================
+
+/**
+ * HTTP routes for application setup
+ * Handles incoming auth-related HTTP requests
+ */
 export { default as authRoutes } from "./auth.routes";
 
-// Export all types under a namespace for external consumers
+// =============================================================================
+// TYPE CONTRACTS - External interfaces
+// =============================================================================
+
+/**
+ * Export all types for external consumers
+ */
 export type * from "./types";
 
-// Schema exports for validation and OpenAPI
+/**
+ * Schema exports for validation and OpenAPI documentation
+ */
 export {
   LoginResponseSchema,
   LoginSchema,
   SignoutResponseSchema,
-  SignoutSchema,
 } from "./auth.schemas";
 
-// Provider access for cross-domain usage (limited exposure)
+// =============================================================================
+// PROVIDER LAYER - Limited external access
+// =============================================================================
+
+/**
+ * Provider access for cross-domain usage (limited exposure)
+ * Allows other domains to access auth provider when needed
+ */
 export { getAuthProvider } from "./providers";
 
-// Supabase client for middleware usage (minimal exposure)
-export { supabaseClient } from "./providers/supabase";
+// =============================================================================
+// MIDDLEWARE - Route protection
+// =============================================================================
 
-// Authentication middleware for route protection
+/**
+ * Authentication middleware for route protection
+ * Provides reusable auth guards for Express routes
+ */
 export {
   authenticateUser,
   optionalAuthentication,
   requireAdmin,
 } from "./middleware/auth";
-
-// Note: Provider implementations, internal auth logic, and provider-specific
-// details are kept private. External consumers should use the service layer.

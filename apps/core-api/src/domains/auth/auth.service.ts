@@ -2,12 +2,9 @@ import { authLogger } from "@/config/logger";
 import { getUserBySupabaseId } from "@/domains/admin/users";
 import { UnauthorizedError } from "@/utils/errors";
 import { getAuthProvider } from "./providers";
-import type { LoginRequest, LoginResponse } from "./types";
+import type { LoginInput, LoginResponse } from "./types";
 
-// Login with email and password
-export async function loginUser(
-  loginData: LoginRequest,
-): Promise<LoginResponse> {
+export async function loginUser(loginData: LoginInput): Promise<LoginResponse> {
   try {
     // Authenticate with auth provider
     const authProvider = getAuthProvider();
@@ -45,14 +42,12 @@ export async function loginUser(
       },
     };
   } catch (error) {
-    // Always throw UnauthorizedError to prevent information disclosure
     throw new UnauthorizedError("Invalid credentials", {
       cause: error as Error,
     });
   }
 }
 
-// Signout user
 export async function signoutUser(): Promise<void> {
   try {
     // Sign out from auth provider

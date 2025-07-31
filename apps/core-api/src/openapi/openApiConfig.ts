@@ -19,7 +19,6 @@ import {
   LoginResponseSchema,
   LoginSchema,
   SignoutResponseSchema,
-  SignoutSchema,
 } from "../domains/auth";
 import { generateExample } from "./generateExample.js";
 
@@ -200,10 +199,6 @@ export function generateOpenApiDocument() {
           description: "Sign out user by invalidating their access token",
           tags: ["Authentication"],
           security: [{ bearerAuth: [] }],
-          requestBody: {
-            required: true,
-            content: createResponseContent(SignoutSchema),
-          },
           responses: {
             "200": {
               description: "Signout successful",
@@ -632,7 +627,6 @@ export function generateOpenApiDocument() {
         ProjectListResponse: generateSchema(ProjectListResponseSchema),
         LoginRequest: generateSchema(LoginSchema),
         LoginResponse: generateSchema(LoginResponseSchema),
-        SignoutRequest: generateSchema(SignoutSchema),
         SignoutResponse: generateSchema(SignoutResponseSchema),
         ErrorResponse: generateSchema(ErrorResponseSchema),
       },

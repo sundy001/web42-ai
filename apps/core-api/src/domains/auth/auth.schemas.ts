@@ -56,25 +56,52 @@ export const LoginResponseSchema = z.object({
         example: "2024-01-26T12:00:00.000Z",
         description: "User last update timestamp",
       }),
+      // Auth provider fields
+      authProvider: z.string().optional().openapi({
+        example: "supabase",
+        description: "Authentication provider",
+      }),
+      lastSignInAt: z.string().optional().openapi({
+        example: "2024-01-26T12:00:00.000Z",
+        description: "Last sign in timestamp",
+      }),
+      emailConfirmedAt: z.string().optional().openapi({
+        example: "2024-01-26T12:00:00.000Z",
+        description: "Email confirmation timestamp",
+      }),
+      phoneConfirmedAt: z.string().optional().openapi({
+        example: "2024-01-26T12:00:00.000Z",
+        description: "Phone confirmation timestamp",
+      }),
+      phone: z.string().optional().openapi({
+        example: "+1234567890",
+        description: "User phone number",
+      }),
+      userMetadata: z.record(z.unknown()).optional().openapi({
+        description: "User metadata from auth provider",
+      }),
+      appMetadata: z.record(z.unknown()).optional().openapi({
+        description: "App metadata from auth provider",
+      }),
     })
     .openapi({
       description: "Combined user data from MongoDB and Supabase",
     }),
   session: z
     .object({
-      access_token: z.string().openapi({
+      access_token: z.string().optional().openapi({
         example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
         description: "JWT access token",
       }),
-      refresh_token: z.string().openapi({
+      refresh_token: z.string().optional().openapi({
         example: "refresh_token_string",
         description: "Refresh token for obtaining new access tokens",
       }),
-      expires_in: z.number().openapi({
+      expires_in: z.number().optional().openapi({
         example: 3600,
         description: "Token expiration time in seconds",
       }),
-      token_type: z.string().openapi({
+      token_type: z.string().optional().openapi({
         example: "bearer",
         description: "Token type",
       }),
@@ -82,14 +109,6 @@ export const LoginResponseSchema = z.object({
     .openapi({
       description: "Supabase session information",
     }),
-});
-
-// Signout request schema
-export const SignoutSchema = z.object({
-  access_token: z.string().openapi({
-    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-    description: "JWT access token to invalidate",
-  }),
 });
 
 // Signout response schema
@@ -102,4 +121,3 @@ export const SignoutResponseSchema = z.object({
 
 // Export types inferred from schemas
 export type LoginInput = z.infer<typeof LoginSchema>;
-export type SignoutInput = z.infer<typeof SignoutSchema>;

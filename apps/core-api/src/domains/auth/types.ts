@@ -52,7 +52,7 @@ export interface AuthError extends Error {
 /**
  * Request to login a user (service layer)
  */
-export interface LoginRequest {
+export interface LoginInput {
   email: string;
   password: string;
 }
@@ -63,13 +63,6 @@ export interface LoginRequest {
 export interface LoginResponse {
   user: User;
   session: AuthSession;
-}
-
-/**
- * Request to sign out a user (service layer)
- */
-export interface SignoutRequest {
-  access_token: string;
 }
 
 /**
