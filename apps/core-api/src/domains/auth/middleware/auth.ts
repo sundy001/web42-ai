@@ -4,7 +4,8 @@ import { supabaseClient } from "../providers/supabase";
 import type { AuthRequest } from "../types";
 
 /**
- * Middleware to verify Supabase JWT tokens
+ * Middleware to verify Supabase JWT tokens locally without API calls
+ * Uses getClaims() for better performance and reduced bandwidth usage
  */
 export async function authenticateUser(
   req: AuthRequest,
@@ -24,13 +25,11 @@ export async function authenticateUser(
 
     const token = authHeader.substring(7); // Remove "Bearer " prefix
 
-    // Verify the JWT token with Supabase
-    const {
-      data: { user },
-      error,
-    } = await supabaseClient.auth.getUser(token);
+    // Verify the JWT token locally using getClaims()
+    // This avoids network calls and improves performance
+    const { data, error } = await supabaseClient.auth.getClaims(token);
 
-    if (error || !user) {
+    if (error || !data) {
       res.status(401).json({
         error: "Unauthorized",
         message: "Invalid or expired token",
@@ -38,11 +37,11 @@ export async function authenticateUser(
       return;
     }
 
-    // Add user info to request
+    // Extract user info from JWT claims
     req.user = {
-      id: user.id,
-      email: user.email,
-      role: user.app_metadata.role,
+      id: data.claims.sub,
+      email: data.claims.email,
+      role: data.claims.app_metadata?.role,
     };
 
     next();
@@ -74,17 +73,14 @@ export async function optionalAuthentication(
 
     const token = authHeader.substring(7);
 
-    // Try to verify the token
-    const {
-      data: { user },
-      error,
-    } = await supabaseClient.auth.getUser(token);
+    // Try to verify the token locally using getClaims()
+    const { data: claims, error } = await supabaseClient.auth.getClaims(token);
 
-    if (!error && user) {
+    if (!error && claims) {
       req.user = {
-        id: user.id,
-        email: user.email,
-        role: user.role,
+        id: claims.claims.sub,
+        email: claims.claims.email,
+        role: claims.claims.app_metadata?.role,
       };
     }
 
