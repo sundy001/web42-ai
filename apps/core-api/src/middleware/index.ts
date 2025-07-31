@@ -1,3 +1,4 @@
+import { logger } from "@/config/logger";
 import type { ApiError } from "@/utils/errors";
 import { ObjectIdSchema } from "@/utils/schemas";
 import type { NextFunction, Request, Response } from "express";
@@ -98,7 +99,8 @@ export function errorHandler(
   const statusCode = "statusCode" in error ? error.statusCode : 500;
   const isServerError = statusCode >= 500;
 
-  // TODO: add error logging later
+  // Log all errors in one central location
+  logger.error({ err: error, statusCode }, "Request failed");
 
   res.status(statusCode).json({
     error: isServerError ? INTERNAL_SERVER_ERROR : error.name,

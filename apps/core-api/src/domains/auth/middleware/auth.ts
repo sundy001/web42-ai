@@ -25,8 +25,6 @@ export async function authenticateUser(
 
     const token = authHeader.substring(7); // Remove "Bearer " prefix
 
-    // Verify the JWT token locally using getClaims()
-    // This avoids network calls and improves performance
     const { data, error } = await supabaseClient.auth.getClaims(token);
 
     if (error || !data) {
