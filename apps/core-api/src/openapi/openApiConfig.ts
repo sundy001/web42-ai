@@ -88,7 +88,7 @@ export const routeSchemas = {
       id: ObjectIdSchema,
     },
     responses: {
-      204: undefined,
+      200: UserSchema,
       400: ErrorResponseSchema,
       404: ErrorResponseSchema,
       500: ErrorResponseSchema,
@@ -294,26 +294,29 @@ export function generateOpenApiDocument() {
             },
             {
               in: "query",
+              name: "supabaseUserId",
+              schema: { type: "string" },
+              description: "Filter by Supabase user ID",
+            },
+            {
+              in: "query",
               name: "email",
               schema: { type: "string" },
               description: "Filter by email (case-insensitive partial match)",
             },
             {
               in: "query",
-              name: "name",
-              schema: { type: "string" },
-              description: "Filter by name (case-insensitive partial match)",
-            },
-            {
-              in: "query",
-              name: "authProvider",
-              schema: { type: "string", enum: ["google", "github", "email"] },
-              description: "Filter by authentication provider",
+              name: "role",
+              schema: { type: "string", enum: ["admin", "user"] },
+              description: "Filter by user role",
             },
             {
               in: "query",
               name: "status",
-              schema: { type: "string", enum: ["active", "inactive"] },
+              schema: {
+                type: "string",
+                enum: ["active", "inactive", "deleted"],
+              },
               description: "Filter by status",
             },
             {
@@ -459,8 +462,9 @@ export function generateOpenApiDocument() {
             },
           ],
           responses: {
-            "204": {
+            "200": {
               description: "User deleted successfully",
+              content: createResponseContent(UserSchema),
             },
             "400": {
               description: VALIDATION_ERROR_DESC,
