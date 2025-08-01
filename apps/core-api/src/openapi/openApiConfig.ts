@@ -42,6 +42,28 @@ function createResponseContent(schema: z.ZodTypeAny) {
 
 // Define route schemas for OpenAPI generation
 export const routeSchemas = {
+  login: {
+    body: LoginSchema,
+    responses: {
+      200: LoginResponseSchema,
+      400: ErrorResponseSchema,
+      401: ErrorResponseSchema,
+      500: ErrorResponseSchema,
+    },
+  },
+  signout: {
+    responses: {
+      200: SignoutResponseSchema,
+      500: ErrorResponseSchema,
+    },
+  },
+  refresh: {
+    responses: {
+      200: RefreshTokenResponseSchema,
+      401: ErrorResponseSchema,
+      500: ErrorResponseSchema,
+    },
+  },
   listUsers: {
     query: ListUsersQuerySchema,
     responses: {
@@ -195,7 +217,7 @@ export function generateOpenApiDocument() {
               content: createResponseContent(ErrorResponseSchema),
             },
             "401": {
-              description: "Authentication failed",
+              description: "Invalid credentials",
               content: createResponseContent(ErrorResponseSchema),
             },
             "500": {
@@ -210,6 +232,7 @@ export function generateOpenApiDocument() {
           summary: "User signout",
           description: "Sign out user and clear authentication cookies",
           tags: ["Authentication"],
+          security: [{ cookieAuth: [] }],
           responses: {
             "200": {
               description:
@@ -239,6 +262,7 @@ export function generateOpenApiDocument() {
           description:
             "Refresh access token using refresh token from cookies. Updates both access and refresh tokens.",
           tags: ["Authentication"],
+          security: [{ cookieAuth: [] }],
           responses: {
             "200": {
               description:
@@ -257,7 +281,7 @@ export function generateOpenApiDocument() {
               content: createResponseContent(RefreshTokenResponseSchema),
             },
             "401": {
-              description: "Invalid or expired refresh token",
+              description: "Invalid credentials",
               content: createResponseContent(ErrorResponseSchema),
             },
             "500": {
@@ -686,6 +710,14 @@ export function generateOpenApiDocument() {
         RefreshTokenResponse: generateSchema(RefreshTokenResponseSchema),
         SignoutResponse: generateSchema(SignoutResponseSchema),
         ErrorResponse: generateSchema(ErrorResponseSchema),
+      },
+      securitySchemes: {
+        cookieAuth: {
+          type: "apiKey",
+          in: "cookie",
+          name: "web42_access_token",
+          description: "HttpOnly cookie-based authentication using access token",
+        },
       },
     },
     tags: [

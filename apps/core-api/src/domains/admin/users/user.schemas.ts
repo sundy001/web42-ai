@@ -81,7 +81,7 @@ export const UserFiltersSchema = z.object({
   supabaseUserId: z.string().uuid().optional(),
   email: z.string().optional(),
   role: z.enum(["admin", "user"]).optional(),
-  status: z.enum(["active", "inactive"]).optional(),
+  status: z.enum(["active", "inactive", "deleted"]).optional(),
   includeDeleted: z.boolean().optional(),
 });
 
@@ -119,7 +119,7 @@ export const ListUsersQuerySchema = z.object({
   supabaseUserId: z.string().uuid().optional(),
   email: z.string().optional(),
   role: z.enum(["admin", "user"]).optional(),
-  status: z.enum(["active", "inactive"]).optional(),
+  status: z.enum(["active", "inactive", "deleted"]).optional(),
   includeDeleted: z
     .string()
     .transform((val) => val === "true")
@@ -128,7 +128,7 @@ export const ListUsersQuerySchema = z.object({
 
 // Response schemas
 export const UserListResponseSchema = z.object({
-  users: z.array(UserSchema),
+  items: z.array(UserSchema),
   total: z.number().openapi({
     example: 100,
     description: "Total number of users matching the query",
