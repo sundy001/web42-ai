@@ -28,11 +28,13 @@ const envSchema = z.object({
 
   // Cookie configuration
   COOKIE_DOMAIN: z.string().optional(),
+  // Access token expires in 1 hour by default
   ACCESS_TOKEN_EXPIRY_MINUTES: z
     .string()
     .transform(Number)
     .pipe(z.number().int().min(1))
-    .default("15"),
+    .default("60"),
+  // Refresh token expires in 7 days by default
   REFRESH_TOKEN_EXPIRY_DAYS: z
     .string()
     .transform(Number)
