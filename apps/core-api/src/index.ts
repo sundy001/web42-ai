@@ -1,3 +1,4 @@
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
@@ -7,7 +8,7 @@ import { config } from "@/config";
 import { httpLogger, logger } from "@/config/logger";
 import adminRoutes from "@/domains/admin";
 import { authRoutes } from "@/domains/auth";
-import { errorHandler } from "@/middleware";
+import { asyncHandler, errorHandler } from "@/middleware";
 import { openApiDocument } from "@/openapi/openApiConfig";
 import { databaseStore, getHealthStatus } from "@/stores";
 
@@ -16,17 +17,28 @@ const PORT = config.server.port;
 
 // Middleware
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: config.server.isProduction
+      ? ["https://web42.ai", "https://www.web42.ai"]
+      : ["http://localhost:3000", "http://localhost:3001"],
+    credentials: true,
+  }),
+);
 app.use(httpLogger);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Health check endpoint
-app.get("/health", async (req, res) => {
-  const healthStatus = await getHealthStatus();
-  const statusCode = healthStatus.status === "ok" ? 200 : 503;
-  res.status(statusCode).json(healthStatus);
-});
+app.get(
+  "/health",
+  asyncHandler(async (_req, res) => {
+    const healthStatus = await getHealthStatus();
+    const statusCode = healthStatus.status === "ok" ? 200 : 503;
+    res.status(statusCode).json(healthStatus);
+  }),
+);
 
 // Swagger documentation
 app.use(
@@ -127,10 +139,5 @@ async function startServer() {
 }
 
 startServer();
-
-// Export database access for other modules
-export function getDatabase() {
-  return databaseStore.getDatabase();
-}
 
 export default app;

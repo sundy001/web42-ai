@@ -62,7 +62,6 @@ export interface LoginInput {
  */
 export interface LoginResponse {
   user: User;
-  session: AuthSession;
 }
 
 /**
@@ -126,6 +125,10 @@ export interface AuthProvider {
     password: string,
   ): Promise<AuthProviderSignInResponse>;
   signOut(): Promise<void>;
+  refreshSession(refreshToken: string): Promise<{
+    data: { session: unknown } | null;
+    error: Error | null;
+  }>;
 }
 
 // =============================================================================

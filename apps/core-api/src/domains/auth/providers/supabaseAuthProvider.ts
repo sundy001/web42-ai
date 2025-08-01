@@ -141,4 +141,15 @@ export const supabaseAuthProvider = {
       throw createAuthError(error!);
     }
   },
+
+  refreshSession: async (refreshToken) => {
+    const { data, error } = await supabaseClient.auth.refreshSession({
+      refresh_token: refreshToken,
+    });
+
+    return {
+      data: data.session ? { session: data.session } : null,
+      error: error,
+    };
+  },
 } as AuthProvider;

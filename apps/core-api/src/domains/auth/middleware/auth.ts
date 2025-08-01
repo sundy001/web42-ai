@@ -1,27 +1,26 @@
 import { authLogger } from "@/config/logger";
+import { asyncHandler } from "@/middleware";
 import { ForbiddenError, UnauthorizedError } from "@/utils/errors";
-import type { NextFunction, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
+import { AUTH_COOKIES } from "../cookieUtils";
 import { supabaseClient } from "../providers/supabase";
 import type { AuthRequest } from "../types";
 
 /**
- * Middleware to verify Supabase JWT tokens locally without API calls
- * Uses getClaims() for better performance and reduced bandwidth usage
+ * Internal async function for user authentication logic
  */
-export async function authenticateUser(
+async function _authenticateUser(
   req: AuthRequest,
-  res: Response,
+  _res: Response,
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
+    const token = (req as Request).cookies?.[AUTH_COOKIES.ACCESS_TOKEN];
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!token) {
       // Always same message to prevent information disclosure
       throw new UnauthorizedError("Invalid credentials");
     }
-
-    const token = authHeader.substring(7); // Remove "Bearer " prefix
 
     const { data, error } = await supabaseClient.auth.getClaims(token);
 
@@ -55,23 +54,28 @@ export async function authenticateUser(
 }
 
 /**
- * Middleware to optionally authenticate user (doesn't fail if no token)
+ * Middleware to verify Supabase JWT tokens from cookies
+ * Uses getClaims() for better performance and reduced bandwidth usage
+ * Wrapped with asyncHandler to ensure errors are properly caught by Express error handler
  */
-export async function optionalAuthentication(
+export const authenticateUser = asyncHandler(_authenticateUser);
+
+/**
+ * Internal async function for optional authentication logic
+ */
+async function _optionalAuthentication(
   req: AuthRequest,
-  res: Response,
+  _res: Response,
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
+    const token = (req as Request).cookies?.[AUTH_COOKIES.ACCESS_TOKEN];
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!token) {
       // No token provided, continue without authentication
       next();
       return;
     }
-
-    const token = authHeader.substring(7);
 
     // Try to verify the token locally using getClaims()
     const { data: claims, error } = await supabaseClient.auth.getClaims(token);
@@ -91,6 +95,12 @@ export async function optionalAuthentication(
     next();
   }
 }
+
+/**
+ * Middleware to optionally authenticate user (doesn't fail if no token)
+ * Wrapped with asyncHandler to ensure any unexpected errors are properly handled
+ */
+export const optionalAuthentication = asyncHandler(_optionalAuthentication);
 
 /**
  * Middleware to check if user is an admin

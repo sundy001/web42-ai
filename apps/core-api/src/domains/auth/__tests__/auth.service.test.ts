@@ -8,11 +8,15 @@ import {
   createMockUser,
 } from "./authTestFixtures";
 
+// Test constants
+const INVALID_CREDENTIALS_MESSAGE = "Invalid credentials";
+
 // Mock dependencies with proper hoisting
 const mockGetUserBySupabaseId = vi.hoisted(() => vi.fn());
 const mockAuthProvider = vi.hoisted(() => ({
   signInWithPassword: vi.fn(),
   signOut: vi.fn(),
+  refreshSession: vi.fn(),
 }));
 const mockGetAuthProvider = vi.hoisted(() => vi.fn());
 
@@ -26,7 +30,7 @@ vi.mock("../providers", () => ({
 }));
 
 // Import after mocks are set up
-import { loginUser, signoutUser } from "../auth.service";
+import { loginUser, refreshUserToken, signoutUser } from "../auth.service";
 
 describe("Auth Service Unit Tests", () => {
   beforeEach(() => {
@@ -76,7 +80,9 @@ describe("Auth Service Unit Tests", () => {
       mockAuthProvider.signInWithPassword.mockRejectedValue(authError);
 
       await expect(loginUser(loginData)).rejects.toThrow(UnauthorizedError);
-      await expect(loginUser(loginData)).rejects.toThrow("Invalid credentials");
+      await expect(loginUser(loginData)).rejects.toThrow(
+        INVALID_CREDENTIALS_MESSAGE,
+      );
 
       expect(mockAuthProvider.signInWithPassword).toHaveBeenCalledWith(
         loginData.email,
@@ -93,7 +99,9 @@ describe("Auth Service Unit Tests", () => {
       mockGetUserBySupabaseId.mockResolvedValue(null); // User not found
 
       await expect(loginUser(loginData)).rejects.toThrow(UnauthorizedError);
-      await expect(loginUser(loginData)).rejects.toThrow("Invalid credentials");
+      await expect(loginUser(loginData)).rejects.toThrow(
+        INVALID_CREDENTIALS_MESSAGE,
+      );
 
       expect(mockAuthProvider.signInWithPassword).toHaveBeenCalledWith(
         loginData.email,
@@ -113,7 +121,9 @@ describe("Auth Service Unit Tests", () => {
       mockGetUserBySupabaseId.mockRejectedValue(dbError);
 
       await expect(loginUser(loginData)).rejects.toThrow(UnauthorizedError);
-      await expect(loginUser(loginData)).rejects.toThrow("Invalid credentials");
+      await expect(loginUser(loginData)).rejects.toThrow(
+        INVALID_CREDENTIALS_MESSAGE,
+      );
 
       expect(mockAuthProvider.signInWithPassword).toHaveBeenCalledWith(
         loginData.email,
@@ -139,7 +149,9 @@ describe("Auth Service Unit Tests", () => {
       mockGetUserBySupabaseId.mockResolvedValue(mockUser);
 
       await expect(loginUser(loginData)).rejects.toThrow(UnauthorizedError);
-      await expect(loginUser(loginData)).rejects.toThrow("Invalid credentials");
+      await expect(loginUser(loginData)).rejects.toThrow(
+        INVALID_CREDENTIALS_MESSAGE,
+      );
     });
   });
 
@@ -160,6 +172,71 @@ describe("Auth Service Unit Tests", () => {
       await expect(signoutUser()).resolves.toBeUndefined();
 
       expect(mockAuthProvider.signOut).toHaveBeenCalledWith();
+    });
+  });
+
+  describe("refreshUserToken", () => {
+    it("should refresh token successfully", async () => {
+      const refreshToken = "mock_refresh_token";
+      const mockSession = {
+        access_token: "new_access_token",
+        refresh_token: "new_refresh_token",
+        expires_in: 3600,
+        token_type: "bearer",
+      };
+
+      mockAuthProvider.refreshSession.mockResolvedValue({
+        data: { session: mockSession },
+        error: null,
+      });
+
+      const result = await refreshUserToken(refreshToken);
+
+      expect(result).toEqual(mockSession);
+      expect(mockAuthProvider.refreshSession).toHaveBeenCalledWith(
+        refreshToken,
+      );
+    });
+
+    it("should throw UnauthorizedError when refresh fails", async () => {
+      const refreshToken = "invalid_refresh_token";
+      const error = new Error("Invalid refresh token");
+
+      mockAuthProvider.refreshSession.mockResolvedValue({
+        data: null,
+        error: error,
+      });
+
+      await expect(refreshUserToken(refreshToken)).rejects.toThrow(
+        UnauthorizedError,
+      );
+      await expect(refreshUserToken(refreshToken)).rejects.toThrow(
+        INVALID_CREDENTIALS_MESSAGE,
+      );
+
+      expect(mockAuthProvider.refreshSession).toHaveBeenCalledWith(
+        refreshToken,
+      );
+    });
+
+    it("should throw UnauthorizedError when no session data", async () => {
+      const refreshToken = "mock_refresh_token";
+
+      mockAuthProvider.refreshSession.mockResolvedValue({
+        data: { session: null },
+        error: null,
+      });
+
+      await expect(refreshUserToken(refreshToken)).rejects.toThrow(
+        UnauthorizedError,
+      );
+      await expect(refreshUserToken(refreshToken)).rejects.toThrow(
+        INVALID_CREDENTIALS_MESSAGE,
+      );
+
+      expect(mockAuthProvider.refreshSession).toHaveBeenCalledWith(
+        refreshToken,
+      );
     });
   });
 });

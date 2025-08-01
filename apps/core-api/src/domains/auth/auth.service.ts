@@ -2,9 +2,12 @@ import { authLogger } from "@/config/logger";
 import { getUserBySupabaseId } from "@/domains/admin/users";
 import { UnauthorizedError } from "@/utils/errors";
 import { getAuthProvider } from "./providers";
-import type { LoginInput, LoginResponse } from "./types";
+import type { AuthSession, LoginInput, LoginResponse } from "./types";
 
-export async function loginUser(loginData: LoginInput): Promise<LoginResponse> {
+export async function loginUser(loginData: LoginInput): Promise<{
+  user: LoginResponse["user"];
+  session: AuthSession;
+}> {
   try {
     // Authenticate with auth provider
     const authProvider = getAuthProvider();
@@ -56,4 +59,31 @@ export async function signoutUser(): Promise<void> {
   } catch (error) {
     authLogger.warn({ err: error }, "Signout error");
   }
+}
+
+export async function refreshUserToken(
+  refreshToken: string,
+): Promise<AuthSession> {
+  const authProvider = getAuthProvider();
+  const { data, error } = await authProvider.refreshSession(refreshToken);
+
+  if (error || !data || !data.session) {
+    throw new UnauthorizedError("Invalid credentials", {
+      cause: error as Error,
+    });
+  }
+
+  const session = data.session as {
+    access_token: string;
+    refresh_token: string;
+    expires_in: number;
+    token_type: string;
+  };
+
+  return {
+    access_token: session.access_token,
+    refresh_token: session.refresh_token,
+    expires_in: session.expires_in,
+    token_type: session.token_type,
+  };
 }

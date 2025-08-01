@@ -18,6 +18,7 @@ import {
 import {
   LoginResponseSchema,
   LoginSchema,
+  RefreshTokenResponseSchema,
   SignoutResponseSchema,
 } from "../domains/auth";
 import { generateExample } from "./generateExample.js";
@@ -167,7 +168,7 @@ export function generateOpenApiDocument() {
         post: {
           summary: "User login",
           description:
-            "Authenticate user with email and password, returns user data and session tokens",
+            "Authenticate user with email and password. Sets secure HttpOnly cookies for authentication. Returns user data only.",
           tags: ["Authentication"],
           requestBody: {
             required: true,
@@ -175,7 +176,18 @@ export function generateOpenApiDocument() {
           },
           responses: {
             "200": {
-              description: "Login successful",
+              description: "Login successful - authentication cookies set",
+              headers: {
+                "Set-Cookie": {
+                  description:
+                    "HttpOnly authentication cookies (access_token, refresh_token)",
+                  schema: {
+                    type: "string",
+                    example:
+                      "web42_access_token=eyJ...; HttpOnly; Secure; SameSite=Strict; Path=/",
+                  },
+                },
+              },
               content: createResponseContent(LoginResponseSchema),
             },
             "400": {
@@ -196,16 +208,56 @@ export function generateOpenApiDocument() {
       "/api/v1/auth/signout": {
         post: {
           summary: "User signout",
-          description: "Sign out user by invalidating their access token",
+          description: "Sign out user and clear authentication cookies",
           tags: ["Authentication"],
-          security: [{ bearerAuth: [] }],
           responses: {
             "200": {
-              description: "Signout successful",
+              description:
+                "Signout successful - authentication cookies cleared",
+              headers: {
+                "Set-Cookie": {
+                  description: "Clears authentication cookies",
+                  schema: {
+                    type: "string",
+                    example:
+                      "web42_access_token=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly",
+                  },
+                },
+              },
               content: createResponseContent(SignoutResponseSchema),
             },
-            "400": {
-              description: VALIDATION_ERROR_DESC,
+            "500": {
+              description: INTERNAL_ERROR_DESC,
+              content: createResponseContent(ErrorResponseSchema),
+            },
+          },
+        },
+      },
+      "/api/v1/auth/refresh": {
+        post: {
+          summary: "Refresh access token",
+          description:
+            "Refresh access token using refresh token from cookies. Updates both access and refresh tokens.",
+          tags: ["Authentication"],
+          responses: {
+            "200": {
+              description:
+                "Token refreshed successfully - new authentication cookies set",
+              headers: {
+                "Set-Cookie": {
+                  description:
+                    "Updated HttpOnly authentication cookies (access_token, refresh_token)",
+                  schema: {
+                    type: "string",
+                    example:
+                      "web42_access_token=eyJ...; HttpOnly; Secure; SameSite=Strict; Path=/",
+                  },
+                },
+              },
+              content: createResponseContent(RefreshTokenResponseSchema),
+            },
+            "401": {
+              description: "Invalid or expired refresh token",
               content: createResponseContent(ErrorResponseSchema),
             },
             "500": {
@@ -221,7 +273,7 @@ export function generateOpenApiDocument() {
           description:
             "Retrieve a paginated list of users with optional filtering",
           tags: ["Users"],
-          security: [{ bearerAuth: [] }],
+          security: [{ cookieAuth: [] }],
           parameters: [
             {
               in: "query",
@@ -290,7 +342,7 @@ export function generateOpenApiDocument() {
           summary: "Create a new user",
           description: "Create a new user with the provided information",
           tags: ["Users"],
-          security: [{ bearerAuth: [] }],
+          security: [{ cookieAuth: [] }],
           requestBody: {
             required: true,
             content: createResponseContent(CreateUserSchema),
@@ -320,7 +372,7 @@ export function generateOpenApiDocument() {
           summary: "Get user by ID",
           description: "Retrieve a specific user by their MongoDB ObjectId",
           tags: ["Users"],
-          security: [{ bearerAuth: [] }],
+          security: [{ cookieAuth: [] }],
           parameters: [
             {
               in: "path",
@@ -354,7 +406,7 @@ export function generateOpenApiDocument() {
           summary: "Update user",
           description: "Update an existing user's information",
           tags: ["Users"],
-          security: [{ bearerAuth: [] }],
+          security: [{ cookieAuth: [] }],
           parameters: [
             {
               in: "path",
@@ -396,7 +448,7 @@ export function generateOpenApiDocument() {
           description:
             "Soft delete a user by setting their status to 'deleted'",
           tags: ["Users"],
-          security: [{ bearerAuth: [] }],
+          security: [{ cookieAuth: [] }],
           parameters: [
             {
               in: "path",
@@ -431,7 +483,7 @@ export function generateOpenApiDocument() {
           description:
             "Restore a soft-deleted user by setting their status back to 'active'",
           tags: ["Users"],
-          security: [{ bearerAuth: [] }],
+          security: [{ cookieAuth: [] }],
           parameters: [
             {
               in: "path",
@@ -467,7 +519,7 @@ export function generateOpenApiDocument() {
           description:
             "Retrieve a paginated list of projects with optional filtering",
           tags: ["Projects"],
-          security: [{ bearerAuth: [] }],
+          security: [{ cookieAuth: [] }],
           parameters: [
             {
               in: "query",
@@ -526,7 +578,7 @@ export function generateOpenApiDocument() {
           summary: "Create a new project",
           description: "Create a new project with the provided information",
           tags: ["Projects"],
-          security: [{ bearerAuth: [] }],
+          security: [{ cookieAuth: [] }],
           requestBody: {
             required: true,
             content: createResponseContent(CreateProjectSchema),
@@ -552,7 +604,7 @@ export function generateOpenApiDocument() {
           summary: "Get project by ID",
           description: "Retrieve a specific project by its MongoDB ObjectId",
           tags: ["Projects"],
-          security: [{ bearerAuth: [] }],
+          security: [{ cookieAuth: [] }],
           parameters: [
             {
               in: "path",
@@ -586,7 +638,7 @@ export function generateOpenApiDocument() {
           description:
             "Soft delete a project by setting its status to 'deleted'",
           tags: ["Projects"],
-          security: [{ bearerAuth: [] }],
+          security: [{ cookieAuth: [] }],
           parameters: [
             {
               in: "path",
@@ -627,16 +679,9 @@ export function generateOpenApiDocument() {
         ProjectListResponse: generateSchema(ProjectListResponseSchema),
         LoginRequest: generateSchema(LoginSchema),
         LoginResponse: generateSchema(LoginResponseSchema),
+        RefreshTokenResponse: generateSchema(RefreshTokenResponseSchema),
         SignoutResponse: generateSchema(SignoutResponseSchema),
         ErrorResponse: generateSchema(ErrorResponseSchema),
-      },
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
-          description: "JWT token obtained from Supabase authentication",
-        },
       },
     },
     tags: [

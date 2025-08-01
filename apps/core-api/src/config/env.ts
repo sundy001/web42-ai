@@ -25,6 +25,19 @@ const envSchema = z.object({
   SUPABASE_URL: z.string().url(),
   SUPABASE_ANON_KEY: z.string().min(1),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+
+  // Cookie configuration
+  COOKIE_DOMAIN: z.string().optional(),
+  ACCESS_TOKEN_EXPIRY_MINUTES: z
+    .string()
+    .transform(Number)
+    .pipe(z.number().int().min(1))
+    .default("15"),
+  REFRESH_TOKEN_EXPIRY_DAYS: z
+    .string()
+    .transform(Number)
+    .pipe(z.number().int().min(1))
+    .default("7"),
 });
 
 // Validate environment variables
@@ -74,6 +87,11 @@ export const config = {
       url: env.SUPABASE_URL,
       anonKey: env.SUPABASE_ANON_KEY,
       serviceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY,
+    },
+    cookie: {
+      domain: env.COOKIE_DOMAIN,
+      accessTokenExpiryMs: env.ACCESS_TOKEN_EXPIRY_MINUTES * 60 * 1000,
+      refreshTokenExpiryMs: env.REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000,
     },
   },
 } as const;

@@ -90,34 +90,20 @@ export const LoginResponseSchema = z.object({
     .openapi({
       description: "Combined user data from MongoDB and Supabase",
     }),
-  session: z
-    .object({
-      access_token: z.string().openapi({
-        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-        description: "JWT access token",
-      }),
-      refresh_token: z.string().openapi({
-        example: "refresh_token_string",
-        description: "Refresh token for obtaining new access tokens",
-      }),
-      expires_in: z.number().openapi({
-        example: 3600,
-        description: "Token expiration time in seconds",
-      }),
-      token_type: z.string().openapi({
-        example: "bearer",
-        description: "Token type",
-      }),
-    })
-    .openapi({
-      description: "Supabase session information",
-    }),
 });
 
 // Signout response schema
 export const SignoutResponseSchema = z.object({
   message: z.string().openapi({
     example: "Successfully signed out",
+    description: "Confirmation message",
+  }),
+});
+
+// Refresh token response schema
+export const RefreshTokenResponseSchema = z.object({
+  message: z.string().openapi({
+    example: "Token refreshed successfully",
     description: "Confirmation message",
   }),
 });

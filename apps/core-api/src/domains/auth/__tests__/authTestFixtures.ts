@@ -111,7 +111,7 @@ export const createMockLoginRequest = (
 // =============================================================================
 
 /**
- * Creates a mock login response with user and session data
+ * Creates a mock login response with user data only
  *
  * @param overrides - Partial data to override default values
  * @returns Mock LoginResponse for successful authentication
@@ -120,12 +120,6 @@ export const createMockLoginResponse = (
   overrides: Partial<LoginResponse> = {},
 ): LoginResponse => ({
   user: createMockUser(),
-  session: {
-    access_token: MOCK_ACCESS_TOKEN,
-    refresh_token: MOCK_REFRESH_TOKEN,
-    expires_in: 3600,
-    token_type: "bearer",
-  },
   ...overrides,
 });
 
