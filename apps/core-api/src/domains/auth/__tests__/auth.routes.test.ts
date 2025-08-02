@@ -294,7 +294,9 @@ describe("Auth Routes Integration Tests", () => {
           claims: {
             sub: "550e8400-e29b-41d4-a716-446655440000",
             email: "user@example.com",
+            user_metadata: { name: "Jane Doe" },
             app_metadata: { role: "user" },
+            is_anonymous: false,
           },
         },
         error: null,
@@ -308,7 +310,9 @@ describe("Auth Routes Integration Tests", () => {
       const body = expectSuccess(response);
       expect(body).toHaveProperty("id", "550e8400-e29b-41d4-a716-446655440000");
       expect(body).toHaveProperty("email", "user@example.com");
+      expect(body).toHaveProperty("name", "Jane Doe");
       expect(body).toHaveProperty("role", "user");
+      expect(body).toHaveProperty("is_anonymous", false);
       expect(mockSupabaseClient.auth.getClaims).toHaveBeenCalledWith(
         "valid_token",
       );

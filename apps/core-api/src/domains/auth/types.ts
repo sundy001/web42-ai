@@ -77,7 +77,9 @@ export interface SignoutResponse {
 export interface MeResponse {
   id: string;
   email: string;
+  name: string;
   role: string;
+  is_anonymous: boolean;
 }
 
 // =============================================================================
@@ -150,7 +152,9 @@ export interface AuthProvider {
 export interface AuthRequest extends Request {
   user?: {
     id: string;
-    email?: string;
-    role?: string;
+    email: string;
+    name: string;
+    role: string;
+    is_anonymous: boolean;
   };
 }

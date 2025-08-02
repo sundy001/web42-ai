@@ -1,4 +1,4 @@
-import { authLogger } from "@/config/logger";
+import logger, { authLogger } from "@/config/logger";
 import { asyncHandler } from "@/middleware";
 import { ForbiddenError, UnauthorizedError } from "@/utils/errors";
 import type { NextFunction, Request, Response } from "express";
@@ -23,6 +23,7 @@ async function _authenticateUser(
     }
 
     const { data, error } = await supabaseClient.auth.getClaims(token);
+    logger.debug(data);
 
     if (error || !data) {
       // Always same message to prevent information disclosure
@@ -33,7 +34,9 @@ async function _authenticateUser(
     req.user = {
       id: data.claims.sub,
       email: data.claims.email,
-      role: data.claims.app_metadata?.role,
+      name: data.claims.user_metadata.name,
+      role: data.claims.app_metadata.role,
+      is_anonymous: data.claims.is_anonymous,
     };
 
     next();
@@ -84,7 +87,9 @@ async function _optionalAuthentication(
       req.user = {
         id: claims.claims.sub,
         email: claims.claims.email,
-        role: claims.claims.app_metadata?.role,
+        name: claims.claims.user_metadata.name,
+        role: claims.claims.app_metadata.role,
+        is_anonymous: claims.claims.is_anonymous,
       };
     }
 

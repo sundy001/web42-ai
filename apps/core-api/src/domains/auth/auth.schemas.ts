@@ -118,9 +118,17 @@ export const MeResponseSchema = z.object({
     example: "user@example.com",
     description: "User email from JWT claims",
   }),
+  name: z.string().openapi({
+    example: "Jane Doe",
+    description: "User full name from JWT claims",
+  }),
   role: z.string().openapi({
     example: "user",
     description: "User role from JWT claims",
+  }),
+  is_anonymous: z.boolean().openapi({
+    example: false,
+    description: "Whether the user is anonymous from JWT claims",
   }),
 });
 

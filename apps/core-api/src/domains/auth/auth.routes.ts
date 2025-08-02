@@ -65,8 +65,10 @@ router.get(
     // Return user data from JWT claims (no database call needed)
     res.json({
       id: req.user!.id,
-      email: req.user!.email!,
-      role: req.user!.role!,
+      email: req.user!.email,
+      name: req.user!.name,
+      role: req.user!.role,
+      is_anonymous: req.user!.is_anonymous,
     } satisfies MeResponse);
   }),
 );
