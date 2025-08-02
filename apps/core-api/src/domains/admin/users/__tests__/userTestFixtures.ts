@@ -2,8 +2,8 @@ import { AuthUser } from "@/domains/auth";
 import { ObjectId, WithId } from "mongodb";
 import type { MongoUser } from "../types";
 import type {
-  CreateUserPayload,
-  UpdateUserPayload,
+  CreateUserRequest,
+  UpdateUserRequest,
   User,
   UserListResponse,
 } from "../user.schemas";
@@ -77,8 +77,8 @@ export const combineMockUser = (
 
 // Mock request data factories
 export const createMockCreateUserRequest = (
-  overrides: Partial<CreateUserPayload> = {},
-): CreateUserPayload => ({
+  overrides: Partial<CreateUserRequest> = {},
+): CreateUserRequest => ({
   email: "newuser@example.com",
   password: "securePassword123",
   name: "New User",
@@ -87,9 +87,9 @@ export const createMockCreateUserRequest = (
 });
 
 export const createMockUpdateUserRequest = (
-  overrides: Partial<UpdateUserPayload> = {},
-): UpdateUserPayload => {
-  const baseData: UpdateUserPayload = {
+  overrides: Partial<UpdateUserRequest> = {},
+): UpdateUserRequest => {
+  const baseData: UpdateUserRequest = {
     role: "admin",
     status: "inactive",
     ...overrides,
@@ -98,7 +98,7 @@ export const createMockUpdateUserRequest = (
   // Remove undefined values to maintain proper UpdateUserRequest shape
   return Object.fromEntries(
     Object.entries(baseData).filter(([, value]) => value !== undefined),
-  ) as UpdateUserPayload;
+  ) as UpdateUserRequest;
 };
 
 // Mock response data factories

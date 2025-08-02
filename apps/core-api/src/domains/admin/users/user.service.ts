@@ -5,16 +5,16 @@ import { combineUserData } from "./combineUserData";
 import { MongoUser } from "./types";
 import * as userRepository from "./user.repository";
 import type {
-  CreateUserPayload,
-  UpdateUserPayload,
+  CreateUserRequest,
+  UpdateUserRequest,
   User,
-  UserFiltersPayload,
+  UserFiltersRequest,
   UserListResponse,
 } from "./user.schemas";
 
 // High-level user service that coordinates between userStore and auth provider
 
-export async function createUser(userData: CreateUserPayload): Promise<User> {
+export async function createUser(userData: CreateUserRequest): Promise<User> {
   // Check if user already exists by email, including soft deleted users
   const existingUser = await getMongoUserByEmail(userData.email, true);
   if (existingUser) {
@@ -74,7 +74,7 @@ export async function getUserBySupabaseId(
 
 export async function updateUser(
   id: string,
-  updateData: UpdateUserPayload,
+  updateData: UpdateUserRequest,
 ): Promise<User> {
   const authProvider = getAuthProvider();
 
@@ -131,7 +131,7 @@ export async function restoreUser(id: string): Promise<User> {
 }
 
 export async function listUsers(
-  filters: UserFiltersPayload = {},
+  filters: UserFiltersRequest = {},
   pagination: PaginationOptions = {},
 ): Promise<UserListResponse> {
   const result = await userRepository.listUsers(filters, pagination);

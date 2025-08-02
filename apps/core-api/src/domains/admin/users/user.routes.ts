@@ -11,9 +11,9 @@ import {
   ListUsersQuerySchema,
   UpdateUserSchema,
   User,
-  type CreateUserPayload,
-  type ListUsersQueryPayload,
-  type UpdateUserPayload,
+  type CreateUserRequest,
+  type ListUsersQueryRequest,
+  type UpdateUserRequest,
   type UserListResponse,
 } from "./user.schemas";
 import {
@@ -33,7 +33,7 @@ router.get(
   validateQuery(ListUsersQuerySchema),
   asyncHandler(async (req: Request, res: Response) => {
     const { page, limit, supabaseUserId, email, role, status, includeDeleted } =
-      res.locals.validatedQuery as ListUsersQueryPayload;
+      res.locals.validatedQuery as ListUsersQueryRequest;
 
     const filters = {
       supabaseUserId,
@@ -66,7 +66,7 @@ router.post(
   "/",
   validateBody(CreateUserSchema),
   asyncHandler(async (req: Request, res: Response) => {
-    const userData: CreateUserPayload = res.locals.validatedBody;
+    const userData: CreateUserRequest = res.locals.validatedBody;
 
     const user = await createUser(userData);
     res.status(201).json(user satisfies User);
@@ -80,7 +80,7 @@ router.put(
   validateBody(UpdateUserSchema),
   asyncHandler(async (req: Request, res: Response) => {
     const id = res.locals.validatedId;
-    const updateData: UpdateUserPayload = res.locals.validatedBody;
+    const updateData: UpdateUserRequest = res.locals.validatedBody;
 
     const user = await updateUser(id, updateData);
     res.json(user satisfies User);
