@@ -34,16 +34,6 @@ export type UserStatus = "active" | "inactive" | "deleted";
 // =============================================================================
 
 /**
- * Request to create a new user (service layer)
- */
-export interface CreateUserRequest {
-  email: string;
-  password?: string;
-  name: string;
-  role: UserRole;
-}
-
-/**
  * Request to update user data (service layer)
  */
 export interface UpdateUserRequest {

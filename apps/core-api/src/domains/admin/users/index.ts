@@ -40,7 +40,6 @@ export { userRoutes } from "./user.routes";
  */
 export type {
   // Service layer types for API consumers
-  CreateUserRequest,
   UpdateUserRequest,
   // Core domain types
   UserFilters,

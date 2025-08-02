@@ -1,12 +1,7 @@
 import { AuthUser } from "@/domains/auth";
 import { ObjectId, WithId } from "mongodb";
-import type {
-  CreateUserRequest,
-  MongoUser,
-  UpdateUserRequest,
-  UserListResponse,
-} from "../types";
-import type { User } from "../user.schemas";
+import type { MongoUser, UpdateUserRequest, UserListResponse } from "../types";
+import type { CreateUserPayload, User } from "../user.schemas";
 
 // Test constants
 const MOCK_EMAIL = "test@example.com";
@@ -77,8 +72,8 @@ export const combineMockUser = (
 
 // Mock request data factories
 export const createMockCreateUserRequest = (
-  overrides: Partial<CreateUserRequest> = {},
-): CreateUserRequest => ({
+  overrides: Partial<CreateUserPayload> = {},
+): CreateUserPayload => ({
   email: "newuser@example.com",
   password: "securePassword123",
   name: "New User",

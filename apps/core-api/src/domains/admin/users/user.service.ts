@@ -3,18 +3,17 @@ import { ConflictError, NotFoundError } from "@/utils/errors";
 import type { PaginationOptions } from "@/utils/types";
 import { combineUserData } from "./combineUserData";
 import type {
-  CreateUserRequest,
   MongoUser,
   UpdateUserRequest,
   UserFilters,
   UserListResponse,
 } from "./types";
 import * as userRepository from "./user.repository";
-import type { User } from "./user.schemas";
+import type { CreateUserPayload, User } from "./user.schemas";
 
 // High-level user service that coordinates between userStore and auth provider
 
-export async function createUser(userData: CreateUserRequest): Promise<User> {
+export async function createUser(userData: CreateUserPayload): Promise<User> {
   // Check if user already exists by email, including soft deleted users
   const existingUser = await getMongoUserByEmail(userData.email, true);
   if (existingUser) {

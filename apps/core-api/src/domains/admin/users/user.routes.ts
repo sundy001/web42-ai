@@ -6,11 +6,12 @@ import {
 } from "@/middleware";
 import type { Request, Response } from "express";
 import express from "express";
-import type { CreateUserRequest, UpdateUserRequest } from "./types";
+import type { UpdateUserRequest } from "./types";
 import {
   CreateUserSchema,
   ListUsersQuerySchema,
   UpdateUserSchema,
+  type CreateUserPayload,
   type ListUsersQueryInput,
 } from "./user.schemas";
 import {
@@ -63,7 +64,7 @@ router.post(
   "/",
   validateBody(CreateUserSchema),
   asyncHandler(async (req: Request, res: Response) => {
-    const userData: CreateUserRequest = res.locals.validatedBody;
+    const userData: CreateUserPayload = res.locals.validatedBody;
 
     const user = await createUser(userData);
     res.status(201).json(user);
