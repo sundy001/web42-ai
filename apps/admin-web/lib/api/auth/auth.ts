@@ -1,6 +1,7 @@
+import { authFetch } from "../auth-client";
 import { API_BASE_URL, API_ENDPOINTS } from "../config";
-import { handleApiResponse } from "../errors";
-import type { LoginForm, LoginResponse } from "../types";
+import { AuthenticationError, handleApiResponse } from "../errors";
+import type { LoginForm, LoginResponse, MeResponse } from "../types";
 
 export const loginUser = async (form: LoginForm): Promise<LoginResponse> => {
   console.log("API_BASE_URL", API_BASE_URL);
@@ -13,4 +14,16 @@ export const loginUser = async (form: LoginForm): Promise<LoginResponse> => {
   });
 
   return handleApiResponse<LoginResponse>(response);
+};
+
+export const getCurrentUser = async (): Promise<MeResponse> => {
+  try {
+    return await authFetch<MeResponse>(
+      `${API_BASE_URL}${API_ENDPOINTS.auth.me}`,
+    );
+  } catch (error) {
+    throw new AuthenticationError("Failed to get current user", {
+      cause: error,
+    });
+  }
 };

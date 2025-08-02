@@ -6,7 +6,6 @@ export function middleware(request: NextRequest) {
   // Allow access to login page and API routes
   if (
     pathname === "/login" ||
-    pathname.startsWith("/api/") ||
     pathname === "/" ||
     pathname.startsWith("/_next/") ||
     pathname.startsWith("/favicon")

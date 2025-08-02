@@ -40,6 +40,14 @@ export interface LoginResponse {
   token?: string;
 }
 
+export interface MeResponse {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  is_anonymous: boolean;
+}
+
 export interface ApiError {
   message: string;
   details?: Array<{

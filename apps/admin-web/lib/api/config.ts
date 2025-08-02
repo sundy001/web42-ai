@@ -4,6 +4,8 @@ export const API_BASE_URL =
 export const API_ENDPOINTS = {
   auth: {
     login: "/api/v1/auth/login",
+    refresh: "/api/v1/auth/refresh",
+    me: "/api/v1/auth/me",
   },
   users: {
     list: "/api/v1/users",
