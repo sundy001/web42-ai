@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getCurrentUser } from "./lib/api/auth";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Allow access to login page and API routes
+  // Allow access to login page and static assets
   if (
     pathname === "/login" ||
     pathname === "/" ||
@@ -13,17 +14,16 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Check for admin session cookie on protected routes
-  const adminSession = request.cookies.get("admin_session");
-
-  if (!adminSession) {
-    // Redirect to login if no session found
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
+  // Check authentication for protected routes
+  try {
+    await getCurrentUser();
+    return NextResponse.next();
+  } catch (error) {
+    // Redirect to login if authentication fails
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("redirect", pathname);
+    return NextResponse.redirect(loginUrl);
   }
-
-  return NextResponse.next();
 }
 
 export const config = {
