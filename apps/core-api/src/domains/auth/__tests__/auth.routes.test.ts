@@ -35,6 +35,7 @@ vi.mock("../providers/supabase", () => ({
 
 // Test constants
 const LOGIN_ENDPOINT = "/auth/login";
+const REFRESH_API_ENDPOINT = "/auth/refresh/api";
 const INVALID_CREDENTIALS_MSG = "Invalid credentials";
 
 describe("Auth Routes Integration Tests", () => {
@@ -297,7 +298,7 @@ describe("Auth Routes Integration Tests", () => {
 
       mockAuthService.refreshUserToken.mockResolvedValue(mockSession);
 
-      const response = await postRequest(app, "/auth/refresh/api", {}).set(
+      const response = await postRequest(app, REFRESH_API_ENDPOINT, {}).set(
         "Authorization",
         "Bearer old_refresh_token",
       );
@@ -318,14 +319,14 @@ describe("Auth Routes Integration Tests", () => {
     });
 
     it("should return 401 if no authorization header", async () => {
-      const response = await postRequest(app, "/auth/refresh/api", {});
+      const response = await postRequest(app, REFRESH_API_ENDPOINT, {});
 
       expectError(response, 401, "UnauthorizedError", INVALID_CREDENTIALS_MSG);
       expect(mockAuthService.refreshUserToken).not.toHaveBeenCalled();
     });
 
     it("should return 401 if authorization header is malformed", async () => {
-      const response = await postRequest(app, "/auth/refresh/api", {}).set(
+      const response = await postRequest(app, REFRESH_API_ENDPOINT, {}).set(
         "Authorization",
         "InvalidFormat token",
       );
@@ -335,7 +336,7 @@ describe("Auth Routes Integration Tests", () => {
     });
 
     it("should return 401 if authorization header is empty Bearer", async () => {
-      const response = await postRequest(app, "/auth/refresh/api", {}).set(
+      const response = await postRequest(app, REFRESH_API_ENDPOINT, {}).set(
         "Authorization",
         "Bearer ",
       );
@@ -348,7 +349,7 @@ describe("Auth Routes Integration Tests", () => {
       const error = new UnauthorizedError("Invalid credentials");
       mockAuthService.refreshUserToken.mockRejectedValue(error);
 
-      const response = await postRequest(app, "/auth/refresh/api", {}).set(
+      const response = await postRequest(app, REFRESH_API_ENDPOINT, {}).set(
         "Authorization",
         "Bearer invalid_token",
       );
@@ -364,7 +365,7 @@ describe("Auth Routes Integration Tests", () => {
         new Error("Service error"),
       );
 
-      const response = await postRequest(app, "/auth/refresh/api", {}).set(
+      const response = await postRequest(app, REFRESH_API_ENDPOINT, {}).set(
         "Authorization",
         "Bearer valid_token",
       );
