@@ -4,9 +4,9 @@ import type {
   CreateUserRequest,
   MongoUser,
   UpdateUserRequest,
-  User,
   UserListResponse,
 } from "../types";
+import type { User } from "../user.schemas";
 
 // Test constants
 const MOCK_EMAIL = "test@example.com";

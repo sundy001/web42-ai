@@ -2,7 +2,8 @@ import { getAuthProvider } from "@/domains/auth";
 import { AuthError } from "@/domains/auth/authUtils";
 import type { AuthUser } from "@/domains/auth/types";
 import { ApiError, NotFoundError } from "@/utils/errors";
-import type { MongoUser, User } from "./types";
+import type { MongoUser } from "./types";
+import type { User } from "./user.schemas";
 
 // Helper function to merge MongoDB user with auth provider user data
 export async function combineUserData(mongoUser: MongoUser): Promise<User>;

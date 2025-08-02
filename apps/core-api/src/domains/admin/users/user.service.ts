@@ -6,11 +6,11 @@ import type {
   CreateUserRequest,
   MongoUser,
   UpdateUserRequest,
-  User,
   UserFilters,
   UserListResponse,
 } from "./types";
 import * as userRepository from "./user.repository";
+import type { User } from "./user.schemas";
 
 // High-level user service that coordinates between userStore and auth provider
 

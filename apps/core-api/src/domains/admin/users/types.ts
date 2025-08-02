@@ -1,5 +1,6 @@
 import type { PaginatedResponse } from "@/utils/types";
 import type { ObjectId } from "mongodb";
+import type { User } from "./user.schemas";
 
 // =============================================================================
 // DOMAIN ENTITIES
@@ -19,23 +20,6 @@ export interface MongoUser {
   status: UserStatus;
   createdAt: string;
   updatedAt: string;
-}
-
-/**
- * Combined user data (MongoDB + Auth Provider)
- * This represents the complete user view for external consumers
- */
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  role: UserRole;
-  status: UserStatus;
-  emailVerified: boolean;
-  avatarUrl?: string;
-  createdAt: string;
-  updatedAt: string;
-  lastSignInAt?: string;
 }
 
 // =============================================================================

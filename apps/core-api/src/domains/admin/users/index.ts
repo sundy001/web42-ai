@@ -43,12 +43,13 @@ export type {
   CreateUserRequest,
   UpdateUserRequest,
   // Core domain types
-  User,
   UserFilters,
   UserListResponse,
   UserRole,
   UserStatus,
 } from "./types";
+
+export type { User } from "./user.schemas";
 
 /**
  * Schema exports for validation and OpenAPI documentation

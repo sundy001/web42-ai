@@ -174,6 +174,7 @@ export const ErrorResponseSchema = z.object({
 });
 
 // Export types inferred from schemas
+export type User = z.infer<typeof UserSchema>;
 export type CreateUserInput = z.infer<typeof CreateUserSchema>;
 export type UpdateUserInput = z.infer<typeof UpdateUserSchema>;
 export type UserFiltersInput = z.infer<typeof UserFiltersSchema>;
