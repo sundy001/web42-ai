@@ -6,36 +6,44 @@ extendZodWithOpenApi(z);
 
 // User schema for database documents
 export const UserSchema = z.object({
-  _id: z.string().optional().openapi({
+  id: z.string().openapi({
     example: "68842630e5d48662e0313589",
     description: "MongoDB ObjectId",
   }),
-  supabaseUserId: z.string().uuid().openapi({
-    example: "550e8400-e29b-41d4-a716-446655440000",
-    description: "Supabase Auth User ID",
-  }),
   email: z.string().email("Invalid email format").openapi({
     example: "user@example.com",
-    description: "User email address (duplicated for performance)",
+    description: "User email address",
   }),
   name: z.string().openapi({
     example: "Jane Doe",
-    description: "User full name (duplicated for performance)",
+    description: "User full name",
   }),
   role: z.enum(["admin", "user"]).openapi({
     example: "user",
-    description: "User role (duplicated for performance)",
+    description: "User role",
   }),
   status: z
     .enum(["active", "inactive", "deleted"])
     .openapi({ example: "active", description: "User status" }),
-  createdAt: z.string().datetime().optional().openapi({
+  emailVerified: z.boolean().openapi({
+    example: true,
+    description: "Whether the user's email is verified",
+  }),
+  avatarUrl: z.string().url().optional().openapi({
+    example: "https://example.com/avatar.jpg",
+    description: "User avatar URL",
+  }),
+  createdAt: z.string().datetime().openapi({
     example: "2024-01-26T12:00:00.000Z",
     description: "User creation timestamp",
   }),
-  updatedAt: z.string().datetime().optional().openapi({
+  updatedAt: z.string().datetime().openapi({
     example: "2024-01-26T12:00:00.000Z",
     description: "User last update timestamp",
+  }),
+  lastSignInAt: z.string().datetime().optional().openapi({
+    example: "2024-01-26T12:00:00.000Z",
+    description: "User last sign in timestamp",
   }),
 });
 

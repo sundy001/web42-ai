@@ -186,7 +186,7 @@ export const routeSchemas = {
 // Generate OpenAPI document
 export function generateOpenApiDocument() {
   const baseDocument = {
-    openapi: "3.0.0",
+    openapi: "3.1.0",
     info: {
       title: "Core API",
       version: "1.0.0",
