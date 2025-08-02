@@ -43,7 +43,7 @@ export const createMockAuthUser = (
 
 export const createMockUser = (overrides: Partial<User> = {}): User => {
   return {
-    id: new ObjectId(),
+    id: new ObjectId().toString(),
     email: MOCK_EMAIL,
     name: TEST_USER_NAME,
     role: "user",
@@ -62,7 +62,7 @@ export const combineMockUser = (
   authUser: AuthUser,
 ): User => {
   return {
-    id: mongoUser._id,
+    id: mongoUser._id.toString(),
     email: mongoUser.email,
     name: mongoUser.name,
     role: mongoUser.role,

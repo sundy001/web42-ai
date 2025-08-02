@@ -41,7 +41,7 @@ describe("combineUserData", () => {
       const result = await combineUserData(mongoUser, authUser);
 
       expect(result).toEqual({
-        id: mongoUser._id,
+        id: mongoUser._id.toString(),
         email: mongoUser.email,
         name: mongoUser.name,
         role: mongoUser.role,
@@ -89,7 +89,7 @@ describe("combineUserData", () => {
 
       expect(mockAuthProvider.getUserById).toHaveBeenCalledWith("user-456");
       expect(result).toEqual({
-        id: mongoUser._id,
+        id: mongoUser._id.toString(),
         email: mongoUser.email,
         name: mongoUser.name,
         role: mongoUser.role,

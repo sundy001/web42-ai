@@ -5,12 +5,10 @@ import { ConflictError, NotFoundError } from "@/utils/errors";
 import { ObjectId } from "mongodb";
 import { afterEach, describe, expect, it } from "vitest";
 import {
-  combineMockUser,
   createMockAuthUser,
   createMockCreateUserRequest,
   createMockMongoUser,
   createMockUpdateUserRequest,
-  createMockUserListResponse,
 } from "./userTestFixtures";
 
 const mockAuthProvider = vi.hoisted(() => ({
@@ -203,7 +201,7 @@ describe("User Service Unit Tests", () => {
       const result = await userService.getUserBySupabaseId(supabaseUserId);
 
       expect(result).toBeTruthy();
-      expect(result.id).toEqual(mockMongoUser._id);
+      expect(result.id).toEqual(mockMongoUser._id.toString());
       expect(result.email).toBe(mockAuthUser.email);
       expect(mockUserRepository.getUserBySupabaseId).toHaveBeenCalledWith(
         supabaseUserId,
@@ -246,7 +244,7 @@ describe("User Service Unit Tests", () => {
 
       expect(result).toBeTruthy();
       expect(result.status).toBe("deleted");
-      expect(result.id).toEqual(mockMongoUser._id);
+      expect(result.id).toEqual(mockMongoUser._id.toString());
       expect(mockUserRepository.getUserBySupabaseId).toHaveBeenCalledWith(
         supabaseUserId,
         true,
@@ -346,7 +344,7 @@ describe("User Service Unit Tests", () => {
       const result = await userService.deleteUser(userId);
 
       expect(result).toBeTruthy();
-      expect(result.id).toEqual(mockMongoUser._id);
+      expect(result.id).toEqual(mockMongoUser._id.toString());
       expect(mockUserRepository.getUserById).toHaveBeenCalledWith(userId);
       expect(mockAuthProvider.deleteUser).toHaveBeenCalledWith(
         mockMongoUser.supabaseUserId,
@@ -449,10 +447,7 @@ describe("User Service Unit Tests", () => {
         }),
       ];
       const mockRepositoryResponse = {
-        items: [
-          combineMockUser(mockMongoUsers[0]!, mockAuthUsers[0]!),
-          combineMockUser(mockMongoUsers[1]!, mockAuthUsers[1]!),
-        ],
+        items: mockMongoUsers,
         total: 2,
         page: 1,
         limit: 10,
@@ -486,7 +481,7 @@ describe("User Service Unit Tests", () => {
         id: mockMongoUser.supabaseUserId,
       });
       const mockRepositoryResponse = {
-        items: [combineMockUser(mockMongoUser, mockAuthUser)],
+        items: [mockMongoUser],
         total: 1,
         page: 2,
         limit: 5,
@@ -511,10 +506,13 @@ describe("User Service Unit Tests", () => {
     });
 
     it("should handle empty user list", async () => {
-      const mockRepositoryResponse = createMockUserListResponse([], {
+      const mockRepositoryResponse = {
+        items: [],
         total: 0,
+        page: 1,
+        limit: 10,
         totalPages: 0,
-      });
+      };
 
       mockUserRepository.listUsers.mockResolvedValue(mockRepositoryResponse);
 

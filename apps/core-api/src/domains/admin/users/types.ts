@@ -26,7 +26,7 @@ export interface MongoUser {
  * This represents the complete user view for external consumers
  */
 export interface User {
-  id: ObjectId;
+  id: string;
   email: string;
   name: string;
   role: UserRole;

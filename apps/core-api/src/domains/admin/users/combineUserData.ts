@@ -45,7 +45,7 @@ export async function combineUserData(
   }
 
   return {
-    id: mongoUser._id,
+    id: mongoUser._id.toString(),
     email: mongoUser.email,
     name: mongoUser.name,
     role: mongoUser.role,
