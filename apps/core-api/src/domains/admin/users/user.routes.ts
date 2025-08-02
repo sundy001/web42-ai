@@ -12,7 +12,7 @@ import {
   ListUsersQuerySchema,
   UpdateUserSchema,
   type CreateUserPayload,
-  type ListUsersQueryInput,
+  type ListUsersQueryPayload,
 } from "./user.schemas";
 import {
   createUser,
@@ -31,7 +31,7 @@ router.get(
   validateQuery(ListUsersQuerySchema),
   asyncHandler(async (req: Request, res: Response) => {
     const { page, limit, supabaseUserId, email, role, status, includeDeleted } =
-      res.locals.validatedQuery as ListUsersQueryInput;
+      res.locals.validatedQuery as ListUsersQueryPayload;
 
     const filters = {
       supabaseUserId,

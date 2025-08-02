@@ -176,7 +176,7 @@ export const ErrorResponseSchema = z.object({
 // Export types inferred from schemas
 export type User = z.infer<typeof UserSchema>;
 export type CreateUserPayload = z.infer<typeof CreateUserSchema>;
-export type UpdateUserInput = z.infer<typeof UpdateUserSchema>;
-export type UserFiltersInput = z.infer<typeof UserFiltersSchema>;
-export type PaginationInput = z.infer<typeof PaginationSchema>;
-export type ListUsersQueryInput = z.infer<typeof ListUsersQuerySchema>;
+export type UpdateUserPayload = z.infer<typeof UpdateUserSchema>;
+export type UserFiltersPayload = z.infer<typeof UserFiltersSchema>;
+export type PaginationPayload = z.infer<typeof PaginationSchema>;
+export type ListUsersQueryPayload = z.infer<typeof ListUsersQuerySchema>;
