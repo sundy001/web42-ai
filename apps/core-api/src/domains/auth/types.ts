@@ -71,6 +71,15 @@ export interface SignoutResponse {
   message: string;
 }
 
+/**
+ * Response from /me endpoint - current user info from JWT
+ */
+export interface MeResponse {
+  id: string;
+  email: string;
+  role: string;
+}
+
 // =============================================================================
 // PROVIDER LAYER CONTRACTS
 // =============================================================================

@@ -8,7 +8,8 @@ import {
   getRefreshTokenFromCookies,
   setAuthCookies,
 } from "./cookieUtils";
-import type { LoginInput } from "./types";
+import { authenticateUser } from "./middleware/auth";
+import type { AuthRequest, LoginInput, MeResponse } from "./types";
 
 const router = express.Router();
 
@@ -53,6 +54,20 @@ router.post(
     res.json({
       message: "Token refreshed successfully",
     });
+  }),
+);
+
+// GET /auth/me - Get current authenticated user info from JWT
+router.get(
+  "/me",
+  authenticateUser,
+  asyncHandler(async (req: AuthRequest, res: Response) => {
+    // Return user data from JWT claims (no database call needed)
+    res.json({
+      id: req.user!.id,
+      email: req.user!.email!,
+      role: req.user!.role!,
+    } satisfies MeResponse);
   }),
 );
 

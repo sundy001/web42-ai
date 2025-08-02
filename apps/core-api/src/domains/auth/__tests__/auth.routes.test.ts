@@ -5,6 +5,7 @@ import {
   expectError,
   expectSuccess,
   expectValidationError,
+  getRequest,
   postRequest,
 } from "@/testUtils/apiTestHelpers";
 import { UnauthorizedError } from "@/utils/errors";
@@ -21,10 +22,20 @@ const mockAuthService = vi.hoisted(() => ({
   refreshUserToken: vi.fn(),
 }));
 
+const mockSupabaseClient = vi.hoisted(() => ({
+  auth: {
+    getClaims: vi.fn(),
+  },
+}));
+
 vi.mock("../auth.service", () => mockAuthService);
+vi.mock("../providers/supabase", () => ({
+  supabaseClient: mockSupabaseClient,
+}));
 
 // Test constants
 const LOGIN_ENDPOINT = "/auth/login";
+const INVALID_CREDENTIALS_MSG = "Invalid credentials";
 
 describe("Auth Routes Integration Tests", () => {
   let app: Application;
@@ -255,7 +266,7 @@ describe("Auth Routes Integration Tests", () => {
     it("should return 401 if no refresh token cookie", async () => {
       const response = await postRequest(app, "/auth/refresh", {});
 
-      expectError(response, 401, "UnauthorizedError", "Invalid credentials");
+      expectError(response, 401, "UnauthorizedError", INVALID_CREDENTIALS_MSG);
       expect(mockAuthService.refreshUserToken).not.toHaveBeenCalled();
     });
 
@@ -268,8 +279,61 @@ describe("Auth Routes Integration Tests", () => {
         "web42_refresh_token=invalid_token",
       );
 
-      expectError(response, 401, "UnauthorizedError", "Invalid credentials");
+      expectError(response, 401, "UnauthorizedError", INVALID_CREDENTIALS_MSG);
       expect(mockAuthService.refreshUserToken).toHaveBeenCalledWith(
+        "invalid_token",
+      );
+    });
+  });
+
+  describe("GET /auth/me", () => {
+    it("should return current user info when authenticated", async () => {
+      // Mock successful getClaims response
+      mockSupabaseClient.auth.getClaims.mockResolvedValue({
+        data: {
+          claims: {
+            sub: "550e8400-e29b-41d4-a716-446655440000",
+            email: "user@example.com",
+            app_metadata: { role: "user" },
+          },
+        },
+        error: null,
+      });
+
+      const response = await getRequest(app, "/auth/me").set(
+        "Cookie",
+        "web42_access_token=valid_token",
+      );
+
+      const body = expectSuccess(response);
+      expect(body).toHaveProperty("id", "550e8400-e29b-41d4-a716-446655440000");
+      expect(body).toHaveProperty("email", "user@example.com");
+      expect(body).toHaveProperty("role", "user");
+      expect(mockSupabaseClient.auth.getClaims).toHaveBeenCalledWith(
+        "valid_token",
+      );
+    });
+
+    it("should return 401 when no access token provided", async () => {
+      const response = await getRequest(app, "/auth/me");
+
+      expectError(response, 401, "UnauthorizedError", INVALID_CREDENTIALS_MSG);
+    });
+
+    it("should return 401 when access token is invalid", async () => {
+      // Mock getClaims error
+      mockSupabaseClient.auth.getClaims.mockResolvedValue({
+        data: null,
+        error: new Error("Invalid JWT"),
+      });
+
+      const response = await getRequest(app, "/auth/me").set(
+        "Cookie",
+        "web42_access_token=invalid_token",
+      );
+
+      expectError(response, 401, "UnauthorizedError", INVALID_CREDENTIALS_MSG);
+      expect(mockSupabaseClient.auth.getClaims).toHaveBeenCalledWith(
         "invalid_token",
       );
     });

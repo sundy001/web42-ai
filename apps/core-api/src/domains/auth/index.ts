@@ -35,6 +35,7 @@ export type * from "./types";
 export {
   LoginResponseSchema,
   LoginSchema,
+  MeResponseSchema,
   RefreshTokenResponseSchema,
   SignoutResponseSchema,
 } from "./auth.schemas";

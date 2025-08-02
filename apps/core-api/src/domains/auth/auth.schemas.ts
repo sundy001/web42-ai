@@ -108,5 +108,21 @@ export const RefreshTokenResponseSchema = z.object({
   }),
 });
 
+// Me response schema - returns current user info from JWT
+export const MeResponseSchema = z.object({
+  id: z.string().uuid().openapi({
+    example: "550e8400-e29b-41d4-a716-446655440000",
+    description: "User ID from JWT claims",
+  }),
+  email: z.string().email().openapi({
+    example: "user@example.com",
+    description: "User email from JWT claims",
+  }),
+  role: z.string().openapi({
+    example: "user",
+    description: "User role from JWT claims",
+  }),
+});
+
 // Export types inferred from schemas
 export type LoginInput = z.infer<typeof LoginSchema>;

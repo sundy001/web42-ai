@@ -18,6 +18,7 @@ import {
 import {
   LoginResponseSchema,
   LoginSchema,
+  MeResponseSchema,
   RefreshTokenResponseSchema,
   SignoutResponseSchema,
 } from "../domains/auth";
@@ -60,6 +61,13 @@ export const routeSchemas = {
   refresh: {
     responses: {
       200: RefreshTokenResponseSchema,
+      401: ErrorResponseSchema,
+      500: ErrorResponseSchema,
+    },
+  },
+  me: {
+    responses: {
+      200: MeResponseSchema,
       401: ErrorResponseSchema,
       500: ErrorResponseSchema,
     },
@@ -279,6 +287,29 @@ export function generateOpenApiDocument() {
                 },
               },
               content: createResponseContent(RefreshTokenResponseSchema),
+            },
+            "401": {
+              description: "Invalid credentials",
+              content: createResponseContent(ErrorResponseSchema),
+            },
+            "500": {
+              description: INTERNAL_ERROR_DESC,
+              content: createResponseContent(ErrorResponseSchema),
+            },
+          },
+        },
+      },
+      "/api/v1/auth/me": {
+        get: {
+          summary: "Get current authenticated user",
+          description:
+            "Returns the current authenticated user information from JWT claims. This endpoint is designed for BFF middleware usage with minimal data exposure.",
+          tags: ["Authentication"],
+          security: [{ cookieAuth: [] }],
+          responses: {
+            "200": {
+              description: "Current user information retrieved successfully",
+              content: createResponseContent(MeResponseSchema),
             },
             "401": {
               description: "Invalid credentials",
@@ -716,7 +747,8 @@ export function generateOpenApiDocument() {
           type: "apiKey",
           in: "cookie",
           name: "web42_access_token",
-          description: "HttpOnly cookie-based authentication using access token",
+          description:
+            "HttpOnly cookie-based authentication using access token",
         },
       },
     },
