@@ -2,13 +2,14 @@ import { AuthUser, getAuthProvider } from "@/domains/auth";
 import { ConflictError, NotFoundError } from "@/utils/errors";
 import type { PaginationOptions } from "@/utils/types";
 import { combineUserData } from "./combineUserData";
-import type { MongoUser, UserListResponse } from "./types";
+import { MongoUser } from "./types";
 import * as userRepository from "./user.repository";
 import type {
   CreateUserPayload,
   UpdateUserPayload,
   User,
   UserFiltersPayload,
+  UserListResponse,
 } from "./user.schemas";
 
 // High-level user service that coordinates between userStore and auth provider

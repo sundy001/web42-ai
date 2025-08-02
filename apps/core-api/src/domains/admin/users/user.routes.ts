@@ -10,9 +10,11 @@ import {
   CreateUserSchema,
   ListUsersQuerySchema,
   UpdateUserSchema,
+  User,
   type CreateUserPayload,
   type ListUsersQueryPayload,
   type UpdateUserPayload,
+  type UserListResponse,
 } from "./user.schemas";
 import {
   createUser,
@@ -44,7 +46,7 @@ router.get(
 
     const result = await listUsers(filters, pagination);
 
-    res.json(result);
+    res.json(result satisfies UserListResponse);
   }),
 );
 
@@ -55,7 +57,7 @@ router.get(
   asyncHandler(async (req: Request, res: Response) => {
     const user = await getUserById(res.locals.validatedId);
 
-    res.json(user);
+    res.json(user satisfies User);
   }),
 );
 
@@ -67,7 +69,7 @@ router.post(
     const userData: CreateUserPayload = res.locals.validatedBody;
 
     const user = await createUser(userData);
-    res.status(201).json(user);
+    res.status(201).json(user satisfies User);
   }),
 );
 
@@ -81,7 +83,7 @@ router.put(
     const updateData: UpdateUserPayload = res.locals.validatedBody;
 
     const user = await updateUser(id, updateData);
-    res.json(user);
+    res.json(user satisfies User);
   }),
 );
 
@@ -91,7 +93,7 @@ router.delete(
   validateObjectId(),
   asyncHandler(async (req: Request, res: Response) => {
     const user = await deleteUser(res.locals.validatedId);
-    res.json(user);
+    res.json(user satisfies User);
   }),
 );
 
@@ -101,7 +103,7 @@ router.post(
   validateObjectId(),
   asyncHandler(async (req: Request, res: Response) => {
     const user = await restoreUser(res.locals.validatedId);
-    res.json(user);
+    res.json(user satisfies User);
   }),
 );
 

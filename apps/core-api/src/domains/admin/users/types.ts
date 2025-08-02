@@ -1,6 +1,5 @@
 import type { PaginatedResponse } from "@/utils/types";
 import type { ObjectId } from "mongodb";
-import type { User } from "./user.schemas";
 
 // =============================================================================
 // DOMAIN ENTITIES
@@ -28,15 +27,6 @@ export interface MongoUser {
 
 export type UserRole = "admin" | "user";
 export type UserStatus = "active" | "inactive" | "deleted";
-
-// =============================================================================
-// SERVICE LAYER CONTRACTS
-// =============================================================================
-
-/**
- * Paginated list response for users (service layer)
- */
-export type UserListResponse = PaginatedResponse<User>;
 
 // =============================================================================
 // REPOSITORY LAYER CONTRACTS

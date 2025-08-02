@@ -40,7 +40,6 @@ export { userRoutes } from "./user.routes";
  */
 export type {
   // Core domain types
-  UserListResponse,
   UserRole,
   UserStatus,
 } from "./types";

@@ -1,10 +1,11 @@
 import { AuthUser } from "@/domains/auth";
 import { ObjectId, WithId } from "mongodb";
-import type { MongoUser, UserListResponse } from "../types";
+import type { MongoUser } from "../types";
 import type {
   CreateUserPayload,
   UpdateUserPayload,
   User,
+  UserListResponse,
 } from "../user.schemas";
 
 // Test constants

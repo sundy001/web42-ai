@@ -97,23 +97,6 @@ export const UserFiltersSchema = z.object({
   includeDeleted: z.boolean().optional(),
 });
 
-// Pagination schema
-export const PaginationSchema = z.object({
-  page: z
-    .number()
-    .int()
-    .min(1, "Page must be at least 1")
-    .optional()
-    .openapi({ example: 1, description: "Page number for pagination" }),
-  limit: z
-    .number()
-    .int()
-    .min(1, "Limit must be at least 1")
-    .max(100, "Limit must not exceed 100")
-    .optional()
-    .openapi({ example: 10, description: "Number of items per page" }),
-});
-
 // Query parameters schema for list endpoint
 export const ListUsersQuerySchema = z.object({
   page: z
@@ -178,5 +161,6 @@ export type User = z.infer<typeof UserSchema>;
 export type CreateUserPayload = z.infer<typeof CreateUserSchema>;
 export type UpdateUserPayload = z.infer<typeof UpdateUserSchema>;
 export type UserFiltersPayload = z.infer<typeof UserFiltersSchema>;
-export type PaginationPayload = z.infer<typeof PaginationSchema>;
 export type ListUsersQueryPayload = z.infer<typeof ListUsersQuerySchema>;
+
+export type UserListResponse = z.infer<typeof UserListResponseSchema>;
