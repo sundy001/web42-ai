@@ -45,14 +45,15 @@ export async function combineUserData(
   }
 
   return {
-    ...mongoUser,
+    id: mongoUser._id,
+    email: mongoUser.email,
+    name: mongoUser.name,
+    role: mongoUser.role,
+    status: mongoUser.status,
+    emailVerified: Boolean(resolvedAuthUser.emailConfirmedAt),
     avatarUrl: resolvedAuthUser.avatarUrl,
-    authProvider: resolvedAuthUser.authProvider,
+    createdAt: mongoUser.createdAt,
+    updatedAt: mongoUser.updatedAt,
     lastSignInAt: resolvedAuthUser.lastSignInAt || undefined,
-    emailConfirmedAt: resolvedAuthUser.emailConfirmedAt || undefined,
-    phoneConfirmedAt: resolvedAuthUser.phoneConfirmedAt || undefined,
-    phone: resolvedAuthUser.phone || undefined,
-    userMetadata: resolvedAuthUser.userMetadata,
-    appMetadata: resolvedAuthUser.appMetadata,
   };
 }

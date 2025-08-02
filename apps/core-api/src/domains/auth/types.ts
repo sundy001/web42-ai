@@ -48,7 +48,7 @@ export interface AuthError extends Error {
 // =============================================================================
 // SERVICE LAYER CONTRACTS
 // =============================================================================
-
+// TODO: check if these are needed
 /**
  * Request to login a user (service layer)
  */

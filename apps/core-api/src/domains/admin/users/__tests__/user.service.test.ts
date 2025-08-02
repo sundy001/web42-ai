@@ -5,6 +5,7 @@ import { ConflictError, NotFoundError } from "@/utils/errors";
 import { ObjectId } from "mongodb";
 import { afterEach, describe, expect, it } from "vitest";
 import {
+  combineMockUser,
   createMockAuthUser,
   createMockCreateUserRequest,
   createMockMongoUser,
@@ -141,7 +142,7 @@ describe("User Service Unit Tests", () => {
       const result = await userService.getUserById(userId);
 
       expect(result).toBeTruthy();
-      expect(result._id.toString()).toBe(userId);
+      expect(result.id.toString()).toBe(userId);
       expect(result.email).toBe(mockAuthUser.email);
       expect(result.name).toBe(mockAuthUser.name);
       expect(result.role).toBe(mockMongoUser.role);
@@ -183,7 +184,7 @@ describe("User Service Unit Tests", () => {
 
       expect(result).toBeTruthy();
       expect(result.status).toBe("deleted");
-      expect(result._id.toString()).toBe(userId);
+      expect(result.id.toString()).toBe(userId);
       expect(mockUserRepository.getUserById).toHaveBeenCalledWith(userId, true);
     });
   });
@@ -202,7 +203,7 @@ describe("User Service Unit Tests", () => {
       const result = await userService.getUserBySupabaseId(supabaseUserId);
 
       expect(result).toBeTruthy();
-      expect(result.supabaseUserId).toBe(supabaseUserId);
+      expect(result.id).toEqual(mockMongoUser._id);
       expect(result.email).toBe(mockAuthUser.email);
       expect(mockUserRepository.getUserBySupabaseId).toHaveBeenCalledWith(
         supabaseUserId,
@@ -245,7 +246,7 @@ describe("User Service Unit Tests", () => {
 
       expect(result).toBeTruthy();
       expect(result.status).toBe("deleted");
-      expect(result.supabaseUserId).toBe(supabaseUserId);
+      expect(result.id).toEqual(mockMongoUser._id);
       expect(mockUserRepository.getUserBySupabaseId).toHaveBeenCalledWith(
         supabaseUserId,
         true,
@@ -345,7 +346,7 @@ describe("User Service Unit Tests", () => {
       const result = await userService.deleteUser(userId);
 
       expect(result).toBeTruthy();
-      expect(result.supabaseUserId).toBe(mockMongoUser.supabaseUserId);
+      expect(result.id).toEqual(mockMongoUser._id);
       expect(mockUserRepository.getUserById).toHaveBeenCalledWith(userId);
       expect(mockAuthProvider.deleteUser).toHaveBeenCalledWith(
         mockMongoUser.supabaseUserId,
@@ -440,13 +441,6 @@ describe("User Service Unit Tests", () => {
         createMockMongoUser(),
         createMockMongoUser({ email: "user2@example.com" }),
       ];
-      const mockRepositoryResponse = createMockUserListResponse(
-        mockMongoUsers,
-        {
-          total: 2,
-          totalPages: 1,
-        },
-      );
       const mockAuthUsers = [
         createMockAuthUser({ id: mockMongoUsers[0]!.supabaseUserId }),
         createMockAuthUser({
@@ -454,6 +448,16 @@ describe("User Service Unit Tests", () => {
           email: "user2@example.com",
         }),
       ];
+      const mockRepositoryResponse = {
+        items: [
+          combineMockUser(mockMongoUsers[0]!, mockAuthUsers[0]!),
+          combineMockUser(mockMongoUsers[1]!, mockAuthUsers[1]!),
+        ],
+        total: 2,
+        page: 1,
+        limit: 10,
+        totalPages: 1,
+      };
 
       mockUserRepository.listUsers.mockResolvedValue(mockRepositoryResponse);
       mockAuthProvider.getUserById
@@ -465,11 +469,11 @@ describe("User Service Unit Tests", () => {
       expect(result.items).toHaveLength(2);
       expect(result.total).toBe(2);
       expect(result.totalPages).toBe(1);
-      expect(result.items[0]!.email).toBe(mockAuthUsers[0]!.email);
-      expect(result.items[0]!.name).toBe(mockAuthUsers[0]!.name);
+      expect(result.items[0]!.email).toBe(mockMongoUsers[0]!.email);
+      expect(result.items[0]!.name).toBe(mockMongoUsers[0]!.name);
       expect(result.items[0]!.role).toBe(mockMongoUsers[0]!.role);
-      expect(result.items[1]!.email).toBe(mockAuthUsers[1]!.email);
-      expect(result.items[1]!.name).toBe(mockAuthUsers[1]!.name);
+      expect(result.items[1]!.email).toBe(mockMongoUsers[1]!.email);
+      expect(result.items[1]!.name).toBe(mockMongoUsers[1]!.name);
       expect(result.items[1]!.role).toBe(mockMongoUsers[1]!.role);
       expect(mockUserRepository.listUsers).toHaveBeenCalledWith({}, {});
     });
@@ -478,18 +482,16 @@ describe("User Service Unit Tests", () => {
       const filters = { email: "test@example.com", role: "admin" as const };
       const pagination = { page: 2, limit: 5 };
       const mockMongoUser = createMockMongoUser();
-      const mockRepositoryResponse = createMockUserListResponse(
-        [mockMongoUser],
-        {
-          total: 1,
-          page: 2,
-          limit: 5,
-          totalPages: 1,
-        },
-      );
       const mockAuthUser = createMockAuthUser({
         id: mockMongoUser.supabaseUserId,
       });
+      const mockRepositoryResponse = {
+        items: [combineMockUser(mockMongoUser, mockAuthUser)],
+        total: 1,
+        page: 2,
+        limit: 5,
+        totalPages: 1,
+      };
 
       mockUserRepository.listUsers.mockResolvedValue(mockRepositoryResponse);
       mockAuthProvider.getUserById.mockResolvedValue(mockAuthUser);
@@ -499,8 +501,8 @@ describe("User Service Unit Tests", () => {
       expect(result.items).toHaveLength(1);
       expect(result.page).toBe(2);
       expect(result.limit).toBe(5);
-      expect(result.items[0]!.email).toBe(mockAuthUser.email);
-      expect(result.items[0]!.name).toBe(mockAuthUser.name);
+      expect(result.items[0]!.email).toBe(mockMongoUser.email);
+      expect(result.items[0]!.name).toBe(mockMongoUser.name);
       expect(result.items[0]!.role).toBe(mockMongoUser.role);
       expect(mockUserRepository.listUsers).toHaveBeenCalledWith(
         filters,

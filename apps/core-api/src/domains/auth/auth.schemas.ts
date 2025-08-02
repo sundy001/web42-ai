@@ -4,8 +4,15 @@ import { z } from "zod";
 // Extend Zod with OpenAPI support
 extendZodWithOpenApi(z);
 
-// Schema constants
+// =============================================================================
+// CONSTANTS
+// =============================================================================
+
 const EXAMPLE_TIMESTAMP = "2024-01-26T12:00:00.000Z";
+
+// =============================================================================
+// REQUEST SCHEMAS
+// =============================================================================
 
 // Login request schema
 export const LoginSchema = z.object({
@@ -18,6 +25,10 @@ export const LoginSchema = z.object({
     description: "User password",
   }),
 });
+
+// =============================================================================
+// RESPONSE SCHEMAS
+// =============================================================================
 
 // Login response schema
 export const LoginResponseSchema = z.object({
@@ -152,5 +163,18 @@ export const MeResponseSchema = z.object({
   }),
 });
 
-// Export types inferred from schemas
+// =============================================================================
+// TYPE EXPORTS
+// =============================================================================
+
+// Request types
 export type LoginInput = z.infer<typeof LoginSchema>;
+
+// Response types
+export type LoginResponse = z.infer<typeof LoginResponseSchema>;
+export type SignoutResponse = z.infer<typeof SignoutResponseSchema>;
+export type RefreshTokenResponse = z.infer<typeof RefreshTokenResponseSchema>;
+export type ApiRefreshTokenResponse = z.infer<
+  typeof ApiRefreshTokenResponseSchema
+>;
+export type MeResponse = z.infer<typeof MeResponseSchema>;

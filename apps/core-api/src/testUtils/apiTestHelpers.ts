@@ -114,33 +114,25 @@ export function expectPaginatedResponse(
 }
 
 /**
- * Internal assertion helper for base user object structure (MongoDB fields)
+ * Assertion helper for user object structure (User type fields)
  */
-function expectBaseUserStructure(user: unknown) {
-  expect(user).toHaveProperty("_id");
-  expect(user).toHaveProperty("supabaseUserId");
+export function expectUserStructure(user: unknown) {
+  expect(user).toHaveProperty("id");
   expect(user).toHaveProperty("email");
+  expect(user).toHaveProperty("name");
   expect(user).toHaveProperty("role");
   expect(user).toHaveProperty("status");
+  expect(user).toHaveProperty("emailVerified");
   expect(user).toHaveProperty("createdAt");
   expect(user).toHaveProperty("updatedAt");
 
-  return user;
-}
-
-/**
- * Assertion helper for user object structure (including auth provider data)
- */
-export function expectUserStructure(user: unknown) {
-  expectBaseUserStructure(user);
-
-  // Auth provider fields that might be present
+  // Optional auth provider fields
   const userObj = user as Record<string, unknown>;
-  if (userObj.name !== undefined) {
-    expect(typeof userObj.name).toBe("string");
-  }
   if (userObj.avatarUrl !== undefined) {
     expect(typeof userObj.avatarUrl).toBe("string");
+  }
+  if (userObj.lastSignInAt !== undefined) {
+    expect(typeof userObj.lastSignInAt).toBe("string");
   }
 
   return user;

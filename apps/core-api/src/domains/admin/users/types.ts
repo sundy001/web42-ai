@@ -17,24 +17,25 @@ export interface MongoUser {
   name: string; // Duplicated for performance
   role: UserRole; // Duplicated for performance
   status: UserStatus;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /**
  * Combined user data (MongoDB + Auth Provider)
  * This represents the complete user view for external consumers
  */
-export interface User extends MongoUser {
-  // Auth provider fields
+export interface User {
+  id: ObjectId;
+  email: string;
+  name: string;
+  role: UserRole;
+  status: UserStatus;
+  emailVerified: boolean;
   avatarUrl?: string;
-  authProvider?: string;
+  createdAt: string;
+  updatedAt: string;
   lastSignInAt?: string;
-  emailConfirmedAt?: string;
-  phoneConfirmedAt?: string;
-  phone?: string;
-  userMetadata?: Record<string, unknown>;
-  appMetadata?: Record<string, unknown>;
 }
 
 // =============================================================================

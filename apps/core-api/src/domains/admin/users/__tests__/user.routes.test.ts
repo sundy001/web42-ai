@@ -154,7 +154,7 @@ describe("User Routes Integration Tests", () => {
   describe("GET /users/:id", () => {
     it("should get user by valid ID", async () => {
       const mockUser = createMockUser();
-      const userId = mockUser._id;
+      const userId = mockUser.id;
 
       mockUserService.getUserById.mockResolvedValue(mockUser);
 
@@ -263,7 +263,7 @@ describe("User Routes Integration Tests", () => {
         role: updateData.role!,
         status: updateData.status!,
       });
-      mockUser._id = new ObjectId(userId);
+      mockUser.id = new ObjectId(userId);
 
       mockUserService.updateUser.mockResolvedValue(mockUser);
 
@@ -332,7 +332,7 @@ describe("User Routes Integration Tests", () => {
     it("should soft delete user successfully", async () => {
       const userId = new ObjectId().toString();
       const mockUser = createMockUser();
-      mockUser._id = new ObjectId(userId);
+      mockUser.id = new ObjectId(userId);
 
       mockUserService.deleteUser.mockResolvedValue(mockUser);
 
@@ -373,7 +373,7 @@ describe("User Routes Integration Tests", () => {
       const mockUser = createMockUser({
         status: "active",
       });
-      mockUser._id = new ObjectId(userId);
+      mockUser.id = new ObjectId(userId);
 
       mockUserService.restoreUser.mockResolvedValue(mockUser);
 

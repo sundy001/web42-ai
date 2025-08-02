@@ -41,15 +41,16 @@ describe("combineUserData", () => {
       const result = await combineUserData(mongoUser, authUser);
 
       expect(result).toEqual({
-        ...mongoUser,
+        id: mongoUser._id,
+        email: mongoUser.email,
+        name: mongoUser.name,
+        role: mongoUser.role,
+        status: mongoUser.status,
+        emailVerified: true,
         avatarUrl: "https://example.com/avatar.jpg",
-        authProvider: "supabase",
+        createdAt: mongoUser.createdAt,
+        updatedAt: mongoUser.updatedAt,
         lastSignInAt: "2024-01-15T10:00:00.000Z",
-        emailConfirmedAt: "2024-01-01T00:00:00.000Z",
-        phoneConfirmedAt: "2024-01-02T00:00:00.000Z",
-        phone: "+1234567890",
-        userMetadata: { theme: "dark" },
-        appMetadata: { role: "premium" },
       });
 
       // Should not call auth provider when authUser is provided
@@ -61,16 +62,12 @@ describe("combineUserData", () => {
       const authUser = createMockAuthUser({
         lastSignInAt: null,
         emailConfirmedAt: null,
-        phoneConfirmedAt: null,
-        phone: null,
       });
 
       const result = await combineUserData(mongoUser, authUser);
 
       expect(result.lastSignInAt).toBeUndefined();
-      expect(result.emailConfirmedAt).toBeUndefined();
-      expect(result.phoneConfirmedAt).toBeUndefined();
-      expect(result.phone).toBeUndefined();
+      expect(result.emailVerified).toBe(false);
     });
   });
 
@@ -92,15 +89,16 @@ describe("combineUserData", () => {
 
       expect(mockAuthProvider.getUserById).toHaveBeenCalledWith("user-456");
       expect(result).toEqual({
-        ...mongoUser,
+        id: mongoUser._id,
+        email: mongoUser.email,
+        name: mongoUser.name,
+        role: mongoUser.role,
+        status: mongoUser.status,
+        emailVerified: Boolean(authUser.emailConfirmedAt),
         avatarUrl: "https://example.com/jane.jpg",
-        authProvider: authUser.authProvider,
+        createdAt: mongoUser.createdAt,
+        updatedAt: mongoUser.updatedAt,
         lastSignInAt: authUser.lastSignInAt,
-        emailConfirmedAt: authUser.emailConfirmedAt,
-        phoneConfirmedAt: authUser.phoneConfirmedAt,
-        phone: authUser.phone,
-        userMetadata: authUser.userMetadata,
-        appMetadata: authUser.appMetadata,
       });
     });
 
@@ -161,69 +159,30 @@ describe("combineUserData", () => {
     it("should handle authUser with undefined optional fields", async () => {
       const mongoUser = createMockMongoUser();
       const authUser = createMockAuthUser({
-        name: undefined,
         avatarUrl: undefined,
-        authProvider: undefined,
         lastSignInAt: undefined,
         emailConfirmedAt: undefined,
-        phoneConfirmedAt: undefined,
-        phone: undefined,
-        userMetadata: undefined,
-        appMetadata: undefined,
       });
 
       const result = await combineUserData(mongoUser, authUser);
 
-      expect(result.name).toBe("Test User"); // name comes from mongoUser, not authUser
       expect(result.avatarUrl).toBeUndefined();
-      expect(result.authProvider).toBeUndefined();
       expect(result.lastSignInAt).toBeUndefined();
-      expect(result.emailConfirmedAt).toBeUndefined();
-      expect(result.phoneConfirmedAt).toBeUndefined();
-      expect(result.phone).toBeUndefined();
-      expect(result.userMetadata).toBeUndefined();
-      expect(result.appMetadata).toBeUndefined();
+      expect(result.emailVerified).toBe(false);
     });
 
-    it("should preserve mongoUser data while adding auth fields", async () => {
-      const mongoUser = createMockMongoUser({
-        email: "preserved@example.com",
-        role: "admin",
-        status: "inactive",
-        createdAt: "2024-01-01T00:00:00.000Z",
-        updatedAt: "2024-01-15T00:00:00.000Z",
-      });
-
-      const authUser = createMockAuthUser({
-        name: "Override Name",
-      });
-
-      const result = await combineUserData(mongoUser, authUser);
-
-      // MongoDB fields should be preserved
-      expect(result._id).toEqual(mongoUser._id);
-      expect(result.supabaseUserId).toBe(mongoUser.supabaseUserId);
-      expect(result.email).toBe("preserved@example.com");
-      expect(result.role).toBe("admin");
-      expect(result.status).toBe("inactive");
-      expect(result.createdAt).toBe("2024-01-01T00:00:00.000Z");
-      expect(result.updatedAt).toBe("2024-01-15T00:00:00.000Z");
-
-      // Name comes from mongoUser
-      expect(result.name).toBe("Test User");
-    });
-
-    it("should handle empty metadata objects", async () => {
+    it("should handle emailVerified correctly", async () => {
       const mongoUser = createMockMongoUser();
-      const authUser = createMockAuthUser({
-        userMetadata: {},
-        appMetadata: {},
+      const authUserWithConfirmedEmail = createMockAuthUser({
+        emailConfirmedAt: "2024-01-01T00:00:00.000Z",
       });
 
-      const result = await combineUserData(mongoUser, authUser);
+      const result = await combineUserData(
+        mongoUser,
+        authUserWithConfirmedEmail,
+      );
 
-      expect(result.userMetadata).toEqual({});
-      expect(result.appMetadata).toEqual({});
+      expect(result.emailVerified).toBe(true);
     });
   });
 });

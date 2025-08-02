@@ -48,7 +48,6 @@ describe("Auth Service Unit Tests", () => {
       const loginData = createMockLoginRequest();
       const mockAuthResponse = createMockAuthProviderSignInResponse();
       const mockUser = createMockUser({
-        supabaseUserId: mockAuthResponse.user.id,
         email: loginData.email,
       });
 
@@ -141,7 +140,6 @@ describe("Auth Service Unit Tests", () => {
         session: null, // No session data
       };
       const mockUser = createMockUser({
-        supabaseUserId: mockAuthResponse.user.id,
         email: loginData.email,
       });
 

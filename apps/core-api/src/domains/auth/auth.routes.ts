@@ -2,7 +2,13 @@ import { asyncHandler, validateBody } from "@/middleware";
 import { UnauthorizedError } from "@/utils/errors";
 import type { Request, Response } from "express";
 import express from "express";
-import { LoginSchema } from "./auth.schemas";
+import {
+  ApiRefreshTokenResponse,
+  LoginSchema,
+  MeResponse,
+  RefreshTokenResponse,
+  SignoutResponse,
+} from "./auth.schemas";
 import { loginUser, refreshUserToken, signoutUser } from "./auth.service";
 import {
   clearAuthCookies,
@@ -10,7 +16,7 @@ import {
   setAuthCookies,
 } from "./cookieUtils";
 import { authenticateUser } from "./middleware/auth";
-import type { AuthRequest, LoginInput, MeResponse } from "./types";
+import type { AuthRequest, LoginInput } from "./types";
 
 const router = express.Router();
 
@@ -39,7 +45,7 @@ router.post(
 
     res.json({
       message: "Successfully signed out",
-    });
+    } satisfies SignoutResponse);
   }),
 );
 
@@ -54,7 +60,7 @@ router.post(
 
     res.json({
       message: "Token refreshed successfully",
-    });
+    } satisfies RefreshTokenResponse);
   }),
 );
 
@@ -78,7 +84,7 @@ router.post(
       refresh_token: session.refresh_token,
       token_type: session.token_type,
       expires_in: session.expires_in,
-    });
+    } satisfies ApiRefreshTokenResponse);
   }),
 );
 

@@ -4,6 +4,7 @@ import type { PaginationOptions } from "@/utils/types";
 import { combineUserData } from "./combineUserData";
 import type {
   CreateUserRequest,
+  MongoUser,
   UpdateUserRequest,
   User,
   UserFilters,
@@ -158,7 +159,7 @@ export async function userExists(id: string): Promise<boolean> {
 async function getMongoUserByEmail(
   email: string,
   includeDeleted = false,
-): Promise<User | null> {
+): Promise<MongoUser | null> {
   const mongoUser = await userRepository.getUserByEmail(email, includeDeleted);
   if (!mongoUser) {
     return null;

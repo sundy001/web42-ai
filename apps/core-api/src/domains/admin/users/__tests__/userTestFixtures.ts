@@ -41,16 +41,39 @@ export const createMockAuthUser = (
   ...overrides,
 });
 
-export const createMockUser = (
-  overrides: Partial<User> = {},
-): WithId<User> => ({
-  ...createMockMongoUser(),
-  avatarUrl: "https://example.com/avatar.png",
-  authProvider: "supabase",
-  lastSignInAt: MOCK_TIMESTAMP,
-  emailConfirmedAt: MOCK_TIMESTAMP,
-  ...overrides,
-});
+export const createMockUser = (overrides: Partial<User> = {}): User => {
+  return {
+    id: new ObjectId(),
+    email: MOCK_EMAIL,
+    name: TEST_USER_NAME,
+    role: "user",
+    status: "active",
+    emailVerified: true,
+    avatarUrl: "https://example.com/avatar.png",
+    createdAt: MOCK_TIMESTAMP,
+    updatedAt: MOCK_TIMESTAMP,
+    lastSignInAt: MOCK_TIMESTAMP,
+    ...overrides,
+  };
+};
+
+export const combineMockUser = (
+  mongoUser: MongoUser,
+  authUser: AuthUser,
+): User => {
+  return {
+    id: mongoUser._id,
+    email: mongoUser.email,
+    name: mongoUser.name,
+    role: mongoUser.role,
+    status: mongoUser.status,
+    emailVerified: Boolean(authUser.emailConfirmedAt),
+    avatarUrl: authUser.avatarUrl,
+    createdAt: mongoUser.createdAt,
+    updatedAt: mongoUser.updatedAt,
+    lastSignInAt: authUser.lastSignInAt || undefined,
+  };
+};
 
 // Mock request data factories
 export const createMockCreateUserRequest = (
