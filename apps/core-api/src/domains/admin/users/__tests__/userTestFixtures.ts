@@ -1,7 +1,11 @@
 import { AuthUser } from "@/domains/auth";
 import { ObjectId, WithId } from "mongodb";
-import type { MongoUser, UpdateUserRequest, UserListResponse } from "../types";
-import type { CreateUserPayload, User } from "../user.schemas";
+import type { MongoUser, UserListResponse } from "../types";
+import type {
+  CreateUserPayload,
+  UpdateUserPayload,
+  User,
+} from "../user.schemas";
 
 // Test constants
 const MOCK_EMAIL = "test@example.com";
@@ -82,9 +86,9 @@ export const createMockCreateUserRequest = (
 });
 
 export const createMockUpdateUserRequest = (
-  overrides: Partial<UpdateUserRequest> = {},
-): UpdateUserRequest => {
-  const baseData: UpdateUserRequest = {
+  overrides: Partial<UpdateUserPayload> = {},
+): UpdateUserPayload => {
+  const baseData: UpdateUserPayload = {
     role: "admin",
     status: "inactive",
     ...overrides,
@@ -93,7 +97,7 @@ export const createMockUpdateUserRequest = (
   // Remove undefined values to maintain proper UpdateUserRequest shape
   return Object.fromEntries(
     Object.entries(baseData).filter(([, value]) => value !== undefined),
-  ) as UpdateUserRequest;
+  ) as UpdateUserPayload;
 };
 
 // Mock response data factories

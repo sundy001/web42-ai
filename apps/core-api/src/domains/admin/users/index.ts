@@ -39,10 +39,7 @@ export { userRoutes } from "./user.routes";
  * Note: Repository namespace types are kept internal to the domain
  */
 export type {
-  // Service layer types for API consumers
-  UpdateUserRequest,
   // Core domain types
-  UserFilters,
   UserListResponse,
   UserRole,
   UserStatus,

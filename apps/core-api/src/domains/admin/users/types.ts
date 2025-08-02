@@ -34,25 +34,6 @@ export type UserStatus = "active" | "inactive" | "deleted";
 // =============================================================================
 
 /**
- * Request to update user data (service layer)
- */
-export interface UpdateUserRequest {
-  role?: UserRole;
-  status?: Exclude<UserStatus, "deleted">; // Can't directly set to deleted - use deleteUser instead
-}
-
-/**
- * Filters for querying users (service layer)
- */
-export interface UserFilters {
-  supabaseUserId?: string;
-  email?: string;
-  role?: UserRole;
-  status?: UserStatus;
-  includeDeleted?: boolean;
-}
-
-/**
  * Paginated list response for users (service layer)
  */
 export type UserListResponse = PaginatedResponse<User>;

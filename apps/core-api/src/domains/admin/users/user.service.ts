@@ -2,14 +2,14 @@ import { AuthUser, getAuthProvider } from "@/domains/auth";
 import { ConflictError, NotFoundError } from "@/utils/errors";
 import type { PaginationOptions } from "@/utils/types";
 import { combineUserData } from "./combineUserData";
-import type {
-  MongoUser,
-  UpdateUserRequest,
-  UserFilters,
-  UserListResponse,
-} from "./types";
+import type { MongoUser, UserListResponse } from "./types";
 import * as userRepository from "./user.repository";
-import type { CreateUserPayload, User } from "./user.schemas";
+import type {
+  CreateUserPayload,
+  UpdateUserPayload,
+  User,
+  UserFiltersPayload,
+} from "./user.schemas";
 
 // High-level user service that coordinates between userStore and auth provider
 
@@ -73,7 +73,7 @@ export async function getUserBySupabaseId(
 
 export async function updateUser(
   id: string,
-  updateData: UpdateUserRequest,
+  updateData: UpdateUserPayload,
 ): Promise<User> {
   const authProvider = getAuthProvider();
 
@@ -130,7 +130,7 @@ export async function restoreUser(id: string): Promise<User> {
 }
 
 export async function listUsers(
-  filters: UserFilters = {},
+  filters: UserFiltersPayload = {},
   pagination: PaginationOptions = {},
 ): Promise<UserListResponse> {
   const result = await userRepository.listUsers(filters, pagination);

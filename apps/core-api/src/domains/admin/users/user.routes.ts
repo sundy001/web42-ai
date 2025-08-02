@@ -6,13 +6,13 @@ import {
 } from "@/middleware";
 import type { Request, Response } from "express";
 import express from "express";
-import type { UpdateUserRequest } from "./types";
 import {
   CreateUserSchema,
   ListUsersQuerySchema,
   UpdateUserSchema,
   type CreateUserPayload,
   type ListUsersQueryPayload,
+  type UpdateUserPayload,
 } from "./user.schemas";
 import {
   createUser,
@@ -78,7 +78,7 @@ router.put(
   validateBody(UpdateUserSchema),
   asyncHandler(async (req: Request, res: Response) => {
     const id = res.locals.validatedId;
-    const updateData: UpdateUserRequest = res.locals.validatedBody;
+    const updateData: UpdateUserPayload = res.locals.validatedBody;
 
     const user = await updateUser(id, updateData);
     res.json(user);
