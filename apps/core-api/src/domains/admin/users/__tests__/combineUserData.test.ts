@@ -42,7 +42,6 @@ describe("combineUserData", () => {
 
       expect(result).toEqual({
         ...mongoUser,
-        name: "John Doe",
         avatarUrl: "https://example.com/avatar.jpg",
         authProvider: "supabase",
         lastSignInAt: "2024-01-15T10:00:00.000Z",
@@ -94,7 +93,6 @@ describe("combineUserData", () => {
       expect(mockAuthProvider.getUserById).toHaveBeenCalledWith("user-456");
       expect(result).toEqual({
         ...mongoUser,
-        name: "Jane Smith",
         avatarUrl: "https://example.com/jane.jpg",
         authProvider: authUser.authProvider,
         lastSignInAt: authUser.lastSignInAt,
@@ -176,7 +174,7 @@ describe("combineUserData", () => {
 
       const result = await combineUserData(mongoUser, authUser);
 
-      expect(result.name).toBeUndefined();
+      expect(result.name).toBe("Test User"); // name comes from mongoUser, not authUser
       expect(result.avatarUrl).toBeUndefined();
       expect(result.authProvider).toBeUndefined();
       expect(result.lastSignInAt).toBeUndefined();
@@ -211,8 +209,8 @@ describe("combineUserData", () => {
       expect(result.createdAt).toBe("2024-01-01T00:00:00.000Z");
       expect(result.updatedAt).toBe("2024-01-15T00:00:00.000Z");
 
-      // Auth fields should be added
-      expect(result.name).toBe("Override Name");
+      // Name comes from mongoUser
+      expect(result.name).toBe("Test User");
     });
 
     it("should handle empty metadata objects", async () => {

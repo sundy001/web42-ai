@@ -46,7 +46,6 @@ export async function combineUserData(
 
   return {
     ...mongoUser,
-    name: resolvedAuthUser.name,
     avatarUrl: resolvedAuthUser.avatarUrl,
     authProvider: resolvedAuthUser.authProvider,
     lastSignInAt: resolvedAuthUser.lastSignInAt || undefined,

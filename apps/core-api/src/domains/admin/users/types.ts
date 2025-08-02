@@ -14,6 +14,7 @@ export interface MongoUser {
   _id: ObjectId;
   supabaseUserId: string;
   email: string; // Duplicated for performance
+  name: string; // Duplicated for performance
   role: UserRole; // Duplicated for performance
   status: UserStatus;
   createdAt?: string;
@@ -26,7 +27,6 @@ export interface MongoUser {
  */
 export interface User extends MongoUser {
   // Auth provider fields
-  name?: string;
   avatarUrl?: string;
   authProvider?: string;
   lastSignInAt?: string;
@@ -97,6 +97,7 @@ export type UserListResponse = PaginatedResponse<User>;
 export interface CreateUserData {
   supabaseUserId: string;
   email: string;
+  name: string;
   role: UserRole;
   status: UserStatus;
 }

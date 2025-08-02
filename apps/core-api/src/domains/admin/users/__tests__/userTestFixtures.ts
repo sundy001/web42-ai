@@ -20,6 +20,7 @@ export const createMockMongoUser = (
   _id: new ObjectId(),
   supabaseUserId: "supabase-123",
   email: MOCK_EMAIL,
+  name: TEST_USER_NAME,
   role: "user",
   status: "active",
   createdAt: MOCK_TIMESTAMP,
@@ -44,7 +45,6 @@ export const createMockUser = (
   overrides: Partial<User> = {},
 ): WithId<User> => ({
   ...createMockMongoUser(),
-  name: TEST_USER_NAME,
   avatarUrl: "https://example.com/avatar.png",
   authProvider: "supabase",
   lastSignInAt: MOCK_TIMESTAMP,

@@ -40,8 +40,6 @@ vi.mock("@/domains/auth", () => ({
 
 vi.mock("../user.repository", () => mockUserRepository);
 
-// Use actual combineUserData implementation
-
 import * as userService from "../user.service";
 
 describe("User Service Unit Tests", () => {
@@ -58,6 +56,7 @@ describe("User Service Unit Tests", () => {
       });
       const mockMongoUser = createMockMongoUser({
         email: createUserData.email,
+        name: createUserData.name,
         role: createUserData.role,
         supabaseUserId: mockAuthUser.id,
       });
@@ -83,6 +82,7 @@ describe("User Service Unit Tests", () => {
       expect(mockUserRepository.createUser).toHaveBeenCalledWith({
         supabaseUserId: mockAuthUser.id,
         email: createUserData.email,
+        name: createUserData.name,
         role: createUserData.role,
         status: "active",
       });

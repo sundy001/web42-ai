@@ -35,6 +35,7 @@ export async function createUser(userData: CreateUserRequest): Promise<User> {
   const mongoUser = await userRepository.createUser({
     supabaseUserId: authUser.id,
     email: userData.email,
+    name: userData.name,
     role: userData.role,
     status: "active",
   });

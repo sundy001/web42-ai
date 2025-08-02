@@ -26,6 +26,7 @@ export async function createUser(userData: CreateUserData): Promise<MongoUser> {
   const mongoUser: WithoutId<MongoUser> = {
     supabaseUserId: userData.supabaseUserId,
     email: userData.email,
+    name: userData.name,
     role: userData.role,
     status: userData.status,
     createdAt: now,
