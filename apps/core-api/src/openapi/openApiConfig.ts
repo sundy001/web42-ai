@@ -16,6 +16,7 @@ import {
   UserSchema,
 } from "../domains/admin/users";
 import {
+  ApiRefreshTokenResponseSchema,
   LoginResponseSchema,
   LoginSchema,
   MeResponseSchema,
@@ -61,6 +62,13 @@ export const routeSchemas = {
   refresh: {
     responses: {
       200: RefreshTokenResponseSchema,
+      401: ErrorResponseSchema,
+      500: ErrorResponseSchema,
+    },
+  },
+  refreshApi: {
+    responses: {
+      200: ApiRefreshTokenResponseSchema,
       401: ErrorResponseSchema,
       500: ErrorResponseSchema,
     },
@@ -266,9 +274,9 @@ export function generateOpenApiDocument() {
       },
       "/api/v1/auth/refresh": {
         post: {
-          summary: "Refresh access token",
+          summary: "Refresh access token (Web clients)",
           description:
-            "Refresh access token using refresh token from cookies. Updates both access and refresh tokens.",
+            "Refresh access token using refresh token from cookies. Updates both access and refresh tokens via HttpOnly cookies. For web applications only.",
           tags: ["Authentication"],
           security: [{ cookieAuth: [] }],
           responses: {
@@ -287,6 +295,43 @@ export function generateOpenApiDocument() {
                 },
               },
               content: createResponseContent(RefreshTokenResponseSchema),
+            },
+            "401": {
+              description: "Invalid credentials",
+              content: createResponseContent(ErrorResponseSchema),
+            },
+            "500": {
+              description: INTERNAL_ERROR_DESC,
+              content: createResponseContent(ErrorResponseSchema),
+            },
+          },
+        },
+      },
+      "/api/v1/auth/refresh/api": {
+        post: {
+          summary: "Refresh access token (API clients)",
+          description:
+            "Refresh access token for API clients (mobile apps, CLI tools, SDKs). Accepts refresh token via Authorization header and returns new tokens in response body.",
+          tags: ["Authentication"],
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            {
+              in: "header",
+              name: "Authorization",
+              required: true,
+              description: "Bearer token with refresh token",
+              schema: {
+                type: "string",
+                example:
+                  "Bearer v1.MHg5ZjA4NzU2NzY4NDY3MDY4NjQ2NTc0NjM2NTczNzM...",
+              },
+            },
+          ],
+          responses: {
+            "200": {
+              description:
+                "Tokens refreshed successfully - returns new tokens in response body",
+              content: createResponseContent(ApiRefreshTokenResponseSchema),
             },
             "401": {
               description: "Invalid credentials",
@@ -739,6 +784,7 @@ export function generateOpenApiDocument() {
         LoginRequest: generateSchema(LoginSchema),
         LoginResponse: generateSchema(LoginResponseSchema),
         RefreshTokenResponse: generateSchema(RefreshTokenResponseSchema),
+        ApiRefreshTokenResponse: generateSchema(ApiRefreshTokenResponseSchema),
         SignoutResponse: generateSchema(SignoutResponseSchema),
         ErrorResponse: generateSchema(ErrorResponseSchema),
       },
@@ -749,6 +795,12 @@ export function generateOpenApiDocument() {
           name: "web42_access_token",
           description:
             "HttpOnly cookie-based authentication using access token",
+        },
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+          description: "Bearer token authentication for API clients",
         },
       },
     },

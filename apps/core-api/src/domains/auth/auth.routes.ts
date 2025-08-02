@@ -1,4 +1,5 @@
 import { asyncHandler, validateBody } from "@/middleware";
+import { UnauthorizedError } from "@/utils/errors";
 import type { Request, Response } from "express";
 import express from "express";
 import { LoginSchema } from "./auth.schemas";
@@ -42,7 +43,7 @@ router.post(
   }),
 );
 
-// POST /auth/refresh - Refresh access token
+// POST /auth/refresh - Refresh access token (web client with cookies)
 router.post(
   "/refresh",
   asyncHandler(async (req: Request, res: Response) => {
@@ -53,6 +54,30 @@ router.post(
 
     res.json({
       message: "Token refreshed successfully",
+    });
+  }),
+);
+
+// POST /auth/refresh/api - Refresh tokens for API clients (returns tokens in response)
+router.post(
+  "/refresh/api",
+  asyncHandler(async (req: Request, res: Response) => {
+    // Extract refresh token from Authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      throw new UnauthorizedError("Invalid credentials");
+    }
+
+    const refreshToken = authHeader.substring(7); // Remove "Bearer " prefix
+
+    const session = await refreshUserToken(refreshToken);
+
+    // Return tokens in response body for API clients
+    res.json({
+      access_token: session.access_token,
+      refresh_token: session.refresh_token,
+      token_type: session.token_type,
+      expires_in: session.expires_in,
     });
   }),
 );

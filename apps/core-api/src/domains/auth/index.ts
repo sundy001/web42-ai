@@ -33,6 +33,7 @@ export type * from "./types";
  * Schema exports for validation and OpenAPI documentation
  */
 export {
+  ApiRefreshTokenResponseSchema,
   LoginResponseSchema,
   LoginSchema,
   MeResponseSchema,

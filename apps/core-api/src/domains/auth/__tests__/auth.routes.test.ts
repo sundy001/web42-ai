@@ -286,6 +286,97 @@ describe("Auth Routes Integration Tests", () => {
     });
   });
 
+  describe("POST /auth/refresh/api", () => {
+    it("should refresh tokens successfully with bearer token", async () => {
+      const mockSession = {
+        access_token: "new_access_token",
+        refresh_token: "new_refresh_token",
+        expires_in: 3600,
+        token_type: "bearer",
+      };
+
+      mockAuthService.refreshUserToken.mockResolvedValue(mockSession);
+
+      const response = await postRequest(app, "/auth/refresh/api", {}).set(
+        "Authorization",
+        "Bearer old_refresh_token",
+      );
+
+      const body = expectSuccess(response);
+      expect(body).toHaveProperty("access_token", "new_access_token");
+      expect(body).toHaveProperty("refresh_token", "new_refresh_token");
+      expect(body).toHaveProperty("expires_in", 3600);
+      expect(body).toHaveProperty("token_type", "bearer");
+
+      // Check no cookies are set
+      const cookies = response.headers["set-cookie"];
+      expect(cookies).toBeUndefined();
+
+      expect(mockAuthService.refreshUserToken).toHaveBeenCalledWith(
+        "old_refresh_token",
+      );
+    });
+
+    it("should return 401 if no authorization header", async () => {
+      const response = await postRequest(app, "/auth/refresh/api", {});
+
+      expectError(response, 401, "UnauthorizedError", INVALID_CREDENTIALS_MSG);
+      expect(mockAuthService.refreshUserToken).not.toHaveBeenCalled();
+    });
+
+    it("should return 401 if authorization header is malformed", async () => {
+      const response = await postRequest(app, "/auth/refresh/api", {}).set(
+        "Authorization",
+        "InvalidFormat token",
+      );
+
+      expectError(response, 401, "UnauthorizedError", INVALID_CREDENTIALS_MSG);
+      expect(mockAuthService.refreshUserToken).not.toHaveBeenCalled();
+    });
+
+    it("should return 401 if authorization header is empty Bearer", async () => {
+      const response = await postRequest(app, "/auth/refresh/api", {}).set(
+        "Authorization",
+        "Bearer ",
+      );
+
+      expectError(response, 401, "UnauthorizedError", INVALID_CREDENTIALS_MSG);
+      expect(mockAuthService.refreshUserToken).not.toHaveBeenCalled();
+    });
+
+    it("should return 401 if refresh token is invalid", async () => {
+      const error = new UnauthorizedError("Invalid credentials");
+      mockAuthService.refreshUserToken.mockRejectedValue(error);
+
+      const response = await postRequest(app, "/auth/refresh/api", {}).set(
+        "Authorization",
+        "Bearer invalid_token",
+      );
+
+      expectError(response, 401, "UnauthorizedError", INVALID_CREDENTIALS_MSG);
+      expect(mockAuthService.refreshUserToken).toHaveBeenCalledWith(
+        "invalid_token",
+      );
+    });
+
+    it("should handle service errors", async () => {
+      mockAuthService.refreshUserToken.mockRejectedValue(
+        new Error("Service error"),
+      );
+
+      const response = await postRequest(app, "/auth/refresh/api", {}).set(
+        "Authorization",
+        "Bearer valid_token",
+      );
+
+      expect(response.status).toBe(500);
+      expect(response.body).toHaveProperty("error", "Internal Server Error");
+      expect(mockAuthService.refreshUserToken).toHaveBeenCalledWith(
+        "valid_token",
+      );
+    });
+  });
+
   describe("GET /auth/me", () => {
     it("should return current user info when authenticated", async () => {
       // Mock successful getClaims response
