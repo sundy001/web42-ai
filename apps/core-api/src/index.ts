@@ -40,24 +40,26 @@ app.get(
   }),
 );
 
-// Swagger documentation
-app.use(
-  "/api-docs",
-  swaggerUi.serve,
-  swaggerUi.setup(openApiDocument, {
-    customCss: ".swagger-ui .topbar { display: none }",
-    customSiteTitle: "Core API Documentation",
-  }),
-);
+// Swagger documentation (development only)
+if (!config.server.isProduction) {
+  app.use(
+    "/api-docs",
+    swaggerUi.serve,
+    swaggerUi.setup(openApiDocument, {
+      customCss: ".swagger-ui .topbar { display: none }",
+      customSiteTitle: "Core API Documentation",
+    }),
+  );
 
-// API documentation JSON
-app.get("/api-docs.json", (req, res) => {
-  res.setHeader("Content-Type", "application/json");
-  res.send(openApiDocument);
-});
+  // API documentation JSON
+  app.get("/api-docs.json", (_req, res) => {
+    res.setHeader("Content-Type", "application/json");
+    res.send(openApiDocument);
+  });
+}
 
 // API routes
-app.get("/api/v1/status", (req, res) => {
+app.get("/api/v1/status", (_req, res) => {
   res.json({
     message: "Core API is running",
     version: "1.0.0",
@@ -72,17 +74,24 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/admin", adminRoutes);
 
 // Welcome endpoint
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
+  const endpoints: Record<string, string> = {
+    health: "/health",
+    api: "/api/v1/status",
+    auth: "/api/v1/auth",
+    admin: "/api/v1/admin",
+  };
+
+  // Add documentation endpoints only in development
+  if (!config.server.isProduction) {
+    endpoints.documentation = "/api-docs";
+    endpoints.openapi = "/api-docs.json";
+  }
+
   res.json({
     message: "Welcome to Core API",
     description: "Express server for web42-ai platform",
-    endpoints: {
-      health: "/health",
-      api: "/api/v1/status",
-      auth: "/api/v1/auth",
-      admin: "/api/v1/admin",
-      documentation: "/api-docs",
-    },
+    endpoints,
   });
 });
 

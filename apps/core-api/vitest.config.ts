@@ -15,6 +15,5 @@ export default defineConfig({
       SUPABASE_ANON_KEY: "test-anon-key",
       SUPABASE_SERVICE_ROLE_KEY: "test-service-key",
     },
-    setupFiles: ["./vitest.setup.ts"],
   },
 });
