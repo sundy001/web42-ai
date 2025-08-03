@@ -1,4 +1,4 @@
-import { AuthError } from "@/domains/auth/authUtils";
+import { AuthError } from "@/domains/auth/providers/authUtils";
 import { ApiError, NotFoundError } from "@/utils/errors";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { combineUserData } from "../combineUserData";

@@ -1,5 +1,5 @@
-import { createAuthError } from "../authUtils";
 import type { AuthProvider, AuthUser } from "../types";
+import { createAuthError } from "./authUtils";
 import { getSupabaseAdmin, supabaseClient } from "./supabase";
 
 // Convert Supabase user to our AuthUser interface

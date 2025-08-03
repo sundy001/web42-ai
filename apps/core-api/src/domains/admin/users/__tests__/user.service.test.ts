@@ -1,6 +1,6 @@
 import { vi } from "vitest";
 
-import { AuthError } from "@/domains/auth/authUtils";
+import { AuthError } from "@/domains/auth/providers/authUtils";
 import { ConflictError, NotFoundError } from "@/utils/errors";
 import { ObjectId } from "mongodb";
 import { afterEach, describe, expect, it } from "vitest";

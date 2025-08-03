@@ -1,5 +1,5 @@
 import { getAuthProvider } from "@/domains/auth";
-import { AuthError } from "@/domains/auth/authUtils";
+import { AuthError } from "@/domains/auth/providers/authUtils";
 import type { AuthUser } from "@/domains/auth/types";
 import { ApiError, NotFoundError } from "@/utils/errors";
 import type { MongoUser } from "./types";
