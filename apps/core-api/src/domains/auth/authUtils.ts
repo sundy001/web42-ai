@@ -13,7 +13,7 @@ export const AUTH_COOKIES = {
 export const AUTH_COOKIE_OPTIONS = {
   httpOnly: true,
   secure: config.server.isProduction,
-  sameSite: "strict" as const,
+  sameSite: config.server.isProduction ? "strict" : "lax",
   path: "/",
   domain: config.auth.cookie.domain,
 } as const;

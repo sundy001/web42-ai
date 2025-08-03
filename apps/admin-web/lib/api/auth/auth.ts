@@ -6,6 +6,7 @@ import type { LoginForm, MeResponse, User } from "../types";
 export const loginUser = async (form: LoginForm): Promise<User> => {
   const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.auth.login}`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
