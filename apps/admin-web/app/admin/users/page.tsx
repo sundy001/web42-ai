@@ -77,7 +77,7 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
           </TableHeader>
           <TableBody>
             {users.map((user) => (
-              <TableRow key={user._id}>
+              <TableRow key={user.id}>
                 <TableCell className="font-medium">{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell className="capitalize">
@@ -87,13 +87,13 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
                 <TableCell>{formatDate(user.createdAt)}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
-                    <Link href={`/admin/users/${user._id}`}>
+                    <Link href={`/admin/users/${user.id}`}>
                       <Button variant="outline" size="sm">
                         <Eye className="h-4 w-4" />
                       </Button>
                     </Link>
                     {user.status !== "deleted" && (
-                      <DeleteUserButton userId={user._id} />
+                      <DeleteUserButton userId={user.id} />
                     )}
                   </div>
                 </TableCell>

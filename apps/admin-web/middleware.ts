@@ -16,8 +16,7 @@ export async function middleware(request: NextRequest, response: NextResponse) {
 
   // Check authentication for protected routes
   try {
-    // TODO: save user to the request object
-    const { data: user, tokens } = await getCurrentUser();
+    const { tokens } = await getCurrentUser();
 
     const nextResponse = NextResponse.next();
     // set new tokens to the response

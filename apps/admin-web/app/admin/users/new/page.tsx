@@ -45,7 +45,7 @@ export default function NewUserPage() {
       setSaving(true);
       const newUser = await createUser(data);
       showSuccess("User created successfully!");
-      router.push(`/admin/users/${newUser._id}`);
+      router.push(`/admin/users/${newUser.id}`);
     } catch (err) {
       if (err instanceof ApiRequestError && err.status === 400 && err.details) {
         err.details.forEach((detail) => {

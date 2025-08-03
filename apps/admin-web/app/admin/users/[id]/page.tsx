@@ -271,7 +271,7 @@ export default function UserDetailPage({
               <Label className="text-sm font-medium text-gray-500">
                 User ID
               </Label>
-              <p className="text-sm text-gray-900 font-mono">{user._id}</p>
+              <p className="text-sm text-gray-900 font-mono">{user.id}</p>
             </div>
             <div>
               <Label className="text-sm font-medium text-gray-500">
