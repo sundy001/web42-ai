@@ -2,7 +2,7 @@ import logger, { authLogger } from "@/config/logger";
 import { asyncHandler } from "@/middleware";
 import { ForbiddenError, UnauthorizedError } from "@/utils/errors";
 import type { NextFunction, Request, Response } from "express";
-import { AUTH_COOKIES } from "../cookieUtils";
+import { getAccessToken } from "../authUtils";
 import { supabaseClient } from "../providers/supabase";
 import type { AuthRequest } from "../types";
 
@@ -15,7 +15,7 @@ async function _authenticateUser(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const token = (req as Request).cookies?.[AUTH_COOKIES.ACCESS_TOKEN];
+    const token = getAccessToken(req);
 
     if (!token) {
       // Always same message to prevent information disclosure
@@ -72,7 +72,7 @@ async function _optionalAuthentication(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const token = (req as Request).cookies?.[AUTH_COOKIES.ACCESS_TOKEN];
+    const token = getAccessToken(req as Request);
 
     if (!token) {
       // No token provided, continue without authentication

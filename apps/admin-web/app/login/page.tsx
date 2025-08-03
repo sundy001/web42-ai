@@ -37,10 +37,10 @@ export default function AdminLoginPage() {
     setIsLoading(true);
 
     try {
-      const data = await loginUser(form);
+      const user = await loginUser(form);
 
       // Check if user has admin role
-      if (data.user?.role !== "admin") {
+      if (user.role !== "admin") {
         throw new Error("Access denied. Admin privileges required.");
       }
 

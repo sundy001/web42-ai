@@ -34,12 +34,6 @@ export interface LoginForm {
   email: string;
   password: string;
 }
-
-export interface LoginResponse {
-  user: User;
-  token?: string;
-}
-
 export interface MeResponse {
   id: string;
   email: string;

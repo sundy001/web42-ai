@@ -15,7 +15,7 @@ import {
   clearAuthCookies,
   getRefreshTokenFromCookies,
   setAuthCookies,
-} from "./cookieUtils";
+} from "./authUtils";
 import { authenticateUser } from "./middleware/auth";
 import type { AuthRequest } from "./types";
 

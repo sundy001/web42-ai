@@ -44,3 +44,14 @@ export const getRefreshTokenFromCookies = (req: Request): string => {
 
   return refreshToken;
 };
+
+export const getAccessToken = (req: Request): string | undefined => {
+  const authHeader = req.headers.authorization;
+  if (authHeader?.startsWith("Bearer ")) {
+    return authHeader.substring(7);
+  }
+
+  // Fallback to cookie if header not present
+  const cookieToken = req.cookies?.[AUTH_COOKIES.ACCESS_TOKEN];
+  return cookieToken;
+};
