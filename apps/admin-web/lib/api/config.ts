@@ -1,3 +1,5 @@
+import { createAuthFetch } from "@web42-ai/express-util";
+
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3002";
 
@@ -17,3 +19,12 @@ export const API_ENDPOINTS = {
     restore: (id: string) => `/api/v1/admin/users/${id}/restore`,
   },
 } as const;
+
+// Create configured authFetch instance
+export const authFetch = createAuthFetch({
+  baseUrl: API_BASE_URL,
+  endpoints: {
+    refresh: API_ENDPOINTS.auth.refresh,
+    refreshApi: API_ENDPOINTS.auth.refreshApi,
+  },
+});

@@ -3,6 +3,7 @@ export {
   deleteUser,
   fetchUser,
   fetchUsers,
+  getCurrentUser,
   restoreUser,
   updateUser,
 } from "./users";

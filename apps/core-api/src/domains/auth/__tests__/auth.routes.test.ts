@@ -89,11 +89,11 @@ describe("Auth Routes Integration Tests", () => {
 
       expect(accessTokenCookie).toBeDefined();
       expect(accessTokenCookie).toContain("HttpOnly");
-      expect(accessTokenCookie).toContain("SameSite=Strict");
+      expect(accessTokenCookie).toContain("SameSite=Lax");
 
       expect(refreshTokenCookie).toBeDefined();
       expect(refreshTokenCookie).toContain("HttpOnly");
-      expect(refreshTokenCookie).toContain("SameSite=Strict");
+      expect(refreshTokenCookie).toContain("SameSite=Lax");
 
       expect(mockAuthService.loginUser).toHaveBeenCalledWith(loginData);
     });

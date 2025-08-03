@@ -1,3 +1,3 @@
 // Browser-specific exports
-export { clientAuthFetch } from "./client/clientAuthFetch";
-export type { DataWithTokensResult } from "./types";
+export { createClientAuthFetch } from "./client/clientAuthFetch";
+export type { AuthConfig, DataWithTokensResult } from "./types";

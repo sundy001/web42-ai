@@ -1,3 +1,3 @@
 // Node.js-specific exports
-export { serverAuthFetch } from "./server/serverAuthFetch";
-export type { DataWithTokensResult } from "./types";
+export { createServerAuthFetch } from "./server/serverAuthFetch";
+export type { AuthConfig, DataWithTokensResult } from "./types";

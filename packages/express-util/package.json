@@ -1,7 +1,7 @@
 {
   "name": "@web42-ai/express-util",
   "version": "0.1.0",
-  "description": "Express and authentication utilities for web42-ai applications",
+  "description": "Express utilities for web42-ai applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [

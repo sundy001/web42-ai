@@ -12,3 +12,11 @@ export interface RefreshTokenResponse {
   tokenType: string;
   expiresIn: number;
 }
+
+export interface AuthConfig {
+  baseUrl: string;
+  endpoints: {
+    refresh: string;
+    refreshApi: string;
+  };
+}
