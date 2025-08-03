@@ -51,7 +51,6 @@ export type { User } from "./user.schemas";
  */
 export {
   CreateUserSchema,
-  ErrorResponseSchema,
   ListUsersQuerySchema,
   UpdateUserSchema,
   UserListResponseSchema,

@@ -146,25 +146,6 @@ export const ProjectListResponseSchema = z.object({
     .openapi({ example: 5, description: "Total number of pages" }),
 });
 
-export const ErrorResponseSchema = z.object({
-  error: z
-    .string()
-    .openapi({ example: "Validation failed", description: "Error type" }),
-  message: z.string().optional().openapi({
-    example: "Project name is required",
-    description: "Error message",
-  }),
-  details: z
-    .array(
-      z.object({
-        field: z.string().openapi({ example: "name" }),
-        message: z.string().openapi({ example: "Project name is required" }),
-      }),
-    )
-    .optional()
-    .openapi({ description: "Detailed validation errors" }),
-});
-
 // Export types inferred from schemas
 export type CreateProjectInput = z.infer<typeof CreateProjectSchema>;
 export type ProjectFiltersInput = z.infer<typeof ProjectFiltersSchema>;

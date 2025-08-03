@@ -4,8 +4,10 @@ import {
   validateObjectId,
   validateQuery,
 } from "@/middleware";
+import { PaginationOptions } from "@/utils/types";
 import type { Request, Response } from "express";
 import express from "express";
+import type { UserFiltersRequest } from "./types";
 import {
   CreateUserSchema,
   ListUsersQuerySchema,
@@ -41,8 +43,8 @@ router.get(
       role,
       status,
       includeDeleted,
-    };
-    const pagination = { page, limit };
+    } satisfies UserFiltersRequest;
+    const pagination = { page, limit } satisfies PaginationOptions;
 
     const result = await listUsers(filters, pagination);
 

@@ -29,6 +29,21 @@ export type UserRole = "admin" | "user";
 export type UserStatus = "active" | "inactive" | "deleted";
 
 // =============================================================================
+// SERVICE LAYER CONTRACTS
+// =============================================================================
+
+/**
+ * Service layer filters for user queries
+ */
+export interface UserFiltersRequest {
+  supabaseUserId?: string;
+  email?: string;
+  role?: UserRole;
+  status?: UserStatus;
+  includeDeleted?: boolean;
+}
+
+// =============================================================================
 // REPOSITORY LAYER CONTRACTS
 // =============================================================================
 

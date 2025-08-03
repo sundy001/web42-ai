@@ -2,13 +2,12 @@ import { AuthUser, getAuthProvider } from "@/domains/auth";
 import { ConflictError, NotFoundError } from "@/utils/errors";
 import type { PaginationOptions } from "@/utils/types";
 import { combineUserData } from "./combineUserData";
-import { MongoUser } from "./types";
+import type { MongoUser, UserFiltersRequest } from "./types";
 import * as userRepository from "./user.repository";
 import type {
   CreateUserRequest,
   UpdateUserRequest,
   User,
-  UserFiltersRequest,
   UserListResponse,
 } from "./user.schemas";
 

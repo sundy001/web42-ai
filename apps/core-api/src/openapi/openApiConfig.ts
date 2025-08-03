@@ -1,4 +1,4 @@
-import { ObjectIdSchema } from "@/utils/schemas";
+import { ErrorResponseSchema, ObjectIdSchema } from "@/utils/schemas";
 import { generateSchema } from "@anatine/zod-openapi";
 import { z } from "zod";
 import {
@@ -9,7 +9,6 @@ import {
 } from "../domains/admin/projects/project.schemas";
 import {
   CreateUserSchema,
-  ErrorResponseSchema,
   ListUsersQuerySchema,
   UpdateUserSchema,
   UserListResponseSchema,

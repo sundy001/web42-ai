@@ -88,15 +88,6 @@ export const UpdateUserSchema = z
     message: "At least one field must be provided for update",
   });
 
-// Query filters schema
-export const UserFiltersSchema = z.object({
-  supabaseUserId: z.string().uuid().optional(),
-  email: z.string().optional(),
-  role: z.enum(["admin", "user"]).optional(),
-  status: z.enum(["active", "inactive", "deleted"]).optional(),
-  includeDeleted: z.boolean().optional(),
-});
-
 // Query parameters schema for list endpoint
 export const ListUsersQuerySchema = z.object({
   page: z
@@ -137,30 +128,10 @@ export const UserListResponseSchema = z.object({
     .openapi({ example: 10, description: "Total number of pages" }),
 });
 
-export const ErrorResponseSchema = z.object({
-  error: z
-    .string()
-    .openapi({ example: "Validation failed", description: "Error type" }),
-  message: z
-    .string()
-    .optional()
-    .openapi({ example: "Email is required", description: "Error message" }),
-  details: z
-    .array(
-      z.object({
-        field: z.string().openapi({ example: "email" }),
-        message: z.string().openapi({ example: "Invalid email format" }),
-      }),
-    )
-    .optional()
-    .openapi({ description: "Detailed validation errors" }),
-});
-
 // Export types inferred from schemas
 export type User = z.infer<typeof UserSchema>;
 export type CreateUserRequest = z.infer<typeof CreateUserSchema>;
 export type UpdateUserRequest = z.infer<typeof UpdateUserSchema>;
-export type UserFiltersRequest = z.infer<typeof UserFiltersSchema>;
 export type ListUsersQueryRequest = z.infer<typeof ListUsersQuerySchema>;
 
 export type UserListResponse = z.infer<typeof UserListResponseSchema>;
