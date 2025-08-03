@@ -23,13 +23,12 @@ interface UsersPageProps {
 
 export default async function UsersPage({ searchParams }: UsersPageProps) {
   const resolvedSearchParams = await searchParams;
-  const page = Number(resolvedSearchParams.page) || 1;
+  const resolvedPage = Number(resolvedSearchParams.page) || 1;
 
-  const data = await fetchUsers(page, 10);
-  const users = data.users;
+  const { items: users, page, totalPages } = await fetchUsers(resolvedPage, 10);
   const pagination = {
-    page: data.page,
-    totalPages: data.totalPages,
+    page: page,
+    totalPages: totalPages,
   };
 
   const getStatusBadge = (status: User["status"]) => {

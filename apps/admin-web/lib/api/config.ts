@@ -9,11 +9,11 @@ export const API_ENDPOINTS = {
     me: "/api/v1/auth/me",
   },
   users: {
-    list: "/api/v1/users",
-    detail: (id: string) => `/api/v1/users/${id}`,
-    create: "/api/v1/users",
-    update: (id: string) => `/api/v1/users/${id}`,
-    delete: (id: string) => `/api/v1/users/${id}`,
-    restore: (id: string) => `/api/v1/users/${id}/restore`,
+    list: "/api/v1/admin/users",
+    detail: (id: string) => `/api/v1/admin/users/${id}`,
+    create: "/api/v1/admin/users",
+    update: (id: string) => `/api/v1/admin/users/${id}`,
+    delete: (id: string) => `/api/v1/admin/users/${id}`,
+    restore: (id: string) => `/api/v1/admin/users/${id}/restore`,
   },
 } as const;

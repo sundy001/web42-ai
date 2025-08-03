@@ -10,7 +10,7 @@ export interface User {
 }
 
 export interface UserListResponse {
-  users: User[];
+  items: User[];
   total: number;
   page: number;
   limit: number;
