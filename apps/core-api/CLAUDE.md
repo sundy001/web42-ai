@@ -139,8 +139,7 @@ bun run migrate:status
 - `DATABASE_URI` - MongoDB connection string
 - `DATABASE_NAME` - MongoDB database name
 - `SUPABASE_URL` - Supabase project URL
-- `SUPABASE_ANON_KEY` - Supabase anonymous key
-- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key
+- `SUPABASE_API_KEY` - Supabase API key
 
 ### Security Configuration
 

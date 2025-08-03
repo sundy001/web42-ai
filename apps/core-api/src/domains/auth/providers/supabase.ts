@@ -5,29 +5,17 @@ import { config } from "@/config";
 // Client for public operations (authentication)
 export const supabaseClient = createClient(
   config.auth.supabase.url,
-  config.auth.supabase.anonKey,
+  config.auth.supabase.apiKey,
 );
 
 // Admin client for server-side operations (requires service role key)
-export const supabaseAdmin = config.auth.supabase.serviceRoleKey
-  ? createClient(
-      config.auth.supabase.url,
-      config.auth.supabase.serviceRoleKey,
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false,
-        },
-      },
-    )
-  : null;
-
-// Helper to get admin client or throw error
-export function getSupabaseAdmin() {
-  if (!supabaseAdmin) {
-    throw new Error(
-      "Supabase Admin client not initialized - SUPABASE_SERVICE_ROLE_KEY environment variable is required for admin operations",
-    );
-  }
-  return supabaseAdmin;
-}
+export const supabaseAdmin = createClient(
+  config.auth.supabase.url,
+  config.auth.supabase.apiKey,
+  {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  },
+);

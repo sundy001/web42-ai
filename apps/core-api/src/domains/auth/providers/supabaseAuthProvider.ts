@@ -1,6 +1,6 @@
 import type { AuthProvider, AuthUser } from "../types";
 import { createAuthError } from "./authUtils";
-import { getSupabaseAdmin, supabaseClient } from "./supabase";
+import { supabaseAdmin, supabaseClient } from "./supabase";
 
 // Convert Supabase user to our AuthUser interface
 function mapSupabaseUser(supabaseUser: {
@@ -32,8 +32,6 @@ function mapSupabaseUser(supabaseUser: {
 
 export const supabaseAuthProvider = {
   createUser: async (input) => {
-    const supabaseAdmin = getSupabaseAdmin();
-
     const { data, error } = await supabaseAdmin.auth.admin.createUser({
       email: input.email,
       password: input.password,
@@ -54,8 +52,6 @@ export const supabaseAuthProvider = {
   },
 
   getUserById: async (id) => {
-    const supabaseAdmin = getSupabaseAdmin();
-
     const { data, error } = await supabaseAdmin.auth.admin.getUserById(id);
 
     if (error) {
@@ -66,8 +62,6 @@ export const supabaseAuthProvider = {
   },
 
   updateUser: async (id, input) => {
-    const supabaseAdmin = getSupabaseAdmin();
-
     const updateData: {
       email?: string;
       password?: string;
@@ -104,8 +98,6 @@ export const supabaseAuthProvider = {
   },
 
   deleteUser: async (id, softDelete) => {
-    const supabaseAdmin = getSupabaseAdmin();
-
     const { data, error } = await supabaseAdmin.auth.admin.deleteUser(
       id,
       softDelete,

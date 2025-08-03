@@ -83,8 +83,7 @@ const envSchema = z.object({
 
   // Supabase authentication
   SUPABASE_URL: z.string().url(),
-  SUPABASE_ANON_KEY: z.string().min(1),
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+  SUPABASE_API_KEY: z.string().min(1),
 
   // Cookie configuration
   COOKIE_DOMAIN: z.string().optional(),
@@ -167,8 +166,7 @@ export const config = {
   auth: {
     supabase: {
       url: env.SUPABASE_URL,
-      anonKey: env.SUPABASE_ANON_KEY,
-      serviceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY,
+      apiKey: env.SUPABASE_API_KEY,
     },
     cookie: {
       domain: env.COOKIE_DOMAIN,
