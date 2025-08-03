@@ -1,14 +1,14 @@
 import { vi } from "vitest";
 
 import { errorHandler } from "@/middleware";
+import { UnauthorizedError } from "@/utils/errors";
 import {
   expectError,
   expectSuccess,
   expectValidationError,
   getRequest,
   postRequest,
-} from "@/testUtils/apiTestHelpers";
-import { UnauthorizedError } from "@/utils/errors";
+} from "@/utils/tests";
 import cookieParser from "cookie-parser";
 import type { Application } from "express";
 import express from "express";

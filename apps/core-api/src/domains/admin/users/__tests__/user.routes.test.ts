@@ -1,6 +1,7 @@
 import { vi } from "vitest";
 
 import { errorHandler } from "@/middleware";
+import { ConflictError, NotFoundError } from "@/utils/errors";
 import {
   deleteRequest,
   expectError,
@@ -11,8 +12,7 @@ import {
   getRequest,
   postRequest,
   putRequest,
-} from "@/testUtils/apiTestHelpers";
-import { ConflictError, NotFoundError } from "@/utils/errors";
+} from "@/utils/tests";
 import type { Application } from "express";
 import express from "express";
 import { ObjectId } from "mongodb";
