@@ -1,13 +1,13 @@
 import { DataWithTokensResult } from "@web42-ai/express-util";
-import { API_ENDPOINTS, authFetch } from "../config";
-import { AuthenticationError } from "../errors";
+import { MeResponse } from "@web42-ai/types/auth";
 import type {
-  CreateUserData,
-  MeResponse,
-  UpdateUserData,
+  CreateUserRequest,
+  UpdateUserRequest,
   User,
   UserListResponse,
-} from "../types";
+} from "@web42-ai/types/users";
+import { API_ENDPOINTS, authFetch } from "../config";
+import { AuthenticationError } from "../errors";
 
 export const getCurrentUser = async (): Promise<
   DataWithTokensResult<MeResponse>
@@ -38,7 +38,7 @@ export const fetchUser = async (userId: string): Promise<User> => {
   return data;
 };
 
-export const createUser = async (data: CreateUserData): Promise<User> => {
+export const createUser = async (data: CreateUserRequest): Promise<User> => {
   const { data: user } = await authFetch<User>(API_ENDPOINTS.users.create, {
     method: "POST",
     body: JSON.stringify(data),
@@ -49,7 +49,7 @@ export const createUser = async (data: CreateUserData): Promise<User> => {
 
 export const updateUser = async (
   userId: string,
-  data: UpdateUserData,
+  data: UpdateUserRequest,
 ): Promise<User> => {
   const { data: user } = await authFetch<User>(
     API_ENDPOINTS.users.update(userId),

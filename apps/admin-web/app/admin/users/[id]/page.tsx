@@ -1,7 +1,6 @@
 "use client";
 
 import { ApiRequestError } from "@/lib/api/errors";
-import type { UpdateUserData, User } from "@/lib/api/types";
 import {
   deleteUser,
   fetchUser,
@@ -10,10 +9,10 @@ import {
 } from "@/lib/api/users";
 import { formatDateTime } from "@/lib/utils/dateUtils";
 import { showError, showSuccess } from "@/lib/utils/toast";
+import { UpdateUserRequest, User } from "@web42-ai/types/users";
 import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";
 import { Form } from "@web42-ai/ui/form";
-import { FormInput } from "@web42-ai/ui/input";
 import { Label } from "@web42-ai/ui/label";
 import { FormSelect } from "@web42-ai/ui/select";
 import { ArrowLeft, RotateCcw, Trash2 } from "lucide-react";
@@ -21,8 +20,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { use, useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-
-type UpdateUserForm = UpdateUserData;
 
 export default function UserDetailPage({
   params,
@@ -36,12 +33,10 @@ export default function UserDetailPage({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const methods = useForm<UpdateUserForm>({
+  const methods = useForm<UpdateUserRequest>({
     defaultValues: {
-      name: "",
-      email: "",
-      authProvider: "",
-      status: "",
+      role: "user",
+      status: "active",
     },
   });
 
@@ -65,13 +60,11 @@ export default function UserDetailPage({
   const loadUser = useCallback(async () => {
     try {
       setLoading(true);
-      const userData = await fetchUser(id);
-      setUser(userData);
+      const user = await fetchUser(id);
+      setUser(user);
       reset({
-        name: userData.name,
-        email: userData.email,
-        authProvider: userData.authProvider,
-        status: userData.status,
+        role: user.role,
+        status: user.status as "active" | "inactive",
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -80,7 +73,7 @@ export default function UserDetailPage({
     }
   }, [id, reset]);
 
-  const onSubmit = async (data: UpdateUserForm) => {
+  const onSubmit = async (data: UpdateUserRequest) => {
     try {
       setSaving(true);
       const updatedUser = await updateUser(id, data);
@@ -89,7 +82,7 @@ export default function UserDetailPage({
     } catch (err) {
       if (err instanceof ApiRequestError && err.status === 400 && err.details) {
         err.details.forEach((detail) => {
-          setFormError(detail.field as keyof UpdateUserForm, {
+          setFormError(detail.field as keyof UpdateUserRequest, {
             message: detail.message,
           });
         });
@@ -209,39 +202,8 @@ export default function UserDetailPage({
             <Form {...methods}>
               <form onSubmit={methods.handleSubmit(onSubmit)}>
                 <div className="space-y-6">
-                  <FormInput
-                    name="name"
-                    label="Name"
-                    rules={{
-                      required: "Name is required",
-                      minLength: {
-                        value: 2,
-                        message: "Name must be at least 2 characters",
-                      },
-                    }}
-                    placeholder="Enter user's full name"
-                    message={errors.name?.message}
-                  />
-                  <FormInput
-                    name="email"
-                    label="Email"
-                    rules={{
-                      required: "Email is required",
-                      pattern: {
-                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                        message: "Invalid email address",
-                      },
-                    }}
-                    placeholder="Enter user's email address"
-                    message={errors.email?.message}
-                  />
-                  <FormSelect
-                    name="authProvider"
-                    label="Auth Provider"
-                    options={authProviderOptions}
-                    placeholder="Select auth provider"
-                    message={errors.authProvider?.message}
-                  />
+                  <div>{user.name}</div>
+                  <div>{user.email}</div>
                   {user.status !== "deleted" && (
                     <FormSelect
                       name="status"

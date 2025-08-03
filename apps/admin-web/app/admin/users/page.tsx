@@ -1,6 +1,6 @@
-import type { User } from "@/lib/api/types";
 import { fetchUsers } from "@/lib/api/users";
 import { formatDate } from "@/lib/utils/dateUtils";
+import { User } from "@web42-ai/types/users";
 import { Badge } from "@web42-ai/ui/badge";
 import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";
@@ -80,9 +80,7 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
               <TableRow key={user.id}>
                 <TableCell className="font-medium">{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
-                <TableCell className="capitalize">
-                  {user.authProvider}
-                </TableCell>
+                <TableCell className="capitalize">none</TableCell>
                 <TableCell>{getStatusBadge(user.status)}</TableCell>
                 <TableCell>{formatDate(user.createdAt)}</TableCell>
                 <TableCell className="text-right">

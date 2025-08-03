@@ -1,9 +1,9 @@
 "use client";
 
 import { ApiRequestError } from "@/lib/api/errors";
-import type { CreateUserData } from "@/lib/api/types";
 import { createUser } from "@/lib/api/users";
 import { showError, showSuccess } from "@/lib/utils/toast";
+import { CreateUserRequest } from "@web42-ai/types/users";
 import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";
 import { Form } from "@web42-ai/ui/form";
@@ -14,13 +14,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-type CreateUserForm = CreateUserData;
-
 export default function NewUserPage() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
 
-  const methods = useForm<CreateUserForm>({
+  const methods = useForm<CreateUserRequest>({
     defaultValues: {
       name: "",
       email: "",
@@ -32,7 +30,7 @@ export default function NewUserPage() {
     setError,
   } = methods;
 
-  const onSubmit = async (data: CreateUserForm) => {
+  const onSubmit = async (data: CreateUserRequest) => {
     try {
       setSaving(true);
       const newUser = await createUser(data);
@@ -41,7 +39,7 @@ export default function NewUserPage() {
     } catch (err) {
       if (err instanceof ApiRequestError && err.status === 400 && err.details) {
         err.details.forEach((detail) => {
-          setError(detail.field as keyof CreateUserForm, {
+          setError(detail.field as keyof CreateUserRequest, {
             message: detail.message,
           });
         });
