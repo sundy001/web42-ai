@@ -8,7 +8,6 @@ import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";
 import { Form } from "@web42-ai/ui/form";
 import { FormInput } from "@web42-ai/ui/input";
-import { FormSelect } from "@web42-ai/ui/select";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -25,7 +24,6 @@ export default function NewUserPage() {
     defaultValues: {
       name: "",
       email: "",
-      authProvider: "email",
     },
   });
 
@@ -33,12 +31,6 @@ export default function NewUserPage() {
     formState: { errors },
     setError,
   } = methods;
-
-  const authProviderOptions = [
-    { value: "google", label: "Google" },
-    { value: "github", label: "GitHub" },
-    { value: "email", label: "Email" },
-  ];
 
   const onSubmit = async (data: CreateUserForm) => {
     try {
@@ -111,13 +103,6 @@ export default function NewUserPage() {
                   type="email"
                   placeholder="Enter user's email address"
                   message={errors.email?.message}
-                />
-                <FormSelect
-                  name="authProvider"
-                  label="Auth Provider"
-                  options={authProviderOptions}
-                  placeholder="Select auth provider"
-                  message={errors.authProvider?.message}
                 />
                 <div className="flex justify-end gap-4">
                   <Link href="/admin/users">
