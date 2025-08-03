@@ -1,13 +1,14 @@
 import { asyncHandler, validateBody } from "@/middleware";
-import { UnauthorizedError } from "@/utils/errors";
 import type { Request, Response } from "express";
 import express from "express";
 import {
   ApiRefreshTokenResponse,
-  LoginInput,
+  LoginRequest,
   LoginResponse,
   LoginSchema,
   MeResponse,
+  RefreshTokenRequest,
+  RefreshTokenSchema,
 } from "./auth.schemas";
 import { loginUser, refreshUserToken, signoutUser } from "./auth.service";
 import {
@@ -25,7 +26,7 @@ router.post(
   "/login",
   validateBody(LoginSchema),
   asyncHandler(async (_req: Request, res: Response) => {
-    const loginData: LoginInput = res.locals.validatedBody;
+    const loginData: LoginRequest = res.locals.validatedBody;
 
     const { user, session } = await loginUser(loginData);
 
@@ -63,16 +64,12 @@ router.post(
 // POST /auth/refresh/api - Refresh tokens for API clients (returns tokens in response)
 router.post(
   "/refresh/api",
-  asyncHandler(async (req: Request, res: Response) => {
-    // Extract refresh token from Authorization header
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      throw new UnauthorizedError("Invalid credentials");
-    }
+  validateBody(RefreshTokenSchema),
+  asyncHandler(async (_req: Request, res: Response) => {
+    // Extract refresh token from validated body
+    const { refresh_token }: RefreshTokenRequest = res.locals.validatedBody;
 
-    const refreshToken = authHeader.substring(7); // Remove "Bearer " prefix
-
-    const session = await refreshUserToken(refreshToken);
+    const session = await refreshUserToken(refresh_token);
 
     // Return tokens in response body for API clients
     res.json({

@@ -4,7 +4,6 @@ import { AuthenticationError, handleApiResponse } from "../errors";
 import type { LoginForm, LoginResponse, MeResponse } from "../types";
 
 export const loginUser = async (form: LoginForm): Promise<LoginResponse> => {
-  console.log("API_BASE_URL", API_BASE_URL);
   const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.auth.login}`, {
     method: "POST",
     headers: {
@@ -26,4 +25,14 @@ export const getCurrentUser = async (): Promise<MeResponse> => {
       cause: error,
     });
   }
+};
+
+export const getCurrentUserOnServer = async (
+  accessToken: string,
+): Promise<MeResponse> => {
+  const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.auth.me}`, {
+    credentials: "include",
+  });
+
+  return handleApiResponse<MeResponse>(response);
 };

@@ -15,7 +15,7 @@
 
 import type { User } from "@/domains/admin/users";
 import { ObjectId } from "mongodb";
-import { LoginInput, LoginResponse } from "../auth.schemas";
+import { LoginRequest, LoginResponse } from "../auth.schemas";
 import type { AuthUser } from "../types";
 
 // =============================================================================
@@ -100,8 +100,8 @@ export const createMockUser = (overrides: Partial<User> = {}): User =>
  * @returns Mock LoginRequest for authentication testing
  */
 export const createMockLoginRequest = (
-  overrides: Partial<LoginInput> = {},
-): LoginInput => ({
+  overrides: Partial<LoginRequest> = {},
+): LoginRequest => ({
   email: MOCK_EMAIL,
   password: MOCK_PASSWORD,
   ...overrides,

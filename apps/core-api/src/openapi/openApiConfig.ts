@@ -19,6 +19,7 @@ import {
   LoginResponseSchema,
   LoginSchema,
   MeResponseSchema,
+  RefreshTokenSchema,
 } from "../domains/auth";
 import { generateExample } from "./generateExample.js";
 
@@ -64,6 +65,7 @@ export const routeSchemas = {
     },
   },
   refreshApi: {
+    body: RefreshTokenSchema,
     responses: {
       200: ApiRefreshTokenResponseSchema,
       401: ErrorResponseSchema,
@@ -306,22 +308,12 @@ export function generateOpenApiDocument() {
         post: {
           summary: "Refresh access token (API clients)",
           description:
-            "Refresh access token for API clients (mobile apps, CLI tools, SDKs). Accepts refresh token via Authorization header and returns new tokens in response body.",
+            "Refresh access token for API clients (mobile apps, CLI tools, SDKs). Accepts refresh token in request body and returns new tokens in response body.",
           tags: ["Authentication"],
-          security: [{ bearerAuth: [] }],
-          parameters: [
-            {
-              in: "header",
-              name: "Authorization",
-              required: true,
-              description: "Bearer token with refresh token",
-              schema: {
-                type: "string",
-                example:
-                  "Bearer v1.MHg5ZjA4NzU2NzY4NDY3MDY4NjQ2NTc0NjM2NTczNzM...",
-              },
-            },
-          ],
+          requestBody: {
+            required: true,
+            content: createResponseContent(RefreshTokenSchema),
+          },
           responses: {
             "200": {
               description:
@@ -778,6 +770,7 @@ export function generateOpenApiDocument() {
         ProjectListResponse: generateSchema(ProjectListResponseSchema),
         LoginRequest: generateSchema(LoginSchema),
         LoginResponse: generateSchema(LoginResponseSchema),
+        RefreshTokenRequest: generateSchema(RefreshTokenSchema),
         ApiRefreshTokenResponse: generateSchema(ApiRefreshTokenResponseSchema),
         ErrorResponse: generateSchema(ErrorResponseSchema),
       },

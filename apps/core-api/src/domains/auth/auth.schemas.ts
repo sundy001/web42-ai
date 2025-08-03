@@ -21,6 +21,14 @@ export const LoginSchema = z.object({
   }),
 });
 
+// Refresh token request schema
+export const RefreshTokenSchema = z.object({
+  refresh_token: z.string().min(1, "Refresh token is required").openapi({
+    example: "v1.MHg5ZjA4NzU2NzY4NDY3MDY4NjQ2NTc0NjM2NTczNzM...",
+    description: "Refresh token for obtaining new access tokens",
+  }),
+});
+
 // =============================================================================
 // RESPONSE SCHEMAS
 // =============================================================================
@@ -77,7 +85,8 @@ export const MeResponseSchema = z.object({
 // =============================================================================
 
 // Request types
-export type LoginInput = z.infer<typeof LoginSchema>;
+export type LoginRequest = z.infer<typeof LoginSchema>;
+export type RefreshTokenRequest = z.infer<typeof RefreshTokenSchema>;
 
 // Response types
 export type LoginResponse = z.infer<typeof LoginResponseSchema>;

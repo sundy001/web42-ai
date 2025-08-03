@@ -286,7 +286,7 @@ describe("Auth Routes Integration Tests", () => {
   });
 
   describe("POST /auth/refresh/api", () => {
-    it("should refresh tokens successfully with bearer token", async () => {
+    it("should refresh tokens successfully with refresh token in body", async () => {
       const mockSession = {
         access_token: "new_access_token",
         refresh_token: "new_refresh_token",
@@ -296,10 +296,9 @@ describe("Auth Routes Integration Tests", () => {
 
       mockAuthService.refreshUserToken.mockResolvedValue(mockSession);
 
-      const response = await postRequest(app, REFRESH_API_ENDPOINT, {}).set(
-        "Authorization",
-        "Bearer old_refresh_token",
-      );
+      const response = await postRequest(app, REFRESH_API_ENDPOINT, {
+        refresh_token: "old_refresh_token",
+      });
 
       const body = expectSuccess(response);
       expect(body).toHaveProperty("access_token", "new_access_token");
@@ -316,30 +315,19 @@ describe("Auth Routes Integration Tests", () => {
       );
     });
 
-    it("should return 401 if no authorization header", async () => {
+    it("should return validation error if no refresh token in body", async () => {
       const response = await postRequest(app, REFRESH_API_ENDPOINT, {});
 
-      expectError(response, 401, "UnauthorizedError", INVALID_CREDENTIALS_MSG);
+      expectValidationError(response, ["refresh_token"]);
       expect(mockAuthService.refreshUserToken).not.toHaveBeenCalled();
     });
 
-    it("should return 401 if authorization header is malformed", async () => {
-      const response = await postRequest(app, REFRESH_API_ENDPOINT, {}).set(
-        "Authorization",
-        "InvalidFormat token",
-      );
+    it("should return validation error if refresh token is empty", async () => {
+      const response = await postRequest(app, REFRESH_API_ENDPOINT, {
+        refresh_token: "",
+      });
 
-      expectError(response, 401, "UnauthorizedError", INVALID_CREDENTIALS_MSG);
-      expect(mockAuthService.refreshUserToken).not.toHaveBeenCalled();
-    });
-
-    it("should return 401 if authorization header is empty Bearer", async () => {
-      const response = await postRequest(app, REFRESH_API_ENDPOINT, {}).set(
-        "Authorization",
-        "Bearer ",
-      );
-
-      expectError(response, 401, "UnauthorizedError", INVALID_CREDENTIALS_MSG);
+      expectValidationError(response, ["refresh_token"]);
       expect(mockAuthService.refreshUserToken).not.toHaveBeenCalled();
     });
 
@@ -347,10 +335,9 @@ describe("Auth Routes Integration Tests", () => {
       const error = new UnauthorizedError("Invalid credentials");
       mockAuthService.refreshUserToken.mockRejectedValue(error);
 
-      const response = await postRequest(app, REFRESH_API_ENDPOINT, {}).set(
-        "Authorization",
-        "Bearer invalid_token",
-      );
+      const response = await postRequest(app, REFRESH_API_ENDPOINT, {
+        refresh_token: "invalid_token",
+      });
 
       expectError(response, 401, "UnauthorizedError", INVALID_CREDENTIALS_MSG);
       expect(mockAuthService.refreshUserToken).toHaveBeenCalledWith(
@@ -363,10 +350,9 @@ describe("Auth Routes Integration Tests", () => {
         new Error("Service error"),
       );
 
-      const response = await postRequest(app, REFRESH_API_ENDPOINT, {}).set(
-        "Authorization",
-        "Bearer valid_token",
-      );
+      const response = await postRequest(app, REFRESH_API_ENDPOINT, {
+        refresh_token: "valid_token",
+      });
 
       expect(response.status).toBe(500);
       expect(response.body).toHaveProperty("error", "Internal Server Error");
