@@ -1,5 +1,5 @@
-import { createClientAuthFetch } from "./client/clientAuthFetch";
-import { createServerAuthFetch } from "./server/serverAuthFetch";
+import { createClientAuthFetch } from "./client/createClientAuthFetch";
+import { createServerAuthFetch } from "./server/createServerAuthFetch";
 import { AuthConfig, DataWithTokensResult } from "./types";
 
 export const createAuthFetch = (config: AuthConfig) => {
