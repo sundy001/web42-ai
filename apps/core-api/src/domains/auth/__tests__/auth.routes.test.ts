@@ -73,9 +73,7 @@ describe("Auth Routes Integration Tests", () => {
       const response = await postRequest(app, LOGIN_ENDPOINT, loginData);
 
       const body = expectSuccess(response);
-      expect(body).toHaveProperty("user");
-      expect(body).not.toHaveProperty("session");
-      expect(body.user.email).toBe(loginData.email);
+      expect(body.email).toBe(loginData.email);
 
       // Check cookies are set
       const cookies = response.headers["set-cookie"] as unknown as string[];

@@ -1,4 +1,3 @@
-import type { User } from "@/domains/admin/users";
 import type { Request } from "express";
 
 // =============================================================================
@@ -43,43 +42,6 @@ export interface AuthSession {
 export interface AuthError extends Error {
   status?: number;
   code?: string;
-}
-
-// =============================================================================
-// SERVICE LAYER CONTRACTS
-// =============================================================================
-// TODO: check if these are needed
-/**
- * Request to login a user (service layer)
- */
-export interface LoginInput {
-  email: string;
-  password: string;
-}
-
-/**
- * Response from login operation (service layer)
- */
-export interface LoginResponse {
-  user: User;
-}
-
-/**
- * Response from signout operation (service layer)
- */
-export interface SignoutResponse {
-  message: string;
-}
-
-/**
- * Response from /me endpoint - current user info from JWT
- */
-export interface MeResponse {
-  id: string;
-  email: string;
-  name: string;
-  role: string;
-  is_anonymous: boolean;
 }
 
 // =============================================================================

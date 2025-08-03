@@ -1,11 +1,12 @@
 import { authLogger } from "@/config/logger";
 import { getUserBySupabaseId } from "@/domains/admin/users";
 import { UnauthorizedError } from "@/utils/errors";
+import { LoginInput, LoginResponse } from "./auth.schemas";
 import { getAuthProvider } from "./providers";
-import type { AuthSession, LoginInput, LoginResponse } from "./types";
+import type { AuthSession } from "./types";
 
 export async function loginUser(loginData: LoginInput): Promise<{
-  user: LoginResponse["user"];
+  user: LoginResponse;
   session: AuthSession;
 }> {
   try {

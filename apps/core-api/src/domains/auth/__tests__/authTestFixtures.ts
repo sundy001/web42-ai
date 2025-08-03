@@ -15,7 +15,8 @@
 
 import type { User } from "@/domains/admin/users";
 import { ObjectId } from "mongodb";
-import type { AuthUser, LoginInput, LoginResponse } from "../types";
+import { LoginInput, LoginResponse } from "../auth.schemas";
+import type { AuthUser } from "../types";
 
 // =============================================================================
 // TEST CONSTANTS
@@ -119,7 +120,7 @@ export const createMockLoginRequest = (
 export const createMockLoginResponse = (
   overrides: Partial<LoginResponse> = {},
 ): LoginResponse => ({
-  user: createMockUser(),
+  ...createMockUser(),
   ...overrides,
 });
 

@@ -4,6 +4,8 @@ import type { Request, Response } from "express";
 import express from "express";
 import {
   ApiRefreshTokenResponse,
+  LoginInput,
+  LoginResponse,
   LoginSchema,
   MeResponse,
   RefreshTokenResponse,
@@ -16,7 +18,7 @@ import {
   setAuthCookies,
 } from "./cookieUtils";
 import { authenticateUser } from "./middleware/auth";
-import type { AuthRequest, LoginInput } from "./types";
+import type { AuthRequest } from "./types";
 
 const router = express.Router();
 
@@ -32,7 +34,7 @@ router.post(
     setAuthCookies(res, session);
 
     // Return only user data
-    res.json({ user });
+    res.json(user satisfies LoginResponse);
   }),
 );
 
