@@ -33,18 +33,6 @@ export interface AuthSession {
 }
 
 // =============================================================================
-// DOMAIN VALUE OBJECTS
-// =============================================================================
-
-/**
- * Authentication error with optional error code
- */
-export interface AuthError extends Error {
-  status?: number;
-  code?: string;
-}
-
-// =============================================================================
 // PROVIDER LAYER CONTRACTS
 // =============================================================================
 

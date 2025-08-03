@@ -8,7 +8,7 @@
  * Main service functions for external consumption
  * These provide the core auth business logic
  */
-export { loginUser, signoutUser } from "./auth.service";
+export { loginUser, refreshUserToken, signoutUser } from "./auth.service";
 
 // =============================================================================
 // PRESENTATION LAYER - HTTP interface
@@ -18,7 +18,7 @@ export { loginUser, signoutUser } from "./auth.service";
  * HTTP routes for application setup
  * Handles incoming auth-related HTTP requests
  */
-export { default as authRoutes } from "./auth.routes";
+export { authRoutes } from "./auth.routes";
 
 // =============================================================================
 // TYPE CONTRACTS - External interfaces
@@ -27,7 +27,7 @@ export { default as authRoutes } from "./auth.routes";
 /**
  * Export all types for external consumers
  */
-export type * from "./types";
+export type { AuthRequest, AuthUser } from "./types";
 
 /**
  * Schema exports for validation and OpenAPI documentation

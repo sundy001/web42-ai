@@ -13,7 +13,7 @@ import cookieParser from "cookie-parser";
 import type { Application } from "express";
 import express from "express";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import authRoutes from "../auth.routes";
+import { authRoutes } from "../auth.routes";
 import { createMockLoginRequest, createMockUser } from "./authTestFixtures";
 
 const mockAuthService = vi.hoisted(() => ({
