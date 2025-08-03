@@ -20,7 +20,6 @@ import {
   LoginResponseSchema,
   LoginSchema,
   MeResponseSchema,
-  RefreshTokenResponseSchema,
 } from "../domains/auth";
 import { generateExample } from "./generateExample.js";
 
@@ -60,7 +59,7 @@ export const routeSchemas = {
   },
   refresh: {
     responses: {
-      200: RefreshTokenResponseSchema,
+      204: undefined,
       401: ErrorResponseSchema,
       500: ErrorResponseSchema,
     },
@@ -278,7 +277,7 @@ export function generateOpenApiDocument() {
           tags: ["Authentication"],
           security: [{ cookieAuth: [] }],
           responses: {
-            "200": {
+            "204": {
               description:
                 "Token refreshed successfully - new authentication cookies set",
               headers: {
@@ -292,7 +291,6 @@ export function generateOpenApiDocument() {
                   },
                 },
               },
-              content: createResponseContent(RefreshTokenResponseSchema),
             },
             "401": {
               description: "Invalid credentials",
@@ -781,7 +779,6 @@ export function generateOpenApiDocument() {
         ProjectListResponse: generateSchema(ProjectListResponseSchema),
         LoginRequest: generateSchema(LoginSchema),
         LoginResponse: generateSchema(LoginResponseSchema),
-        RefreshTokenResponse: generateSchema(RefreshTokenResponseSchema),
         ApiRefreshTokenResponse: generateSchema(ApiRefreshTokenResponseSchema),
         ErrorResponse: generateSchema(ErrorResponseSchema),
       },

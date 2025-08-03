@@ -28,14 +28,6 @@ export const LoginSchema = z.object({
 // Login response schema
 export const LoginResponseSchema = UserSchema;
 
-// Refresh token response schema (web client - cookies)
-export const RefreshTokenResponseSchema = z.object({
-  message: z.string().openapi({
-    example: "Token refreshed successfully",
-    description: "Confirmation message",
-  }),
-});
-
 // API Refresh token response schema (API clients - returns tokens)
 export const ApiRefreshTokenResponseSchema = z.object({
   access_token: z.string().openapi({
@@ -89,7 +81,6 @@ export type LoginInput = z.infer<typeof LoginSchema>;
 
 // Response types
 export type LoginResponse = z.infer<typeof LoginResponseSchema>;
-export type RefreshTokenResponse = z.infer<typeof RefreshTokenResponseSchema>;
 export type ApiRefreshTokenResponse = z.infer<
   typeof ApiRefreshTokenResponseSchema
 >;

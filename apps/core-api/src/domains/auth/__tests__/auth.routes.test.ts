@@ -236,8 +236,8 @@ describe("Auth Routes Integration Tests", () => {
         "web42_refresh_token=old_refresh_token",
       );
 
-      const body = expectSuccess(response);
-      expect(body).toHaveProperty("message", "Token refreshed successfully");
+      expectSuccess(response, 204);
+      // No body to check for 204 No Content response
 
       // Check new cookies are set
       const cookies = response.headers["set-cookie"] as unknown as string[];

@@ -37,7 +37,6 @@ export {
   LoginResponseSchema,
   LoginSchema,
   MeResponseSchema,
-  RefreshTokenResponseSchema,
 } from "./auth.schemas";
 
 // =============================================================================

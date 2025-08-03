@@ -8,7 +8,6 @@ import {
   LoginResponse,
   LoginSchema,
   MeResponse,
-  RefreshTokenResponse,
 } from "./auth.schemas";
 import { loginUser, refreshUserToken, signoutUser } from "./auth.service";
 import {
@@ -57,9 +56,7 @@ router.post(
     const session = await refreshUserToken(refreshToken);
     setAuthCookies(res, session);
 
-    res.json({
-      message: "Token refreshed successfully",
-    } satisfies RefreshTokenResponse);
+    res.status(204).send();
   }),
 );
 
