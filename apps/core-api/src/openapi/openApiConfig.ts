@@ -247,7 +247,7 @@ export function generateOpenApiDocument() {
           summary: "User signout",
           description: "Sign out user and clear authentication cookies",
           tags: ["Authentication"],
-          security: [{ cookieAuth: [] }],
+          security: [{ bearerAuth: [] }],
           responses: {
             "204": {
               description:
@@ -276,7 +276,7 @@ export function generateOpenApiDocument() {
           description:
             "Refresh access token using refresh token from cookies. Updates both access and refresh tokens via HttpOnly cookies. For web applications only.",
           tags: ["Authentication"],
-          security: [{ cookieAuth: [] }],
+          security: [{ bearerAuth: [] }],
           responses: {
             "204": {
               description:
@@ -337,7 +337,7 @@ export function generateOpenApiDocument() {
           description:
             "Returns the current authenticated user information from JWT claims. This endpoint is designed for BFF middleware usage with minimal data exposure.",
           tags: ["Authentication"],
-          security: [{ cookieAuth: [] }],
+          security: [{ bearerAuth: [] }],
           responses: {
             "200": {
               description: "Current user information retrieved successfully",
@@ -360,7 +360,7 @@ export function generateOpenApiDocument() {
           description:
             "Retrieve a paginated list of users with optional filtering",
           tags: ["Users"],
-          security: [{ cookieAuth: [] }],
+          security: [{ bearerAuth: [] }],
           parameters: [
             {
               in: "query",
@@ -432,7 +432,7 @@ export function generateOpenApiDocument() {
           summary: "Create a new user",
           description: "Create a new user with the provided information",
           tags: ["Users"],
-          security: [{ cookieAuth: [] }],
+          security: [{ bearerAuth: [] }],
           requestBody: {
             required: true,
             content: createResponseContent(CreateUserSchema),
@@ -462,7 +462,7 @@ export function generateOpenApiDocument() {
           summary: "Get user by ID",
           description: "Retrieve a specific user by their MongoDB ObjectId",
           tags: ["Users"],
-          security: [{ cookieAuth: [] }],
+          security: [{ bearerAuth: [] }],
           parameters: [
             {
               in: "path",
@@ -496,7 +496,7 @@ export function generateOpenApiDocument() {
           summary: "Update user",
           description: "Update an existing user's information",
           tags: ["Users"],
-          security: [{ cookieAuth: [] }],
+          security: [{ bearerAuth: [] }],
           parameters: [
             {
               in: "path",
@@ -538,7 +538,7 @@ export function generateOpenApiDocument() {
           description:
             "Soft delete a user by setting their status to 'deleted'",
           tags: ["Users"],
-          security: [{ cookieAuth: [] }],
+          security: [{ bearerAuth: [] }],
           parameters: [
             {
               in: "path",
@@ -574,7 +574,7 @@ export function generateOpenApiDocument() {
           description:
             "Restore a soft-deleted user by setting their status back to 'active'",
           tags: ["Users"],
-          security: [{ cookieAuth: [] }],
+          security: [{ bearerAuth: [] }],
           parameters: [
             {
               in: "path",
@@ -610,7 +610,7 @@ export function generateOpenApiDocument() {
           description:
             "Retrieve a paginated list of projects with optional filtering",
           tags: ["Projects"],
-          security: [{ cookieAuth: [] }],
+          security: [{ bearerAuth: [] }],
           parameters: [
             {
               in: "query",
@@ -669,7 +669,7 @@ export function generateOpenApiDocument() {
           summary: "Create a new project",
           description: "Create a new project with the provided information",
           tags: ["Projects"],
-          security: [{ cookieAuth: [] }],
+          security: [{ bearerAuth: [] }],
           requestBody: {
             required: true,
             content: createResponseContent(CreateProjectSchema),
@@ -695,7 +695,7 @@ export function generateOpenApiDocument() {
           summary: "Get project by ID",
           description: "Retrieve a specific project by its MongoDB ObjectId",
           tags: ["Projects"],
-          security: [{ cookieAuth: [] }],
+          security: [{ bearerAuth: [] }],
           parameters: [
             {
               in: "path",
@@ -729,7 +729,7 @@ export function generateOpenApiDocument() {
           description:
             "Soft delete a project by setting its status to 'deleted'",
           tags: ["Projects"],
-          security: [{ cookieAuth: [] }],
+          security: [{ bearerAuth: [] }],
           parameters: [
             {
               in: "path",
@@ -775,13 +775,6 @@ export function generateOpenApiDocument() {
         ErrorResponse: generateSchema(ErrorResponseSchema),
       },
       securitySchemes: {
-        cookieAuth: {
-          type: "apiKey",
-          in: "cookie",
-          name: "web42_access_token",
-          description:
-            "HttpOnly cookie-based authentication using access token",
-        },
         bearerAuth: {
           type: "http",
           scheme: "bearer",
