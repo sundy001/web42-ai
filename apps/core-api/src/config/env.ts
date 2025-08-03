@@ -2,6 +2,66 @@ import { z } from "zod";
 
 import { createBootstrapLogger } from "@web42-ai/logger";
 
+// MongoDB connection pool schema with all-or-nothing validation
+const connectionPoolSchema = z
+  .object({
+    MONGODB_MAX_POOL_SIZE: z
+      .string()
+      .transform(Number)
+      .pipe(z.number().int().min(1).max(1000))
+      .optional(),
+    MONGODB_MIN_POOL_SIZE: z
+      .string()
+      .transform(Number)
+      .pipe(z.number().int().min(0).max(100))
+      .optional(),
+    MONGODB_MAX_IDLE_TIME_MS: z
+      .string()
+      .transform(Number)
+      .pipe(z.number().int().min(0))
+      .optional(),
+    MONGODB_SOCKET_TIMEOUT_MS: z
+      .string()
+      .transform(Number)
+      .pipe(z.number().int().min(0))
+      .optional(),
+    MONGODB_CONNECT_TIMEOUT_MS: z
+      .string()
+      .transform(Number)
+      .pipe(z.number().int().min(1000))
+      .optional(),
+    MONGODB_MAX_CONNECTING: z
+      .string()
+      .transform(Number)
+      .pipe(z.number().int().min(1).max(10))
+      .optional(),
+    MONGODB_WAIT_QUEUE_TIMEOUT_MS: z
+      .string()
+      .transform(Number)
+      .pipe(z.number().int().min(0))
+      .optional(),
+  })
+  .refine(
+    (data) => {
+      const poolVars = [
+        data.MONGODB_MAX_POOL_SIZE,
+        data.MONGODB_MIN_POOL_SIZE,
+        data.MONGODB_MAX_IDLE_TIME_MS,
+        data.MONGODB_SOCKET_TIMEOUT_MS,
+        data.MONGODB_CONNECT_TIMEOUT_MS,
+        data.MONGODB_MAX_CONNECTING,
+        data.MONGODB_WAIT_QUEUE_TIMEOUT_MS,
+      ];
+
+      const definedCount = poolVars.filter((v) => v !== undefined).length;
+      return definedCount === 0 || definedCount === 7;
+    },
+    {
+      message:
+        "MongoDB connection pool configuration must be either complete (all variables provided) or disabled (no variables provided). Partial configuration is not allowed.",
+    },
+  );
+
 // Environment validation schema
 const envSchema = z.object({
   // Server configuration
@@ -45,7 +105,16 @@ const envSchema = z.object({
 // Validate environment variables
 function validateEnv() {
   try {
-    return envSchema.parse(process.env);
+    // First validate the connection pool configuration
+    const poolValidation = connectionPoolSchema.parse(process.env);
+    // Then validate the main environment schema
+    const envValidation = envSchema.parse(process.env);
+
+    // Merge the results
+    return {
+      ...envValidation,
+      ...poolValidation,
+    };
   } catch (error) {
     // Use bootstrap logger for env validation errors since main logger isn't available yet
     const bootstrapLogger = createBootstrapLogger();
@@ -81,6 +150,17 @@ export const config = {
   database: {
     uri: env.MONGODB_URI,
     name: env.DATABASE_NAME,
+    ...(env.MONGODB_MAX_POOL_SIZE && {
+      connectionPool: {
+        maxPoolSize: env.MONGODB_MAX_POOL_SIZE,
+        minPoolSize: env.MONGODB_MIN_POOL_SIZE!,
+        maxIdleTimeMS: env.MONGODB_MAX_IDLE_TIME_MS!,
+        socketTimeoutMS: env.MONGODB_SOCKET_TIMEOUT_MS!,
+        connectTimeoutMS: env.MONGODB_CONNECT_TIMEOUT_MS!,
+        maxConnecting: env.MONGODB_MAX_CONNECTING!,
+        waitQueueTimeoutMS: env.MONGODB_WAIT_QUEUE_TIMEOUT_MS!,
+      },
+    }),
   },
 
   // Authentication

@@ -7,6 +7,17 @@ export interface HealthStatus {
     status: "connected" | "disconnected";
     name?: string;
     error?: string;
+    connectionPool?: {
+      isHealthy: boolean;
+      utilization: number;
+      checkedOutConnections: number;
+      totalConnections: number;
+      connectionEvents: {
+        created: number;
+        closed: number;
+        checkoutFailed: number;
+      };
+    };
   };
 }
 

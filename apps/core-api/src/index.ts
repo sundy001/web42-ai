@@ -46,7 +46,7 @@ if (!config.server.isProduction) {
     "/api-docs",
     swaggerUi.serve,
     swaggerUi.setup(openApiDocument, {
-      customCss: ".swagger-ui .topbar { display: none }",
+      customCss: ".swagger-ui .top-bar { display: none }",
       customSiteTitle: "Core API Documentation",
     }),
   );
@@ -107,40 +107,77 @@ app.use("*", (req, res) => {
 // Error handler
 app.use(errorHandler);
 
-// Graceful shutdown handler
-process.on("SIGINT", async () => {
-  logger.info("🛑 Shutting down Core API server...");
+// Graceful shutdown handlers
+const gracefulShutdown = async (signal: string) => {
+  logger.info(
+    `🛑 Received ${signal}. Shutting down Core API server gracefully...`,
+  );
+
   try {
+    // Close database connection pool
     await databaseStore.disconnect();
+    logger.info("✅ Database connection pool closed");
+
     logger.info("✅ Server shutdown complete");
     process.exit(0);
   } catch (error) {
     logger.error({ err: error }, "❌ Error during shutdown");
     process.exit(1);
   }
+};
+
+// Handle various shutdown signals
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGUSR2", () => gracefulShutdown("SIGUSR2")); // nodemon restart
+
+// Handle uncaught errors
+process.on("uncaughtException", (error) => {
+  logger.error({ err: error }, "❌ Uncaught exception");
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  logger.error({ err: reason, promise }, "❌ Unhandled rejection");
+  process.exit(1);
 });
 
 // Start server with database initialization
 async function startServer() {
   try {
+    logger.info("🚀 Starting Core API server...");
+
+    // Initialize database connection with pool
     await databaseStore.connect();
 
     app.listen(PORT, () => {
       const databaseConfig = databaseStore.getConfig();
+      const poolConfig = databaseConfig.connectionPool;
+
       logger.info(
         {
           port: PORT,
           environment: config.server.nodeEnv,
-          database: databaseConfig.databaseName,
-          uri: databaseConfig.uri,
+          database: databaseConfig.name,
+          uri: databaseConfig.uri.replace(/\/\/[^:]+:[^@]+@/, "//***:***@"),
+          connectionPool: {
+            maxPoolSize: poolConfig?.maxPoolSize,
+            minPoolSize: poolConfig?.minPoolSize,
+            maxIdleTimeMS: poolConfig?.maxIdleTimeMS,
+            socketTimeoutMS: poolConfig?.socketTimeoutMS,
+          },
         },
-        "🚀 Core API server started",
+        "🚀 Core API server started with MongoDB connection pool",
       );
 
       logger.info(`📍 Health check: http://localhost:${PORT}/health`);
       logger.info(`🔗 API status: http://localhost:${PORT}/api/v1/status`);
-      logger.info(`📖 API docs: http://localhost:${PORT}/api-docs`);
+      if (!config.server.isProduction) {
+        logger.info(`📖 API docs: http://localhost:${PORT}/api-docs`);
+      }
     });
+
+    // Server is now running - graceful shutdown handlers are already set up
   } catch (error) {
     logger.error({ err: error }, "❌ Failed to start server");
     process.exit(1);

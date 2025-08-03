@@ -13,15 +13,33 @@ async function checkDatabaseHealth() {
   try {
     const isConnected = await databaseStore.ping();
 
-    if (isConnected) {
-      const config = databaseStore.getConfig();
+    if (!isConnected) {
+      return { isConnected: false };
+    }
+
+    const config = databaseStore.getConfig();
+
+    const result = {
+      isConnected: true,
+      name: config.name,
+    };
+
+    // Only include connection pool metrics when pooling is enabled
+    if (config.connectionPool) {
+      const poolStatus = await databaseStore.getConnectionPoolStatus();
       return {
-        isConnected: true,
-        databaseName: config.databaseName,
+        ...result,
+        connectionPool: {
+          isHealthy: poolStatus.isHealthy,
+          utilization: poolStatus.utilization,
+          checkedOutConnections: poolStatus.metrics.checkedOutConnections,
+          totalConnections: poolStatus.metrics.totalConnections,
+          connectionEvents: poolStatus.metrics.connectionEvents,
+        },
       };
     }
 
-    return { isConnected: false };
+    return result;
   } catch {
     return { isConnected: false };
   }
@@ -31,13 +49,16 @@ export async function getHealthStatus(): Promise<HealthStatus> {
   const baseInfo = getBaseHealthInfo();
   const dbHealth = await checkDatabaseHealth();
 
-  if (dbHealth.isConnected) {
+  if (dbHealth.isConnected && "name" in dbHealth) {
     return {
       status: "ok",
       ...baseInfo,
       database: {
         status: "connected",
-        name: dbHealth.databaseName,
+        name: dbHealth.name,
+        ...("connectionPool" in dbHealth && {
+          connectionPool: dbHealth.connectionPool,
+        }),
       },
     };
   }
