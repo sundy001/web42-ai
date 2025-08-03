@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUserWithTokenRefresh } from "./lib/api/auth";
 
-export async function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest, response: NextResponse) {
   const { pathname } = request.nextUrl;
 
   // Allow access to login page and static assets
@@ -16,11 +16,20 @@ export async function middleware(request: NextRequest) {
 
   // Check authentication for protected routes
   try {
-    await getCurrentUserWithTokenRefresh(
+    // TODO: save user to the request object
+    const { user, tokens } = await getCurrentUserWithTokenRefresh(
       request.cookies.get("web42_access_token")?.value ?? "",
       request.cookies.get("web42_refresh_token")?.value,
     );
-    return NextResponse.next();
+
+    const nextResponse = NextResponse.next();
+    // set new tokens to the response
+    if (tokens) {
+      nextResponse.cookies.set("web42_access_token", tokens.accessToken);
+      nextResponse.cookies.set("web42_refresh_token", tokens.refreshToken);
+    }
+
+    return nextResponse;
   } catch (error) {
     // Redirect to login if authentication fails
     const loginUrl = new URL("/login", request.url);
