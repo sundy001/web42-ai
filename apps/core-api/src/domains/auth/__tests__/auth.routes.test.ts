@@ -301,10 +301,10 @@ describe("Auth Routes Integration Tests", () => {
       });
 
       const body = expectSuccess(response);
-      expect(body).toHaveProperty("access_token", "new_access_token");
-      expect(body).toHaveProperty("refresh_token", "new_refresh_token");
-      expect(body).toHaveProperty("expires_in", 3600);
-      expect(body).toHaveProperty("token_type", "bearer");
+      expect(body).toHaveProperty("accessToken", "new_access_token");
+      expect(body).toHaveProperty("refreshToken", "new_refresh_token");
+      expect(body).toHaveProperty("expiresIn", 3600);
+      expect(body).toHaveProperty("tokenType", "bearer");
 
       // Check no cookies are set
       const cookies = response.headers["set-cookie"];

@@ -73,10 +73,10 @@ router.post(
 
     // Return tokens in response body for API clients
     res.json({
-      access_token: session.access_token,
-      refresh_token: session.refresh_token,
-      token_type: session.token_type,
-      expires_in: session.expires_in,
+      accessToken: session.access_token,
+      refreshToken: session.refresh_token,
+      tokenType: session.token_type,
+      expiresIn: session.expires_in,
     } satisfies ApiRefreshTokenResponse);
   }),
 );

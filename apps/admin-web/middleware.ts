@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentUserOnServer } from "./lib/api/auth/auth";
+import { getCurrentUserWithTokenRefresh } from "./lib/api/auth";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -16,7 +16,7 @@ export async function middleware(request: NextRequest) {
 
   // Check authentication for protected routes
   try {
-    await getCurrentUserOnServer(
+    await getCurrentUserWithTokenRefresh(
       request.cookies.get("web42_access_token")?.value ?? "",
       request.cookies.get("web42_refresh_token")?.value,
     );

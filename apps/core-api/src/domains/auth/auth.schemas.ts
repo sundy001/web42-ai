@@ -38,19 +38,19 @@ export const LoginResponseSchema = UserSchema;
 
 // API Refresh token response schema (API clients - returns tokens)
 export const ApiRefreshTokenResponseSchema = z.object({
-  access_token: z.string().openapi({
+  accessToken: z.string().openapi({
     example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
     description: "JWT access token",
   }),
-  refresh_token: z.string().openapi({
+  refreshToken: z.string().openapi({
     example: "v1.MHg5ZjA4NzU2NzY4NDY3MDY4NjQ2NTc0NjM2NTczNzM...",
     description: "Refresh token for obtaining new access tokens",
   }),
-  token_type: z.string().openapi({
+  tokenType: z.string().openapi({
     example: "Bearer",
     description: "Token type (always 'Bearer')",
   }),
-  expires_in: z.number().openapi({
+  expiresIn: z.number().openapi({
     example: 3600,
     description: "Access token expiration time in seconds",
   }),
