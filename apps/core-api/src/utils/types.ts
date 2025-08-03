@@ -1,22 +1,2 @@
-// =============================================================================
-// SHARED UTILITIES
-// =============================================================================
-
-/**
- * Pagination options for queries
- */
-export interface PaginationOptions {
-  page?: number;
-  limit?: number;
-}
-
-/**
- * Generic paginated response structure
- */
-export interface PaginatedResponse<T> {
-  items: T[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
+// Re-export types from shared types package
+export * from "@web42-ai/types/common";

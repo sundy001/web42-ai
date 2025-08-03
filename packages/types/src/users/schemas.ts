@@ -133,5 +133,4 @@ export type User = z.infer<typeof UserSchema>;
 export type CreateUserRequest = z.infer<typeof CreateUserSchema>;
 export type UpdateUserRequest = z.infer<typeof UpdateUserSchema>;
 export type ListUsersQueryRequest = z.infer<typeof ListUsersQuerySchema>;
-
 export type UserListResponse = z.infer<typeof UserListResponseSchema>;

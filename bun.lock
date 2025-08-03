@@ -19,6 +19,7 @@
       "version": "0.1.0",
       "dependencies": {
         "@radix-ui/react-slot": "^1.2.3",
+        "@web42-ai/types": "workspace:*",
         "@web42-ai/ui": "*",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
@@ -123,6 +124,7 @@
         "@supabase/supabase-js": "^2.45.0",
         "@web42-ai/logger": "workspace:*",
         "@web42-ai/migrations": "workspace:*",
+        "@web42-ai/types": "workspace:*",
         "cors": "^2.8.5",
         "dotenv": "^16.4.7",
         "express": "^4.19.2",
@@ -214,6 +216,20 @@
         "tsx": "^4.19.2",
         "typescript": "5.8.2",
         "vitest": "^2.1.8",
+      },
+    },
+    "packages/types": {
+      "name": "@web42-ai/types",
+      "version": "0.0.0",
+      "dependencies": {
+        "@anatine/zod-openapi": "^2.2.6",
+        "zod": "^3.23.8",
+      },
+      "devDependencies": {
+        "@web42-ai/eslint-config": "*",
+        "@web42-ai/typescript-config": "*",
+        "eslint": "^9.31.0",
+        "typescript": "5.8.3",
       },
     },
     "packages/typescript-config": {
@@ -791,6 +807,8 @@
     "@web42-ai/logger": ["@web42-ai/logger@workspace:packages/logger"],
 
     "@web42-ai/migrations": ["@web42-ai/migrations@workspace:packages/migrations"],
+
+    "@web42-ai/types": ["@web42-ai/types@workspace:packages/types"],
 
     "@web42-ai/typescript-config": ["@web42-ai/typescript-config@workspace:packages/typescript-config"],
 

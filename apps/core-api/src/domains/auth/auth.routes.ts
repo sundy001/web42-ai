@@ -1,6 +1,4 @@
 import { asyncHandler, validateBody } from "@/middleware";
-import type { Request, Response } from "express";
-import express from "express";
 import {
   ApiRefreshTokenResponse,
   LoginRequest,
@@ -9,7 +7,9 @@ import {
   MeResponse,
   RefreshTokenRequest,
   RefreshTokenSchema,
-} from "./auth.schemas";
+} from "@web42-ai/types/auth";
+import type { Request, Response } from "express";
+import express from "express";
 import { loginUser, refreshUserToken, signoutUser } from "./auth.service";
 import {
   clearAuthCookies,

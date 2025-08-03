@@ -29,17 +29,6 @@ export { authRoutes } from "./auth.routes";
  */
 export type { AuthRequest, AuthUser } from "./types";
 
-/**
- * Schema exports for validation and OpenAPI documentation
- */
-export {
-  ApiRefreshTokenResponseSchema,
-  LoginResponseSchema,
-  LoginSchema,
-  MeResponseSchema,
-  RefreshTokenSchema,
-} from "./auth.schemas";
-
 // =============================================================================
 // PROVIDER LAYER - Limited external access
 // =============================================================================

@@ -1,7 +1,7 @@
 import { authLogger } from "@/config/logger";
 import { getUserBySupabaseId } from "@/domains/admin/users";
 import { ApiError, UnauthorizedError } from "@/utils/errors";
-import { LoginRequest, LoginResponse } from "./auth.schemas";
+import { LoginRequest, LoginResponse } from "@web42-ai/types/auth";
 import { getAuthProvider } from "./providers";
 import type { AuthSession } from "./types";
 

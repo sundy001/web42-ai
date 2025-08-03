@@ -43,16 +43,3 @@ export type {
   UserRole,
   UserStatus,
 } from "./types";
-
-export type { User } from "./user.schemas";
-
-/**
- * Schema exports for validation and OpenAPI documentation
- */
-export {
-  CreateUserSchema,
-  ListUsersQuerySchema,
-  UpdateUserSchema,
-  UserListResponseSchema,
-  UserSchema,
-} from "./user.schemas";

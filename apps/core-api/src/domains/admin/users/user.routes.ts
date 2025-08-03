@@ -5,9 +5,6 @@ import {
   validateQuery,
 } from "@/middleware";
 import { PaginationOptions } from "@/utils/types";
-import type { Request, Response } from "express";
-import express from "express";
-import type { UserFiltersRequest } from "./types";
 import {
   CreateUserSchema,
   ListUsersQuerySchema,
@@ -17,7 +14,10 @@ import {
   type ListUsersQueryRequest,
   type UpdateUserRequest,
   type UserListResponse,
-} from "./user.schemas";
+} from "@web42-ai/types/users";
+import type { Request, Response } from "express";
+import express from "express";
+import type { UserFiltersRequest } from "./types";
 import {
   createUser,
   deleteUser,

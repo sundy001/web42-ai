@@ -30,8 +30,7 @@ Each domain follows a consistent layered architecture:
 - **Service Layer**: Core business logic (`*.service.ts`)
 - **Repository Layer**: Data access patterns (`*.repository.ts`)
 - **Presentation Layer**: HTTP routes (`*.routes.ts`)
-- **Validation Layer**: Input schemas (`*.schemas.ts`)
-- **Type Contracts**: Domain types (`types.ts`, `*.schemas.ts`)
+- **Type Contracts**: Domain types (`types.ts`) and shared types from `@web42-ai/types`
 - **Public API**: Exported interfaces (`index.ts`)
 
 ### Key Technologies
@@ -40,7 +39,7 @@ Each domain follows a consistent layered architecture:
 - **Language**: TypeScript with strict configuration
 - **Authentication**: Supabase Auth integration
 - **Database**: MongoDB with native driver
-- **Validation**: Zod schemas with OpenAPI integration
+- **Validation**: Zod schemas with OpenAPI integration via `@web42-ai/types`
 - **Logging**: Pino structured logging with HTTP middleware
 - **Testing**: Vitest with Supertest for API testing
 - **Documentation**: OpenAPI 3.1 with Swagger UI
@@ -194,17 +193,23 @@ bun run migrate:status
 - `*.service.ts` - Business logic layer
 - `*.repository.ts` - Data access layer
 - `*.routes.ts` - HTTP presentation layer
-- `*.schemas.ts` - Validation and type schemas
 - `*.test.ts` - Test files
 - `types.ts` - Domain-specific types
 - `index.ts` - Public API exports
 
+### Type System Architecture
+
+- **Shared Types**: Request/response schemas and validation via `@web42-ai/types` package
+- **Domain Types**: Local domain-specific interfaces and types in `types.ts`
+- **Schema Imports**: Zod schemas imported from `@web42-ai/types/{domain}`
+
 ### Import Patterns
 
 - Use path aliases (`@/config`, `@/domains`)
+- Import shared types from `@web42-ai/types` package
 - Prefer named imports over default imports
 - Import from domain public APIs (`index.ts`)
-- Group imports: external, internal, relative
+- Group imports: external, shared types, internal, relative
 
 ## Integration Points
 
@@ -218,7 +223,8 @@ bun run migrate:status
 ### Monorepo Integration
 
 - Shared ESLint and TypeScript configurations
-- Workspace dependencies for shared packages
+- Workspace dependencies for shared packages (`@web42-ai/types`, `@web42-ai/migrations`, etc.)
+- Shared type definitions via `@web42-ai/types` package
 - Turborepo build pipeline integration
 - Consistent development workflows
 
@@ -256,10 +262,10 @@ bun run migrate:status
 
 ### Validation
 
-- Zod schema validation at route level
+- Zod schema validation at route level using `@web42-ai/types`
 - Input sanitization and type coercion
 - Comprehensive error messages
-- OpenAPI integration for documentation
+- OpenAPI integration for documentation via shared schemas
 
 ### Async Operations
 

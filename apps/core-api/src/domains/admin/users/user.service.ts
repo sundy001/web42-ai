@@ -1,15 +1,15 @@
 import { AuthUser, getAuthProvider } from "@/domains/auth";
 import { ConflictError, NotFoundError } from "@/utils/errors";
 import type { PaginationOptions } from "@/utils/types";
-import { combineUserData } from "./combineUserData";
-import type { MongoUser, UserFiltersRequest } from "./types";
-import * as userRepository from "./user.repository";
 import type {
   CreateUserRequest,
   UpdateUserRequest,
   User,
   UserListResponse,
-} from "./user.schemas";
+} from "@web42-ai/types/users";
+import { combineUserData } from "./combineUserData";
+import type { MongoUser, UserFiltersRequest } from "./types";
+import * as userRepository from "./user.repository";
 
 // High-level user service that coordinates between userStore and auth provider
 

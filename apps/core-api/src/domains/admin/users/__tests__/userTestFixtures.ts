@@ -1,12 +1,12 @@
 import { AuthUser } from "@/domains/auth";
-import { ObjectId, WithId } from "mongodb";
-import type { MongoUser } from "../types";
 import type {
   CreateUserRequest,
   UpdateUserRequest,
   User,
   UserListResponse,
-} from "../user.schemas";
+} from "@web42-ai/types/users";
+import { ObjectId, WithId } from "mongodb";
+import type { MongoUser } from "../types";
 
 // Test constants
 const MOCK_EMAIL = "test@example.com";

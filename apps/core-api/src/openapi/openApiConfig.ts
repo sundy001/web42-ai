@@ -1,5 +1,19 @@
 import { ErrorResponseSchema, ObjectIdSchema } from "@/utils/schemas";
 import { generateSchema } from "@anatine/zod-openapi";
+import {
+  ApiRefreshTokenResponseSchema,
+  LoginResponseSchema,
+  LoginSchema,
+  MeResponseSchema,
+  RefreshTokenSchema,
+} from "@web42-ai/types/auth";
+import {
+  CreateUserSchema,
+  ListUsersQuerySchema,
+  UpdateUserSchema,
+  UserListResponseSchema,
+  UserSchema,
+} from "@web42-ai/types/users";
 import { z } from "zod";
 import {
   CreateProjectSchema,
@@ -7,20 +21,6 @@ import {
   ProjectListResponseSchema,
   ProjectSchema,
 } from "../domains/admin/projects/project.schemas";
-import {
-  CreateUserSchema,
-  ListUsersQuerySchema,
-  UpdateUserSchema,
-  UserListResponseSchema,
-  UserSchema,
-} from "../domains/admin/users";
-import {
-  ApiRefreshTokenResponseSchema,
-  LoginResponseSchema,
-  LoginSchema,
-  MeResponseSchema,
-  RefreshTokenSchema,
-} from "../domains/auth";
 import { generateExample } from "./generateExample.js";
 
 // Constants for response descriptions

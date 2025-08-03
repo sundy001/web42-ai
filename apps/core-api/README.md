@@ -140,6 +140,7 @@ apps/core-api/
 - `pino` - Structured logging with HTTP middleware
 - `swagger-ui-express` - API documentation interface
 - `@anatine/zod-openapi` - OpenAPI schema generation
+- `@web42-ai/types` - Shared type definitions and validation schemas
 
 ### Development
 
@@ -159,8 +160,7 @@ The application follows domain-driven design with clear separation of concerns:
 - **Service Layer**: Core business logic (`*.service.ts`)
 - **Repository Layer**: Data access patterns (`*.repository.ts`)
 - **Presentation Layer**: HTTP routes (`*.routes.ts`)
-- **Validation Layer**: Input schemas (`*.schemas.ts`)
-- **Type Contracts**: Domain types and interfaces
+- **Type Contracts**: Shared types from `@web42-ai/types` and domain-specific types
 
 ### Key Domains
 
@@ -185,5 +185,6 @@ This server is part of the web42-ai Turbopack monorepo and follows the shared co
 
 - Uses `@web42-ai/eslint-config` for linting rules
 - Uses `@web42-ai/typescript-config` for TypeScript configuration
+- Uses `@web42-ai/types` for shared type definitions and validation schemas
 - Uses `@web42-ai/migrations` for database migration management
 - Integrated with Turbopack build pipeline and task orchestration
