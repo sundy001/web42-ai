@@ -1,5 +1,5 @@
+import { authFetch } from "@web42-ai/express-util";
 import { API_BASE_URL, API_ENDPOINTS } from "../config";
-import { handleApiResponse } from "../errors";
 import type {
   CreateUserData,
   UpdateUserData,
@@ -11,69 +11,66 @@ export const fetchUsers = async (
   page = 1,
   limit = 10,
 ): Promise<UserListResponse> => {
-  const response = await fetch(
+  const { data } = await authFetch<UserListResponse>(
     `${API_BASE_URL}${API_ENDPOINTS.users.list}?page=${page}&limit=${limit}`,
   );
 
-  return handleApiResponse<UserListResponse>(response);
+  return data;
 };
 
 export const fetchUser = async (userId: string): Promise<User> => {
-  const response = await fetch(
+  const { data } = await authFetch<User>(
     `${API_BASE_URL}${API_ENDPOINTS.users.detail(userId)}`,
   );
 
-  return handleApiResponse<User>(response);
+  return data;
 };
 
 export const createUser = async (data: CreateUserData): Promise<User> => {
-  const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.users.create}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const { data: user } = await authFetch<User>(
+    `${API_BASE_URL}${API_ENDPOINTS.users.create}`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
     },
-    body: JSON.stringify(data),
-  });
+  );
 
-  return handleApiResponse<User>(response);
+  return user;
 };
 
 export const updateUser = async (
   userId: string,
   data: UpdateUserData,
 ): Promise<User> => {
-  const response = await fetch(
+  const { data: user } = await authFetch<User>(
     `${API_BASE_URL}${API_ENDPOINTS.users.update(userId)}`,
     {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(data),
     },
   );
 
-  return handleApiResponse<User>(response);
+  return user;
 };
 
 export const deleteUser = async (userId: string): Promise<void> => {
-  const response = await fetch(
+  const { data } = await authFetch<void>(
     `${API_BASE_URL}${API_ENDPOINTS.users.delete(userId)}`,
     {
       method: "DELETE",
     },
   );
 
-  await handleApiResponse<void>(response);
+  return data;
 };
 
 export const restoreUser = async (userId: string): Promise<User> => {
-  const response = await fetch(
+  const { data: user } = await authFetch<User>(
     `${API_BASE_URL}${API_ENDPOINTS.users.restore(userId)}`,
     {
       method: "POST",
     },
   );
 
-  return handleApiResponse<User>(response);
+  return user;
 };

@@ -1,17 +1,11 @@
-import { API_BASE_URL, API_ENDPOINTS } from "../config";
-import { AuthenticationError, handleApiResponse } from "../errors";
+import { AUTH_ENDPOINTS, getApiBaseUrl } from "../shared/config";
+import { AuthenticationError, handleApiResponse } from "../shared/errors";
+import { DataWithTokensResult } from "../types";
 
-const refreshTokens = async (): Promise<Response> => {
-  return fetch(`${API_BASE_URL}${API_ENDPOINTS.auth.refresh}`, {
-    method: "POST",
-    credentials: "include",
-  });
-};
-
-export const authFetch = async <T>(
+export const clientAuthFetch = async <T>(
   url: string,
   options: RequestInit = {},
-): Promise<T> => {
+): Promise<DataWithTokensResult<T>> => {
   // Ensure credentials are included for cookie-based auth
   const requestOptions: RequestInit = {
     ...options,
@@ -33,8 +27,20 @@ export const authFetch = async <T>(
     }
 
     const retryResponse = await fetch(url, requestOptions);
-    return handleApiResponse<T>(retryResponse);
+    return {
+      data: await handleApiResponse<T>(retryResponse),
+    };
   }
 
-  return handleApiResponse<T>(response);
+  return {
+    data: await handleApiResponse<T>(response),
+  };
+};
+
+const refreshTokens = async (): Promise<Response> => {
+  const apiBaseUrl = getApiBaseUrl();
+  return fetch(`${apiBaseUrl}${AUTH_ENDPOINTS.refresh}`, {
+    method: "POST",
+    credentials: "include",
+  });
 };

@@ -1,2 +1,2 @@
-export { getCurrentUser, loginUser } from "./auth";
-export { getCurrentUserWithTokenRefresh } from "./serverAuth";
+export type { DataWithTokensResult } from "@web42-ai/express-util";
+export { authFetch, getCurrentUser, loginUser } from "./auth";

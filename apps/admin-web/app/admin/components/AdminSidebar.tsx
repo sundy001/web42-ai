@@ -32,7 +32,7 @@ export function AdminSidebar() {
       } else {
         throw new Error("Logout failed");
       }
-    } catch (error) {
+    } catch (_error) {
       showError("Failed to logout. Please try again.");
     } finally {
       setIsLoggingOut(false);

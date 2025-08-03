@@ -1,4 +1,4 @@
-import { authFetch } from "../auth-client";
+import { authFetch, DataWithTokensResult } from "@web42-ai/express-util";
 import { API_BASE_URL, API_ENDPOINTS } from "../config";
 import { AuthenticationError, handleApiResponse } from "../errors";
 import type { LoginForm, MeResponse, User } from "../types";
@@ -16,7 +16,9 @@ export const loginUser = async (form: LoginForm): Promise<User> => {
   return handleApiResponse<User>(response);
 };
 
-export const getCurrentUser = async (): Promise<MeResponse> => {
+export const getCurrentUser = async (): Promise<
+  DataWithTokensResult<MeResponse>
+> => {
   try {
     return await authFetch<MeResponse>(
       `${API_BASE_URL}${API_ENDPOINTS.auth.me}`,
@@ -27,3 +29,6 @@ export const getCurrentUser = async (): Promise<MeResponse> => {
     });
   }
 };
+
+// Re-export authFetch for backwards compatibility
+export { authFetch } from "@web42-ai/express-util";
