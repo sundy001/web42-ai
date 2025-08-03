@@ -9,7 +9,6 @@ import {
   LoginSchema,
   MeResponse,
   RefreshTokenResponse,
-  SignoutResponse,
 } from "./auth.schemas";
 import { loginUser, refreshUserToken, signoutUser } from "./auth.service";
 import {
@@ -45,9 +44,7 @@ router.post(
     await signoutUser();
     clearAuthCookies(res);
 
-    res.json({
-      message: "Successfully signed out",
-    } satisfies SignoutResponse);
+    res.status(204).send();
   }),
 );
 

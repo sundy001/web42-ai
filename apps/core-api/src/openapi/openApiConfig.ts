@@ -21,7 +21,6 @@ import {
   LoginSchema,
   MeResponseSchema,
   RefreshTokenResponseSchema,
-  SignoutResponseSchema,
 } from "../domains/auth";
 import { generateExample } from "./generateExample.js";
 
@@ -55,7 +54,7 @@ export const routeSchemas = {
   },
   signout: {
     responses: {
-      200: SignoutResponseSchema,
+      204: undefined,
       500: ErrorResponseSchema,
     },
   },
@@ -250,7 +249,7 @@ export function generateOpenApiDocument() {
           tags: ["Authentication"],
           security: [{ cookieAuth: [] }],
           responses: {
-            "200": {
+            "204": {
               description:
                 "Signout successful - authentication cookies cleared",
               headers: {
@@ -263,7 +262,6 @@ export function generateOpenApiDocument() {
                   },
                 },
               },
-              content: createResponseContent(SignoutResponseSchema),
             },
             "500": {
               description: INTERNAL_ERROR_DESC,
@@ -785,7 +783,6 @@ export function generateOpenApiDocument() {
         LoginResponse: generateSchema(LoginResponseSchema),
         RefreshTokenResponse: generateSchema(RefreshTokenResponseSchema),
         ApiRefreshTokenResponse: generateSchema(ApiRefreshTokenResponseSchema),
-        SignoutResponse: generateSchema(SignoutResponseSchema),
         ErrorResponse: generateSchema(ErrorResponseSchema),
       },
       securitySchemes: {

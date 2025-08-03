@@ -181,8 +181,8 @@ describe("Auth Routes Integration Tests", () => {
 
       const response = await postRequest(app, "/auth/signout", {});
 
-      const body = expectSuccess(response);
-      expect(body).toHaveProperty("message", "Successfully signed out");
+      expectSuccess(response, 204);
+      // No body to check for 204 No Content response
 
       // Check cookies are cleared
       const cookies = response.headers["set-cookie"] as unknown as string[];
@@ -215,8 +215,8 @@ describe("Auth Routes Integration Tests", () => {
 
       const response = await postRequest(app, "/auth/signout", {});
 
-      const body = expectSuccess(response);
-      expect(body).toHaveProperty("message", "Successfully signed out");
+      expectSuccess(response, 204);
+      // No body to check for 204 No Content response
     });
   });
 
