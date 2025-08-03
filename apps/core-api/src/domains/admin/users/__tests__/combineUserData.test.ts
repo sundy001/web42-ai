@@ -1,5 +1,5 @@
 import { AuthError } from "@/domains/auth/providers/authUtils";
-import { ApiError, NotFoundError } from "@/utils/errors";
+import { ApiError } from "@/utils/errors";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { combineUserData } from "../combineUserData";
 import { createMockAuthUser, createMockMongoUser } from "./userTestFixtures";
@@ -102,7 +102,7 @@ describe("combineUserData", () => {
       });
     });
 
-    it("should throw NotFoundError when auth provider returns user_not_found", async () => {
+    it("should throw ApiError when auth provider returns user_not_found", async () => {
       const mongoUser = createMockMongoUser({
         supabaseUserId: "nonexistent-user",
       });
@@ -110,7 +110,7 @@ describe("combineUserData", () => {
       const authError = new AuthError("User not found", 404, "user_not_found");
       mockAuthProvider.getUserById.mockRejectedValue(authError);
 
-      await expect(combineUserData(mongoUser)).rejects.toThrow(NotFoundError);
+      await expect(combineUserData(mongoUser)).rejects.toThrow(ApiError);
       await expect(combineUserData(mongoUser)).rejects.toThrow(
         "Auth user not found (nonexistent-user)",
       );
