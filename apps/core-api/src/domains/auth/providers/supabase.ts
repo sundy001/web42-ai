@@ -26,7 +26,7 @@ export const supabaseAdmin = config.auth.supabase.serviceRoleKey
 export function getSupabaseAdmin() {
   if (!supabaseAdmin) {
     throw new Error(
-      "Supabase Admin client not initialized. Please set SUPABASE_SERVICE_ROLE_KEY environment variable.",
+      "Supabase Admin client not initialized - SUPABASE_SERVICE_ROLE_KEY environment variable is required for admin operations",
     );
   }
   return supabaseAdmin;

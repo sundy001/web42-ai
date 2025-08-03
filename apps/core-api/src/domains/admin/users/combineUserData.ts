@@ -1,7 +1,7 @@
 import { getAuthProvider } from "@/domains/auth";
 import { AuthError } from "@/domains/auth/providers/authUtils";
 import type { AuthUser } from "@/domains/auth/types";
-import { ApiError, NotFoundError } from "@/utils/errors";
+import { ApiError } from "@/utils/errors";
 import type { MongoUser } from "./types";
 import type { User } from "./user.schemas";
 
@@ -26,7 +26,7 @@ export async function combineUserData(
       );
     } catch (error) {
       if (error instanceof AuthError && error.code === "user_not_found") {
-        throw new NotFoundError(
+        throw new ApiError(
           `Auth user not found (${mongoUser.supabaseUserId})`,
           { cause: error },
         );

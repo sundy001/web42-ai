@@ -1,6 +1,6 @@
 import { authLogger } from "@/config/logger";
 import { getUserBySupabaseId } from "@/domains/admin/users";
-import { UnauthorizedError } from "@/utils/errors";
+import { ApiError, UnauthorizedError } from "@/utils/errors";
 import { LoginInput, LoginResponse } from "./auth.schemas";
 import { getAuthProvider } from "./providers";
 import type { AuthSession } from "./types";
@@ -26,7 +26,9 @@ export async function loginUser(loginData: LoginInput): Promise<{
     const mongoUser = await getUserBySupabaseId(data.user.id);
 
     if (!mongoUser) {
-      throw new Error("Failed to sync user data");
+      throw new ApiError(
+        `Failed to sync user data for Supabase ID ${data.user.id}`,
+      );
     }
 
     const session = data.session as {
