@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+const { cookies } = require("next/headers");
 import { AuthenticationError, handleApiResponse } from "../shared/errors";
 import {
   AuthConfig,
@@ -12,10 +12,11 @@ export const createServerAuthFetch = (config: AuthConfig) => {
     accessToken: string,
     options: RequestInit = {},
   ): Promise<Response> => {
-    return fetch(url, {
+    return fetch(`${config.baseUrl}${url}`, {
       ...options,
       headers: {
         ...options.headers,
+        "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
     });
@@ -36,6 +37,10 @@ export const createServerAuthFetch = (config: AuthConfig) => {
     url: string,
     options: RequestInit = {},
   ): Promise<DataWithTokensResult<T>> => {
+    if (options.headers && "Content-Type" in options.headers) {
+      throw new Error("Content-Type must be application/json");
+    }
+
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("web42_access_token")?.value;
     const refreshToken = cookieStore.get("web42_refresh_token")?.value;

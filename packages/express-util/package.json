@@ -18,19 +18,5 @@
     "@types/node": "^22.10.0",
     "@web42-ai/typescript-config": "workspace:*",
     "typescript": "^5.8.0"
-  },
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    },
-    "./browser": {
-      "types": "./dist/browser.d.ts",
-      "default": "./dist/browser.js"
-    },
-    "./node": {
-      "types": "./dist/node.d.ts",
-      "default": "./dist/node.js"
-    }
   }
 }

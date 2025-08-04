@@ -501,7 +501,7 @@ export function generateOpenApiDocument() {
             {
               in: "path",
               name: "id",
-              required: true,
+              // required: true,
               description: "User MongoDB ObjectId",
               schema: generateSchema(ObjectIdSchema),
             },

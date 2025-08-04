@@ -1,4 +1,4 @@
-import logger, { authLogger } from "@/config/logger";
+import { authLogger } from "@/config/logger";
 import { asyncHandler } from "@/middleware";
 import { ForbiddenError, UnauthorizedError } from "@/utils/errors";
 import type { NextFunction, Request, Response } from "express";
@@ -23,7 +23,6 @@ async function _authenticateUser(
     }
 
     const { data, error } = await supabaseClient.auth.getClaims(token);
-    logger.debug(data);
 
     if (error || !data) {
       // Always same message to prevent information disclosure
@@ -41,9 +40,6 @@ async function _authenticateUser(
 
     next();
   } catch (error) {
-    // Log the actual error for debugging
-    authLogger.error({ err: error }, "Authentication failed");
-
     // Re-throw if it's already an UnauthorizedError (from our checks above)
     if (error instanceof UnauthorizedError) {
       throw error;
