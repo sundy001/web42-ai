@@ -3,3 +3,64 @@
 @import "@web42-ai/ui/styles.css";
 /* register the ui package */
 @source "../../../packages/ui";
+
+/* Animated Gradient Border */
+.animated-gradient-border {
+  z-index: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.animated-gradient-border::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -25%;
+  transform-origin: center center;
+  width: 150%;
+  aspect-ratio: 1;
+  background: linear-gradient(
+    45deg,
+    #3b82f6,
+    #8b5cf6,
+    #ec4899,
+    #06b6d4,
+    #3b82f6
+  );
+  background-size: 100% 100%;
+  animation: gradient-rotate 8s linear infinite;
+  z-index: -2;
+}
+
+.animated-gradient-border::after {
+  content: "";
+  position: absolute;
+  left: 1px;
+  top: 1px;
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
+  background: var(--color-gray-700);
+  border-radius: calc(1rem - 2px);
+  z-index: -1;
+}
+
+@keyframes gradient-rotate {
+  0% {
+    transform: translateY(-50%) rotate(0deg);
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 100% 50%;
+  }
+  50% {
+    transform: translateY(-50%) rotate(180deg);
+    background-position: 100% 50%;
+  }
+  75% {
+    background-position: 0% 50%;
+  }
+  100% {
+    transform: translateY(-50%) rotate(360deg);
+    background-position: 0% 50%;
+  }
+}

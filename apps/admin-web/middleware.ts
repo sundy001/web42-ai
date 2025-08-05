@@ -3,6 +3,7 @@ import { getCurrentUser } from "./lib/api/users";
 
 export async function middleware(request: NextRequest, response: NextResponse) {
   const { pathname } = request.nextUrl;
+  console.log("pathname", pathname);
 
   // Allow access to login page and static assets
   if (
@@ -11,6 +12,7 @@ export async function middleware(request: NextRequest, response: NextResponse) {
     pathname.startsWith("/_next/") ||
     pathname.startsWith("/favicon")
   ) {
+    console.log("pass", pathname);
     return NextResponse.next();
   }
 
