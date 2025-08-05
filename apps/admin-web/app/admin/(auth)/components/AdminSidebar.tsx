@@ -1,12 +1,13 @@
 "use client";
 
+import { signoutUser } from "@/lib/api/auth/auth";
+import { showError } from "@/lib/utils/toast";
 import { Button } from "@web42-ai/ui/button";
 import { cn } from "@web42-ai/ui/utils";
 import { FolderOpen, LogOut, Settings, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { showError, showSuccess } from "../../../lib/utils/toast";
 
 const navigation = [
   { name: "Users", href: "/admin/users", icon: Users },
@@ -22,16 +23,8 @@ export function AdminSidebar() {
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
-      const response = await fetch("/api/auth/logout", {
-        method: "POST",
-      });
-
-      if (response.ok) {
-        showSuccess("Logged out successfully");
-        router.push("/login");
-      } else {
-        throw new Error("Logout failed");
-      }
+      await signoutUser();
+      router.push("/admin/login");
     } catch (_error) {
       showError("Failed to logout. Please try again.");
     } finally {

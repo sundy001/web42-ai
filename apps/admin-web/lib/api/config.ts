@@ -6,6 +6,7 @@ export const API_BASE_URL =
 export const API_ENDPOINTS = {
   auth: {
     login: "/api/v1/auth/login",
+    signout: "/api/v1/auth/signout",
     refresh: "/api/v1/auth/refresh",
     refreshApi: "/api/v1/auth/refresh/api",
     me: "/api/v1/auth/me",

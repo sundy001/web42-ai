@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest, response: NextResponse) {
 
   // Allow access to login page and static assets
   if (
-    pathname === "/login" ||
+    pathname === "/admin/login" ||
     pathname === "/" ||
     pathname.startsWith("/_next/") ||
     pathname.startsWith("/favicon")
@@ -28,7 +28,7 @@ export async function middleware(request: NextRequest, response: NextResponse) {
     return nextResponse;
   } catch (error) {
     // Redirect to login if authentication fails
-    const loginUrl = new URL("/login", request.url);
+    const loginUrl = new URL("/admin/login", request.url);
     loginUrl.searchParams.set("redirect", pathname);
     return NextResponse.redirect(loginUrl);
   }
