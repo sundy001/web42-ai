@@ -1,6 +1,10 @@
 import { ErrorResponseSchema, ObjectIdSchema } from "@/utils/schemas";
 import { generateSchema } from "@anatine/zod-openapi";
 import {
+  CreateProjectFromPromptResponseSchema,
+  CreateProjectFromPromptSchema,
+} from "@web42-ai/types";
+import {
   ApiRefreshTokenResponseSchema,
   LoginResponseSchema,
   LoginSchema,
@@ -15,17 +19,12 @@ import {
   UserSchema,
 } from "@web42-ai/types/users";
 import { z } from "zod";
-import {
-  CreateProjectSchema,
-  ListProjectsQuerySchema,
-  ProjectListResponseSchema,
-  ProjectSchema,
-} from "../domains/admin/projects/project.schemas";
 import { generateExample } from "./generateExample.js";
 
 // Constants for response descriptions
 const VALIDATION_ERROR_DESC = "Validation error";
 const INTERNAL_ERROR_DESC = "Internal server error";
+const INVALID_CREDENTIALS_DESC = "Invalid credentials";
 
 // Helper function to create response content with examples
 function createResponseContent(schema: z.ZodTypeAny) {
@@ -142,41 +141,12 @@ export const routeSchemas = {
       500: ErrorResponseSchema,
     },
   },
-  listProjects: {
-    query: ListProjectsQuerySchema,
+  createProjectFromPrompt: {
+    body: CreateProjectFromPromptSchema,
     responses: {
-      200: ProjectListResponseSchema,
+      201: CreateProjectFromPromptResponseSchema,
       400: ErrorResponseSchema,
-      500: ErrorResponseSchema,
-    },
-  },
-  getProject: {
-    params: {
-      id: ObjectIdSchema,
-    },
-    responses: {
-      200: ProjectSchema,
-      400: ErrorResponseSchema,
-      404: ErrorResponseSchema,
-      500: ErrorResponseSchema,
-    },
-  },
-  createProject: {
-    body: CreateProjectSchema,
-    responses: {
-      201: ProjectSchema,
-      400: ErrorResponseSchema,
-      500: ErrorResponseSchema,
-    },
-  },
-  deleteProject: {
-    params: {
-      id: ObjectIdSchema,
-    },
-    responses: {
-      204: undefined,
-      400: ErrorResponseSchema,
-      404: ErrorResponseSchema,
+      401: ErrorResponseSchema,
       500: ErrorResponseSchema,
     },
   },
@@ -232,7 +202,7 @@ export function generateOpenApiDocument() {
               content: createResponseContent(ErrorResponseSchema),
             },
             "401": {
-              description: "Invalid credentials",
+              description: INVALID_CREDENTIALS_DESC,
               content: createResponseContent(ErrorResponseSchema),
             },
             "500": {
@@ -294,7 +264,7 @@ export function generateOpenApiDocument() {
               },
             },
             "401": {
-              description: "Invalid credentials",
+              description: INVALID_CREDENTIALS_DESC,
               content: createResponseContent(ErrorResponseSchema),
             },
             "500": {
@@ -321,7 +291,7 @@ export function generateOpenApiDocument() {
               content: createResponseContent(ApiRefreshTokenResponseSchema),
             },
             "401": {
-              description: "Invalid credentials",
+              description: INVALID_CREDENTIALS_DESC,
               content: createResponseContent(ErrorResponseSchema),
             },
             "500": {
@@ -344,7 +314,7 @@ export function generateOpenApiDocument() {
               content: createResponseContent(MeResponseSchema),
             },
             "401": {
-              description: "Invalid credentials",
+              description: INVALID_CREDENTIALS_DESC,
               content: createResponseContent(ErrorResponseSchema),
             },
             "500": {
@@ -604,151 +574,30 @@ export function generateOpenApiDocument() {
           },
         },
       },
-      "/api/v1/admin/projects": {
-        get: {
-          summary: "List all projects",
-          description:
-            "Retrieve a paginated list of projects with optional filtering",
-          tags: ["Projects"],
-          security: [{ bearerAuth: [] }],
-          parameters: [
-            {
-              in: "query",
-              name: "page",
-              schema: { type: "string" },
-              description: "Page number for pagination",
-            },
-            {
-              in: "query",
-              name: "limit",
-              schema: { type: "string" },
-              description: "Number of projects per page (1-100)",
-            },
-            {
-              in: "query",
-              name: "userId",
-              schema: { type: "string" },
-              description: "Filter by user ID",
-            },
-            {
-              in: "query",
-              name: "name",
-              schema: { type: "string" },
-              description:
-                "Filter by project name (case-insensitive partial match)",
-            },
-            {
-              in: "query",
-              name: "status",
-              schema: { type: "string", enum: ["active", "deleted"] },
-              description: "Filter by project status",
-            },
-            {
-              in: "query",
-              name: "includeDeleted",
-              schema: { type: "string" },
-              description: "Include deleted projects (pass 'true' to include)",
-            },
-          ],
-          responses: {
-            "200": {
-              description: "List of projects retrieved successfully",
-              content: createResponseContent(ProjectListResponseSchema),
-            },
-            "400": {
-              description: VALIDATION_ERROR_DESC,
-              content: createResponseContent(ErrorResponseSchema),
-            },
-            "500": {
-              description: INTERNAL_ERROR_DESC,
-              content: createResponseContent(ErrorResponseSchema),
-            },
-          },
-        },
+      "/api/v1/projects/from-prompt": {
         post: {
-          summary: "Create a new project",
-          description: "Create a new project with the provided information",
+          summary: "Create project from prompt",
+          description:
+            "Create a new project and initial thread based on a user prompt. Generates a project name using AI and creates the first message in the thread.",
           tags: ["Projects"],
           security: [{ bearerAuth: [] }],
           requestBody: {
             required: true,
-            content: createResponseContent(CreateProjectSchema),
+            content: createResponseContent(CreateProjectFromPromptSchema),
           },
           responses: {
             "201": {
-              description: "Project created successfully",
-              content: createResponseContent(ProjectSchema),
+              description: "Project and thread created successfully",
+              content: createResponseContent(
+                CreateProjectFromPromptResponseSchema,
+              ),
             },
             "400": {
               description: VALIDATION_ERROR_DESC,
               content: createResponseContent(ErrorResponseSchema),
             },
-            "500": {
-              description: INTERNAL_ERROR_DESC,
-              content: createResponseContent(ErrorResponseSchema),
-            },
-          },
-        },
-      },
-      "/api/v1/admin/projects/{id}": {
-        get: {
-          summary: "Get project by ID",
-          description: "Retrieve a specific project by its MongoDB ObjectId",
-          tags: ["Projects"],
-          security: [{ bearerAuth: [] }],
-          parameters: [
-            {
-              in: "path",
-              name: "id",
-              required: true,
-              description: "Project MongoDB ObjectId",
-              schema: generateSchema(ObjectIdSchema),
-            },
-          ],
-          responses: {
-            "200": {
-              description: "Project retrieved successfully",
-              content: createResponseContent(ProjectSchema),
-            },
-            "400": {
-              description: VALIDATION_ERROR_DESC,
-              content: createResponseContent(ErrorResponseSchema),
-            },
-            "404": {
-              description: "Project not found",
-              content: createResponseContent(ErrorResponseSchema),
-            },
-            "500": {
-              description: INTERNAL_ERROR_DESC,
-              content: createResponseContent(ErrorResponseSchema),
-            },
-          },
-        },
-        delete: {
-          summary: "Soft delete project",
-          description:
-            "Soft delete a project by setting its status to 'deleted'",
-          tags: ["Projects"],
-          security: [{ bearerAuth: [] }],
-          parameters: [
-            {
-              in: "path",
-              name: "id",
-              required: true,
-              description: "Project MongoDB ObjectId",
-              schema: generateSchema(ObjectIdSchema),
-            },
-          ],
-          responses: {
-            "204": {
-              description: "Project deleted successfully",
-            },
-            "400": {
-              description: VALIDATION_ERROR_DESC,
-              content: createResponseContent(ErrorResponseSchema),
-            },
-            "404": {
-              description: "Project not found",
+            "401": {
+              description: INVALID_CREDENTIALS_DESC,
               content: createResponseContent(ErrorResponseSchema),
             },
             "500": {
@@ -765,13 +614,16 @@ export function generateOpenApiDocument() {
         CreateUserRequest: generateSchema(CreateUserSchema),
         UpdateUserRequest: generateSchema(UpdateUserSchema),
         UserListResponse: generateSchema(UserListResponseSchema),
-        Project: generateSchema(ProjectSchema),
-        CreateProjectRequest: generateSchema(CreateProjectSchema),
-        ProjectListResponse: generateSchema(ProjectListResponseSchema),
         LoginRequest: generateSchema(LoginSchema),
         LoginResponse: generateSchema(LoginResponseSchema),
         RefreshTokenRequest: generateSchema(RefreshTokenSchema),
         ApiRefreshTokenResponse: generateSchema(ApiRefreshTokenResponseSchema),
+        CreateProjectFromPromptRequest: generateSchema(
+          CreateProjectFromPromptSchema,
+        ),
+        CreateProjectFromPromptResponse: generateSchema(
+          CreateProjectFromPromptResponseSchema,
+        ),
         ErrorResponse: generateSchema(ErrorResponseSchema),
       },
       securitySchemes: {

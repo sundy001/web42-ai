@@ -8,6 +8,7 @@ import { config } from "@/config";
 import { httpLogger, logger } from "@/config/logger";
 import adminRoutes from "@/domains/admin";
 import { authRoutes } from "@/domains/auth";
+import { projectRoutes } from "@/domains/projects";
 import { asyncHandler, errorHandler } from "@/middleware";
 import { openApiDocument } from "@/openapi/openApiConfig";
 import { databaseStore, getHealthStatus } from "@/stores";
@@ -73,6 +74,9 @@ app.use("/api/v1/auth", authRoutes);
 // Admin routes
 app.use("/api/v1/admin", adminRoutes);
 
+// Project routes
+app.use("/api/v1/projects", projectRoutes);
+
 // Welcome endpoint
 app.get("/", (_req, res) => {
   const endpoints: Record<string, string> = {
@@ -80,6 +84,7 @@ app.get("/", (_req, res) => {
     api: "/api/v1/status",
     auth: "/api/v1/auth",
     admin: "/api/v1/admin",
+    projects: "/api/v1/projects",
   };
 
   // Add documentation endpoints only in development
