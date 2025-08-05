@@ -6,12 +6,14 @@ interface PromptTextareaProps {
   value: string;
   onChange: (value: string) => void;
   disabled?: boolean;
+  onSubmit?: () => void;
 }
 
 export function PromptTextarea({
   value,
   onChange,
   disabled,
+  onSubmit,
 }: PromptTextareaProps) {
   const [placeholder, setPlaceholder] = useState("");
   const [showCursor, setShowCursor] = useState(true);
@@ -82,6 +84,15 @@ export function PromptTextarea({
     };
   }, []);
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      if (onSubmit && value.trim()) {
+        onSubmit();
+      }
+    }
+  };
+
   return (
     <textarea
       placeholder={`${placeholder}${showCursor ? "\u2588" : ""}`}
@@ -89,6 +100,7 @@ export function PromptTextarea({
       onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
         onChange(e.target.value)
       }
+      onKeyDown={handleKeyDown}
       className="w-full min-h-[60px] text-lg resize-none rounded-lg border-0 p-0 focus:outline-none transition-all duration-200 placeholder:text-gray-400 text-white px-4 py-3"
       disabled={disabled}
     />

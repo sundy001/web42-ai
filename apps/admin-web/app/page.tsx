@@ -70,24 +70,32 @@ export default function HomePage() {
           {/* Prompt Input Section */}
           <div className="max-w-3xl mx-auto relative">
             <div className="animated-gradient-border bg-gray-700 rounded-2xl p-4">
-              <PromptTextarea
-                value={prompt}
-                onChange={setPrompt}
-                disabled={isCreating}
-              />
-              <div className="flex justify-end">
-                <Button
-                  size="icon"
-                  onClick={handleCreateWebsite}
-                  disabled={isCreating || !prompt.trim()}
-                >
-                  {isCreating ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Send className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleCreateWebsite();
+                }}
+              >
+                <PromptTextarea
+                  value={prompt}
+                  onChange={setPrompt}
+                  disabled={isCreating}
+                  onSubmit={handleCreateWebsite}
+                />
+                <div className="flex justify-end">
+                  <Button
+                    size="icon"
+                    type="submit"
+                    disabled={isCreating || !prompt.trim()}
+                  >
+                    {isCreating ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Send className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
