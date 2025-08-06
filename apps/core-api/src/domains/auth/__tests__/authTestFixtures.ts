@@ -13,8 +13,8 @@
  * @module domains/auth/__tests__/authTestFixtures
  */
 
-import { LoginRequest, LoginResponse } from "@web42-ai/types/auth";
-import type { User } from "@web42-ai/types/users";
+import type { User } from "@web42-ai/types";
+import { LoginRequest, LoginResponse } from "@web42-ai/types";
 import { ObjectId } from "mongodb";
 import type { AuthUser } from "../types";
 

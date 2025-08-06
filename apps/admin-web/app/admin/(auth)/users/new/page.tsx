@@ -3,7 +3,7 @@
 import { ApiRequestError } from "@/lib/api/errors";
 import { createUser } from "@/lib/api/users";
 import { showError, showSuccess } from "@/lib/utils/toast";
-import { CreateUserRequest } from "@web42-ai/types/users";
+import { CreateUserRequest } from "@web42-ai/types";
 import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";
 import { Form } from "@web42-ai/ui/form";

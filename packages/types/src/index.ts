@@ -1,6 +1,6 @@
 // Re-export all types and schemas
-export * from "./auth/index.js";
-export * from "./common/index.js";
-export * from "./projects/index.js";
-export * from "./threads/index.js";
-export * from "./users/index.js";
+export * from "./auth.js";
+export * from "./common.js";
+export * from "./projects.js";
+export * from "./threads.js";
+export * from "./users.js";

@@ -7,7 +7,7 @@ import {
   MeResponse,
   RefreshTokenRequest,
   RefreshTokenSchema,
-} from "@web42-ai/types/auth";
+} from "@web42-ai/types";
 import type { Request, Response } from "express";
 import express from "express";
 import { loginUser, refreshUserToken, signoutUser } from "./auth.service";

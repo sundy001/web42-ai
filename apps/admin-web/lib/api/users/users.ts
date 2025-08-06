@@ -1,11 +1,11 @@
 import { DataWithTokensResult } from "@web42-ai/next-util";
-import { MeResponse } from "@web42-ai/types/auth";
 import type {
   CreateUserRequest,
   UpdateUserRequest,
   User,
   UserListResponse,
-} from "@web42-ai/types/users";
+} from "@web42-ai/types";
+import { MeResponse } from "@web42-ai/types";
 import { API_ENDPOINTS, authFetch } from "../config";
 import { AuthenticationError } from "../errors";
 

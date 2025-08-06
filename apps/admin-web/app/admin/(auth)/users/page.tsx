@@ -1,6 +1,6 @@
 import { fetchUsers } from "@/lib/api/users";
 import { formatDate } from "@/lib/utils/dateUtils";
-import { User } from "@web42-ai/types/users";
+import { User } from "@web42-ai/types";
 import { Badge } from "@web42-ai/ui/badge";
 import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";

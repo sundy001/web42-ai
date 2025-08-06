@@ -2,7 +2,7 @@ import { getAuthProvider } from "@/domains/auth";
 import { AuthError } from "@/domains/auth/providers/authUtils";
 import type { AuthUser } from "@/domains/auth/types";
 import { ApiError } from "@/utils/errors";
-import type { User } from "@web42-ai/types/users";
+import type { User } from "@web42-ai/types";
 import type { MongoUser } from "./types";
 
 // Helper function to merge MongoDB user with auth provider user data

@@ -9,7 +9,7 @@ import {
 } from "@/lib/api/users";
 import { formatDateTime } from "@/lib/utils/dateUtils";
 import { showError, showSuccess } from "@/lib/utils/toast";
-import { UpdateUserRequest, User } from "@web42-ai/types/users";
+import { UpdateUserRequest, User } from "@web42-ai/types";
 import { Button } from "@web42-ai/ui/button";
 import { Card } from "@web42-ai/ui/card";
 import { Form } from "@web42-ai/ui/form";

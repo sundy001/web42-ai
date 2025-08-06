@@ -6,7 +6,7 @@ import type {
   UpdateUserRequest,
   User,
   UserListResponse,
-} from "@web42-ai/types/users";
+} from "@web42-ai/types";
 import { combineUserData } from "./combineUserData";
 import type { MongoUser, UserFiltersRequest } from "./types";
 import * as userRepository from "./user.repository";

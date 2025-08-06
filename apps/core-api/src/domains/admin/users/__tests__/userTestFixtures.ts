@@ -4,7 +4,7 @@ import type {
   UpdateUserRequest,
   User,
   UserListResponse,
-} from "@web42-ai/types/users";
+} from "@web42-ai/types";
 import { ObjectId, WithId } from "mongodb";
 import type { MongoUser } from "../types";
 

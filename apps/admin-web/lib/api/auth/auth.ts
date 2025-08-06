@@ -1,5 +1,4 @@
-import type { LoginRequest } from "@web42-ai/types/auth";
-import type { User } from "@web42-ai/types/users";
+import type { LoginRequest, User } from "@web42-ai/types";
 import { API_BASE_URL, API_ENDPOINTS } from "../config";
 import { handleApiResponse } from "../errors";
 

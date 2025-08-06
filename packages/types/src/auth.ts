@@ -1,6 +1,6 @@
 import { extendZodWithOpenApi } from "@anatine/zod-openapi";
 import { z } from "zod";
-import { UserSchema } from "../users/schemas.js";
+import { UserSchema } from "./users.js";
 
 // Extend Zod with OpenAPI support
 extendZodWithOpenApi(z);

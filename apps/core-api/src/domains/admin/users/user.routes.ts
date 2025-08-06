@@ -14,7 +14,7 @@ import {
   type ListUsersQueryRequest,
   type UpdateUserRequest,
   type UserListResponse,
-} from "@web42-ai/types/users";
+} from "@web42-ai/types";
 import type { Request, Response } from "express";
 import express from "express";
 import type { UserFiltersRequest } from "./types";

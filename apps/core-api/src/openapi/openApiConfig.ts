@@ -1,23 +1,19 @@
 import { ErrorResponseSchema, ObjectIdSchema } from "@/utils/schemas";
 import { generateSchema } from "@anatine/zod-openapi";
 import {
+  ApiRefreshTokenResponseSchema,
   CreateProjectFromPromptResponseSchema,
   CreateProjectFromPromptSchema,
-} from "@web42-ai/types";
-import {
-  ApiRefreshTokenResponseSchema,
+  CreateUserSchema,
+  ListUsersQuerySchema,
   LoginResponseSchema,
   LoginSchema,
   MeResponseSchema,
   RefreshTokenSchema,
-} from "@web42-ai/types/auth";
-import {
-  CreateUserSchema,
-  ListUsersQuerySchema,
   UpdateUserSchema,
   UserListResponseSchema,
   UserSchema,
-} from "@web42-ai/types/users";
+} from "@web42-ai/types";
 import { z } from "zod";
 import { generateExample } from "./generateExample.js";
 
