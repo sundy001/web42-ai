@@ -1,12 +1,13 @@
 "use client";
 
+import { PromptTextarea } from "@/components/PromptTextarea";
+import { createProjectFromPrompt } from "@/lib/api/projects";
 import { showError, showSuccess } from "@/lib/utils/toast";
 import { Button } from "@web42-ai/ui/button";
 import { Loader2, Send, Shield, Sparkles, Zap } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { PromptTextarea } from "./components/PromptTextarea";
 
 export default function HomePage() {
   const [prompt, setPrompt] = useState("");
@@ -21,12 +22,9 @@ export default function HomePage() {
 
     setIsCreating(true);
     try {
-      // TODO: Implement API call to create project
+      const result = await createProjectFromPrompt(prompt);
       showSuccess("Creating your website...");
-      // For now, redirect to login. In production, this would create a project
-      setTimeout(() => {
-        router.push("/admin/login");
-      }, 1500);
+      router.push(`/app/${result.project.id}`);
     } catch (error) {
       showError("Failed to create website. Please try again.");
     } finally {

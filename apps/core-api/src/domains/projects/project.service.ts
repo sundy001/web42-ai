@@ -60,6 +60,7 @@ export async function createProjectByPrompt(
     name: project.name,
   };
 
+  // TODO: may clean up later, only need project object.
   return {
     project: projectResponse,
     thread: threadMessages,
