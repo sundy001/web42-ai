@@ -175,15 +175,6 @@
         "typescript-eslint": "^8.37.0",
       },
     },
-    "packages/express-util": {
-      "name": "@web42-ai/express-util",
-      "version": "0.1.0",
-      "devDependencies": {
-        "@types/node": "^22.10.0",
-        "@web42-ai/typescript-config": "workspace:*",
-        "typescript": "^5.8.0",
-      },
-    },
     "packages/logger": {
       "name": "@web42-ai/logger",
       "version": "0.1.0",
@@ -216,6 +207,15 @@
         "tsx": "^4.19.2",
         "typescript": "5.8.2",
         "vitest": "^2.1.8",
+      },
+    },
+    "packages/next-util": {
+      "name": "@web42-ai/next-util",
+      "version": "0.1.0",
+      "devDependencies": {
+        "@types/node": "^22.10.0",
+        "@web42-ai/typescript-config": "workspace:*",
+        "typescript": "^5.8.0",
       },
     },
     "packages/types": {
@@ -802,11 +802,11 @@
 
     "@web42-ai/eslint-config": ["@web42-ai/eslint-config@workspace:packages/eslint-config"],
 
-    "@web42-ai/express-util": ["@web42-ai/express-util@workspace:packages/express-util"],
-
     "@web42-ai/logger": ["@web42-ai/logger@workspace:packages/logger"],
 
     "@web42-ai/migrations": ["@web42-ai/migrations@workspace:packages/migrations"],
+
+    "@web42-ai/next-util": ["@web42-ai/next-util@workspace:packages/next-util"],
 
     "@web42-ai/types": ["@web42-ai/types@workspace:packages/types"],
 

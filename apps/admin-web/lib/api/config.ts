@@ -1,4 +1,4 @@
-import { createAuthFetch } from "@web42-ai/express-util";
+import { createAuthFetch } from "@web42-ai/next-util";
 
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3002";

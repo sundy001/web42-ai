@@ -1,4 +1,4 @@
-import { DataWithTokensResult } from "@web42-ai/express-util";
+import { DataWithTokensResult } from "@web42-ai/next-util";
 import { MeResponse } from "@web42-ai/types/auth";
 import type {
   CreateUserRequest,
