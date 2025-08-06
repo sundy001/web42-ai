@@ -1,6 +1,6 @@
 import type { LoginRequest, User } from "@web42-ai/types";
-import { API_BASE_URL, API_ENDPOINTS } from "../config";
-import { handleApiResponse } from "../errors";
+import { API_BASE_URL, API_ENDPOINTS } from "./config";
+import { handleApiResponse } from "./errors";
 
 export const loginUser = async (form: LoginRequest): Promise<User> => {
   const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.auth.login}`, {

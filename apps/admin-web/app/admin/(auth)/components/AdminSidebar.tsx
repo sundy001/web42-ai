@@ -1,6 +1,6 @@
 "use client";
 
-import { signoutUser } from "@/lib/api/auth/auth";
+import { signoutUser } from "@/lib/api/auth";
 import { showError } from "@/lib/utils/toast";
 import { Button } from "@web42-ai/ui/button";
 import { cn } from "@web42-ai/ui/utils";

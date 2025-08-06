@@ -6,8 +6,8 @@ import type {
   UserListResponse,
 } from "@web42-ai/types";
 import { MeResponse } from "@web42-ai/types";
-import { API_ENDPOINTS, authFetch } from "../config";
-import { AuthenticationError } from "../errors";
+import { API_ENDPOINTS, authFetch } from "./config";
+import { AuthenticationError } from "./errors";
 
 export const getCurrentUser = async (): Promise<
   DataWithTokensResult<MeResponse>

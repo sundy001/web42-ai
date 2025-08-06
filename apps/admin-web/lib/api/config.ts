@@ -19,6 +19,9 @@ export const API_ENDPOINTS = {
     delete: (id: string) => `/api/v1/admin/users/${id}`,
     restore: (id: string) => `/api/v1/admin/users/${id}/restore`,
   },
+  projects: {
+    fromPrompt: "/api/v1/projects/from-prompt",
+  },
 } as const;
 
 // Create configured authFetch instance
