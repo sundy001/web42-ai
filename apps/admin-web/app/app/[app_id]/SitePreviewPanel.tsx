@@ -1,5 +1,3 @@
-"use client";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@web42-ai/ui/card";
 import { Sparkles } from "lucide-react";
 

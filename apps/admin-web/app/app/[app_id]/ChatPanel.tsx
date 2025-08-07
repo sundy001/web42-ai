@@ -1,28 +1,32 @@
 "use client";
 
+import type { Message } from "@web42-ai/types";
 import { Sparkles } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import AIMessage from "./AIMessage";
 import ChatInput from "./ChatInput";
 import UserMessage from "./UserMessage";
 
-interface MessageData {
-  id: string;
-  content: string;
-  isUser: boolean;
-  timestamp: Date;
+interface ChatPanelProps {
+  defaultMessages?: Message[];
 }
 
-export default function ChatPanel() {
-  const [messages, setMessages] = useState<MessageData[]>([
-    {
-      id: "1",
-      content:
-        "Hi! I'm your AI assistant. Describe the site you'd like to build and I'll help you create it.",
-      isUser: false,
-      timestamp: new Date(),
-    },
-  ]);
+export default function ChatPanel({ defaultMessages }: ChatPanelProps) {
+  const [messages, setMessages] = useState<Message[]>(() => {
+    if (defaultMessages && defaultMessages.length > 0) {
+      return defaultMessages;
+    }
+    return [
+      {
+        id: "welcome",
+        role: "assistant",
+        contentType: "text",
+        content:
+          "Hi! I'm your AI assistant. Describe the site you'd like to build and I'll help you create it.",
+        createdAt: new Date().toISOString(),
+      },
+    ];
+  });
   const [isGenerating, setIsGenerating] = useState(false);
   const [shouldAutoFocus, setShouldAutoFocus] = useState(false);
   const [abortController, setAbortController] =
@@ -40,11 +44,12 @@ export default function ChatPanel() {
   const handleSendMessage = async (message: string) => {
     if (!message.trim()) return;
 
-    const newMessage: MessageData = {
+    const newMessage: Message = {
       id: Date.now().toString(),
+      role: "user",
+      contentType: "text",
       content: message,
-      isUser: true,
-      timestamp: new Date(),
+      createdAt: new Date().toISOString(),
     };
 
     setMessages((prev) => [...prev, newMessage]);
@@ -58,12 +63,13 @@ export default function ChatPanel() {
     // Simulate AI response
     const timeoutId = setTimeout(() => {
       if (!controller.signal.aborted) {
-        const aiResponse: MessageData = {
+        const aiResponse: Message = {
           id: (Date.now() + 1).toString(),
+          role: "assistant",
+          contentType: "text",
           content:
             "Great idea! I'm working on creating that for you. Let me generate the code and preview...",
-          isUser: false,
-          timestamp: new Date(),
+          createdAt: new Date().toISOString(),
         };
         setMessages((prev) => [...prev, aiResponse]);
         setIsGenerating(false);
@@ -92,17 +98,17 @@ export default function ChatPanel() {
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) =>
-          message.isUser ? (
+          message.role === "user" ? (
             <UserMessage
               key={message.id}
               content={message.content}
-              timestamp={message.timestamp}
+              timestamp={new Date(message.createdAt)}
             />
           ) : (
             <AIMessage
               key={message.id}
               content={message.content}
-              timestamp={message.timestamp}
+              timestamp={new Date(message.createdAt)}
             />
           ),
         )}

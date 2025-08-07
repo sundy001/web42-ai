@@ -22,6 +22,9 @@ export const API_ENDPOINTS = {
   projects: {
     fromPrompt: "/api/v1/projects/from-prompt",
   },
+  messages: {
+    list: "/api/v1/messages",
+  },
 } as const;
 
 // Create configured authFetch instance

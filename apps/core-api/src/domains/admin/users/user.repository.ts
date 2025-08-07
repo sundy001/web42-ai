@@ -176,6 +176,7 @@ export async function listUsers(
   pagination: PaginationOptionsDb = {},
 ): Promise<UserListResponseDb> {
   const collection = getCollection();
+  // TODO: the default value should be from the route level
   const { page = 1, limit = 10 } = pagination;
   const skip = (page - 1) * limit;
 

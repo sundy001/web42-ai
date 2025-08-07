@@ -59,10 +59,17 @@ export const GetMessagesQuerySchema = z.object({
     description:
       "Cursor timestamp for pagination (get messages before this time)",
   }),
-  limit: z.number().int().min(1).max(100).default(20).openapi({
-    example: 20,
-    description: "Number of messages to retrieve",
-  }),
+  limit: z.coerce
+    .number()
+    .int()
+    .min(10)
+    .max(30)
+    .default(10)
+    .optional()
+    .openapi({
+      example: 10,
+      description: "Number of messages to retrieve",
+    }),
 });
 
 // Messages list response
