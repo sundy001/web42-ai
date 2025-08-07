@@ -15,9 +15,11 @@ export type MessageRole = "user" | "assistant";
 export type ContentType = "text" | "image" | "code";
 
 /**
- * Thread message
+ * Message entity as stored in MongoDB
  */
-export interface ThreadMessage {
+export interface MongoMessage {
+  _id: ObjectId;
+  projectId: string;
   messageId: string;
   role: MessageRole;
   contentType: ContentType;
@@ -25,25 +27,16 @@ export interface ThreadMessage {
   createdAt: string;
 }
 
-/**
- * Thread entity as stored in MongoDB
- */
-export interface MongoThread {
-  _id: ObjectId;
-  projectId: string;
-  messages: ThreadMessage[];
-  createdAt: string;
-  updatedAt: string;
-}
-
 // =============================================================================
 // REPOSITORY LAYER TYPES
 // =============================================================================
 
 /**
- * Data required to create a new thread
+ * Data required to create a new message
  */
-export interface CreateThreadData {
+export interface CreateMessageData {
   projectId: string;
-  initialMessage: string;
+  role: MessageRole;
+  contentType: ContentType;
+  content: string;
 }

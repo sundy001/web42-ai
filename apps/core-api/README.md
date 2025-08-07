@@ -91,13 +91,19 @@ DELETE /api/v1/admin/users/:id       # Soft delete user
 POST   /api/v1/admin/users/:id/restore  # Restore deleted user
 ```
 
+### Projects
+
+```
+POST /api/v1/projects/from-prompt    # Create project from user prompt
+```
+
 ## Project Structure
 
 ```
 apps/core-api/
 ├── src/
 │   ├── config/          # Application configuration and logging
-│   ├── domains/         # Business domains (auth, admin/users)
+│   ├── domains/         # Business domains (auth, admin/users, messages, projects)
 │   ├── middleware/      # Express middleware
 │   ├── openapi/         # API documentation
 │   ├── stores/          # Data access layer
@@ -166,6 +172,8 @@ The application follows domain-driven design with clear separation of concerns:
 
 - **Authentication**: User login, token management, session handling
 - **User Management**: CRUD operations, soft delete, administrative oversight
+- **Messages**: Message storage and retrieval with cursor-based pagination
+- **Projects**: Project creation and management
 - **Health Monitoring**: Database connectivity, system status
 
 ## Configuration

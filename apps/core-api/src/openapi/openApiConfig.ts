@@ -574,7 +574,7 @@ export function generateOpenApiDocument() {
         post: {
           summary: "Create project from prompt",
           description:
-            "Create a new project and initial thread based on a user prompt. Generates a project name using AI and creates the first message in the thread.",
+            "Create a new project and initial message based on a user prompt. Generates a project name using AI and creates the first message for the project.",
           tags: ["Projects"],
           security: [{ bearerAuth: [] }],
           requestBody: {
@@ -583,7 +583,7 @@ export function generateOpenApiDocument() {
           },
           responses: {
             "201": {
-              description: "Project and thread created successfully",
+              description: "Project and initial message created successfully",
               content: createResponseContent(
                 CreateProjectFromPromptResponseSchema,
               ),

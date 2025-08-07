@@ -1,5 +1,5 @@
 import type { AuthRequest } from "@/domains/auth/types";
-import { createThread } from "@/domains/threads";
+import { createMessage } from "@/domains/messages";
 import { BadRequestError } from "@/utils/errors";
 import type {
   CreateProjectFromPromptResponse,
@@ -51,8 +51,8 @@ export async function createProjectByPrompt(
     name: projectName,
   });
 
-  // Create initial thread with the prompt as the first message
-  const threadMessages = await createThread(project._id.toString(), prompt);
+  // Create initial message with the prompt
+  const initialMessage = await createMessage(project._id.toString(), prompt);
 
   // Format response
   const projectResponse: ProjectResponse = {
@@ -63,6 +63,6 @@ export async function createProjectByPrompt(
   // TODO: may clean up later, only need project object.
   return {
     project: projectResponse,
-    thread: threadMessages,
+    thread: [initialMessage], // Return as array for compatibility
   };
 }

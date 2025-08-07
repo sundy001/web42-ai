@@ -1,4 +1,4 @@
-// Threads Domain - Public API
+// Messages Domain - Public API
 
 // =============================================================================
 // SERVICE LAYER - Core business logic
@@ -6,9 +6,9 @@
 
 /**
  * Main service functions for external consumption
- * These provide the core thread management business logic
+ * These provide the core message management business logic
  */
-export { createThread } from "./thread.service";
+export { createMessage, getMessages } from "./message.service";
 
 // =============================================================================
 // TYPE CONTRACTS - External interfaces
