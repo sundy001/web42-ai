@@ -44,6 +44,7 @@ router.get(
       status,
       includeDeleted,
     } satisfies UserFiltersRequest;
+    // TODO: review the max limit and the default value
     const pagination = { page, limit } satisfies PaginationOptions;
 
     const result = await listUsers(filters, pagination);

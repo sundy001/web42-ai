@@ -10,9 +10,6 @@ function getCollection() {
   return db.collection<WithoutId<MongoMessage>>(COLLECTION_NAME);
 }
 
-/**
- * Create a new message
- */
 export async function createMessage(
   messageData: CreateMessageData,
 ): Promise<MongoMessage> {
@@ -36,10 +33,6 @@ export async function createMessage(
   };
 }
 
-/**
- * Get messages for a project with cursor-based pagination
- * Now uses direct MongoDB queries with index optimization
- */
 export async function getMessagesByProjectId(
   projectId: string,
   timestamp?: string,
@@ -64,18 +57,4 @@ export async function getMessagesByProjectId(
     .toArray();
 
   return messages as MongoMessage[];
-}
-
-/**
- * Create index for efficient message queries
- * This should be called during database initialization
- */
-export async function createIndexes(): Promise<void> {
-  const collection = getCollection();
-
-  // Compound index for efficient queries by projectId and sorting by createdAt
-  await collection.createIndex(
-    { projectId: 1, createdAt: -1 },
-    { name: "projectId_createdAt_idx" },
-  );
 }

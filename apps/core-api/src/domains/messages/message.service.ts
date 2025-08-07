@@ -1,9 +1,8 @@
+import { verifyProjectOwnership } from "@/domains/projects/project.repository";
+import { NotFoundError } from "@/utils/errors";
 import type { ThreadMessage } from "@web42-ai/types";
 import * as messageRepository from "./message.repository";
 
-/**
- * Create a new message for a project
- */
 export async function createMessage(
   projectId: string,
   content: string,
@@ -27,14 +26,19 @@ export async function createMessage(
   };
 }
 
-/**
- * Get messages for a project with cursor-based pagination
- */
-export async function getMessages(
+export async function getMessagesForUser(
+  userId: string,
   projectId: string,
   timestamp?: string,
   limit: number = 20,
 ): Promise<ThreadMessage[]> {
+  // Verify project ownership
+  const isOwner = await verifyProjectOwnership(projectId, userId);
+
+  if (!isOwner) {
+    throw new NotFoundError("Project not found");
+  }
+
   const messages = await messageRepository.getMessagesByProjectId(
     projectId,
     timestamp,

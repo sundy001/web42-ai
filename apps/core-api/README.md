@@ -97,6 +97,12 @@ POST   /api/v1/admin/users/:id/restore  # Restore deleted user
 POST /api/v1/projects/from-prompt    # Create project from user prompt
 ```
 
+### Messages (Authenticated)
+
+```
+GET /api/v1/messages?projectId=xxx&timestamp=xxx&limit=20  # Get messages for user's project
+```
+
 ## Project Structure
 
 ```

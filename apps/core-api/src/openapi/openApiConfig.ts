@@ -5,10 +5,12 @@ import {
   CreateProjectFromPromptResponseSchema,
   CreateProjectFromPromptSchema,
   CreateUserSchema,
+  GetMessagesQuerySchema,
   ListUsersQuerySchema,
   LoginResponseSchema,
   LoginSchema,
   MeResponseSchema,
+  MessagesListResponseSchema,
   RefreshTokenSchema,
   UpdateUserSchema,
   UserListResponseSchema,
@@ -143,6 +145,16 @@ export const routeSchemas = {
       201: CreateProjectFromPromptResponseSchema,
       400: ErrorResponseSchema,
       401: ErrorResponseSchema,
+      500: ErrorResponseSchema,
+    },
+  },
+  getMessages: {
+    query: GetMessagesQuerySchema,
+    responses: {
+      200: MessagesListResponseSchema,
+      400: ErrorResponseSchema,
+      401: ErrorResponseSchema,
+      404: ErrorResponseSchema,
       500: ErrorResponseSchema,
     },
   },
@@ -603,6 +615,64 @@ export function generateOpenApiDocument() {
           },
         },
       },
+      "/api/v1/messages": {
+        get: {
+          summary: "Get messages for a project",
+          description:
+            "Retrieve messages for a project with cursor-based pagination. Requires authentication and project ownership verification. Returns 404 if the project doesn't exist or doesn't belong to the authenticated user.",
+          tags: ["Messages"],
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            {
+              in: "query",
+              name: "projectId",
+              required: true,
+              schema: { type: "string" },
+              description: "MongoDB ObjectId of the project",
+            },
+            {
+              in: "query",
+              name: "timestamp",
+              schema: { type: "string", format: "date-time" },
+              description:
+                "Cursor timestamp for pagination (get messages before this time)",
+            },
+            {
+              in: "query",
+              name: "limit",
+              schema: {
+                type: "integer",
+                minimum: 1,
+                maximum: 100,
+                default: 20,
+              },
+              description: "Number of messages to retrieve",
+            },
+          ],
+          responses: {
+            "200": {
+              description: "Messages retrieved successfully",
+              content: createResponseContent(MessagesListResponseSchema),
+            },
+            "400": {
+              description: VALIDATION_ERROR_DESC,
+              content: createResponseContent(ErrorResponseSchema),
+            },
+            "401": {
+              description: INVALID_CREDENTIALS_DESC,
+              content: createResponseContent(ErrorResponseSchema),
+            },
+            "404": {
+              description: "Project not found or doesn't belong to the user",
+              content: createResponseContent(ErrorResponseSchema),
+            },
+            "500": {
+              description: INTERNAL_ERROR_DESC,
+              content: createResponseContent(ErrorResponseSchema),
+            },
+          },
+        },
+      },
     },
     components: {
       schemas: {
@@ -620,6 +690,8 @@ export function generateOpenApiDocument() {
         CreateProjectFromPromptResponse: generateSchema(
           CreateProjectFromPromptResponseSchema,
         ),
+        GetMessagesQuery: generateSchema(GetMessagesQuerySchema),
+        MessagesListResponse: generateSchema(MessagesListResponseSchema),
         ErrorResponse: generateSchema(ErrorResponseSchema),
       },
       securitySchemes: {
@@ -643,6 +715,10 @@ export function generateOpenApiDocument() {
       {
         name: "Projects",
         description: "Project management operations",
+      },
+      {
+        name: "Messages",
+        description: "Message management operations",
       },
     ],
   };

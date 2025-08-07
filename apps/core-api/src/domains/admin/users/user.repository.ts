@@ -13,7 +13,6 @@ const COLLECTION_NAME = "users";
 
 function getCollection() {
   const db = databaseStore.getDatabase();
-  // MongoDB's collection type automatically handles _id insertion
   return db.collection<WithoutId<MongoUser>>(COLLECTION_NAME);
 }
 

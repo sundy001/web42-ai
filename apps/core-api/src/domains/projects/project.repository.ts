@@ -51,3 +51,25 @@ export async function getProjectById(
 
   return collection.findOne(filter);
 }
+
+export async function verifyProjectOwnership(
+  projectId: string,
+  userId: string,
+): Promise<boolean> {
+  const collection = getCollection();
+
+  if (!ObjectId.isValid(projectId)) {
+    return false;
+  }
+
+  const project = await collection.findOne(
+    {
+      _id: new ObjectId(projectId),
+      userId,
+      status: { $ne: "deleted" },
+    },
+    { projection: { _id: 1 } },
+  );
+
+  return project !== null;
+}
