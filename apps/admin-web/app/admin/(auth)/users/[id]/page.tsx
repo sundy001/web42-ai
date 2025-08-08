@@ -46,12 +46,6 @@ export default function UserDetailPage({
     setError: setFormError,
   } = methods;
 
-  const authProviderOptions = [
-    { value: "google", label: "Google" },
-    { value: "github", label: "GitHub" },
-    { value: "email", label: "Email" },
-  ];
-
   const statusOptions = [
     { value: "active", label: "Active" },
     { value: "inactive", label: "Inactive" },

@@ -1,78 +1,58 @@
-import type { ConsumerOptions, PullMessagesResponse } from "../types.js";
-
-const requiredOptions = [
-  "accountId",
-  "queueId",
-  // only one of handleMessage / handleMessagesBatch is required
-  "handleMessage|handleMessageBatch",
-];
-
-function validateOption(option: string, value: number, strict?: boolean): void {
-  switch (option) {
-    case "batchSize":
-      if (value > 100 || value < 1) {
-        throw new Error("batchSize must be between 1 and 100");
-      }
-      break;
-    case "visibilityTimeoutMs":
-      if (value > 43200000) {
-        throw new Error("visibilityTimeoutMs must be less than 43200000");
-      }
-      break;
-    case "retryMessageDelay":
-      if (value > 42300) {
-        throw new Error("retryMessageDelay must be less than 42300");
-      }
-      break;
-    case "pollingWaitTimeMs":
-      if (value < 0) {
-        throw new Error("pollingWaitTimeMs must be greater than 0.");
-      }
-      break;
-    default:
-      if (strict) {
-        throw new Error(`The update ${option} cannot be updated`);
-      }
-      break;
-  }
-}
+import { z } from "zod";
 
 /**
- * Ensure that the required options have been set.
- * @param options The options that have been set by the application.
+ * Zod schema for validating ConsumerOptions with comprehensive validation rules
  */
-function assertOptions(options: ConsumerOptions): void {
-  requiredOptions.forEach((option) => {
-    const possibilities = option.split("|");
-    if (!possibilities.find((p) => options[p])) {
-      throw new Error(
-        `Missing consumer option [ ${possibilities.join(" or ")} ].`,
-      );
+export const ConsumerOptionsSchema = z.object({
+  // Required fields
+  accountId: z.string().min(1, "accountId is required"),
+  queueId: z.string().min(1, "queueId is required"),
+
+  // Handler functions
+  handleMessageBatch: z.function().args(z.any()).returns(z.promise(z.any())),
+
+  // Numeric options with validation and explicit defaults
+  batchSize: z.number().int().min(1).max(100).optional().default(10),
+  visibilityTimeoutMs: z
+    .number()
+    .int()
+    .min(0)
+    .max(43200000)
+    .optional()
+    .default(1000),
+  pollingWaitTimeMs: z.number().int().min(0).optional().default(1000),
+  retryMessageDelay: z.number().int().min(0).max(42300).optional().default(10),
+
+  // Boolean options with explicit defaults
+  retryMessagesOnError: z.boolean().optional().default(false),
+  alwaysAcknowledge: z.boolean().optional().default(false),
+});
+
+/**
+ * Type for validated ConsumerOptions with all defaults applied
+ */
+export type ConsumerOptions = z.infer<typeof ConsumerOptionsSchema>;
+
+/**
+ * Validate consumer options using Zod schema
+ * @param options The options to validate
+ * @returns Validated and transformed options with defaults applied
+ */
+export function validateConsumerOptions(
+  options: ConsumerOptions,
+): ConsumerOptions {
+  try {
+    return ConsumerOptionsSchema.parse(options);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const errorMessages = error.errors
+        .map((err) => {
+          const path = err.path.join(".");
+          return `${path}: ${err.message}`;
+        })
+        .join(", ");
+      throw new Error(`Consumer validation failed: ${errorMessages}`);
     }
-  });
-
-  if (options.batchSize) {
-    validateOption("batchSize", options.batchSize);
-  }
-
-  if (options.visibilityTimeoutMs) {
-    validateOption("visibilityTimeoutMs", options.visibilityTimeoutMs);
-  }
-
-  if (options.retryMessageDelay) {
-    validateOption("retryMessageDelay", options.retryMessageDelay);
+    throw error;
   }
 }
-
-/**
- * Determine if the response has messages in it.
- * @param response The response from Cloudflare.
- */
-function hasMessages(response: PullMessagesResponse): boolean {
-  return (
-    Array.isArray(response?.result?.messages) &&
-    response.result.messages.length > 0
-  );
-}
-
-export { assertOptions, hasMessages, validateOption };
