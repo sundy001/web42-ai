@@ -1,0 +1,26 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "bff-queue",
+	"main": "src/index.ts",
+	"compatibility_date": "2025-07-25",
+	"observability": {
+		"enabled": true,
+	},
+	"queues": {
+		"producers": [
+			{
+				"queue": "bff-queue",
+				"binding": "BFF_QUEUE",
+			},
+		],
+		"consumers": [
+			{
+				"queue": "bff-queue",
+				"type": "http_pull",
+				"visibility_timeout_ms": 5000,
+				"max_retries": 5,
+				// "dead_letter_queue": "SOME-OTHER-QUEUE",
+			},
+		],
+	},
+}

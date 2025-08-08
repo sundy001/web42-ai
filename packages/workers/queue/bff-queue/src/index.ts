@@ -1,14 +1,14 @@
 import { z } from 'zod';
 import { createQueueFetch } from '@/utils/createQueueFetch';
-import { planStepRequestSchema } from './request-schema';
+import { statusRequestSchema } from './request-schema';
 
-export type PlanStepRequest = z.infer<typeof planStepRequestSchema>;
+export type PlanStepRequest = z.infer<typeof statusRequestSchema>;
 
 export interface Env {
 	PLAN_STEPS_QUEUE: Queue<PlanStepRequest>;
 }
 
-const fetchHandler = createQueueFetch('PLAN_STEPS_QUEUE', planStepRequestSchema);
+const fetchHandler = createQueueFetch('BFF_QUEUE', statusRequestSchema);
 
 export default {
 	fetch: fetchHandler,
