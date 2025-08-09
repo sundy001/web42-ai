@@ -44,14 +44,8 @@ app.get(
 
 // Swagger documentation (development only)
 if (!config.server.isProduction) {
-  app.use(
-    "/api-docs",
-    swaggerUi.serve,
-    swaggerUi.setup(openApiDocument, {
-      customCss: ".swagger-ui .top-bar { display: none }",
-      customSiteTitle: "Core API Documentation",
-    }),
-  );
+  // Serve Swagger UI static files and setup
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
   // API documentation JSON
   app.get("/api-docs.json", (_req, res) => {
@@ -195,5 +189,3 @@ async function startServer() {
 }
 
 startServer();
-
-export default app;

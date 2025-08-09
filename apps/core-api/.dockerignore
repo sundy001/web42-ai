@@ -1,0 +1,4 @@
+# Ignore everything except dist folder and env files
+*
+!dist/
+!.env.production

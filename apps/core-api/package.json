@@ -7,7 +7,8 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "bun --watch --env-file=.env src/index.ts",
-    "build": "tsc",
+    "build": "ncc build ./src/index.ts -s -m --asset-builds -o dist && cp ../../node_modules/swagger-ui-dist/{favicon*,swagger-ui.css,swagger-ui-*} dist/",
+    "docker:build": "docker build -t web-42/core-api -f ./Dockerfile .",
     "start": "bun -r dotenv/config dist/index.js",
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",

@@ -5,7 +5,6 @@
       "name": "my-turborepo",
       "dependencies": {
         "@types/cookie-parser": "^1.4.9",
-        "cookie-parser": "^1.4.7",
       },
       "devDependencies": {
         "prettier": "^3.6.2",
@@ -217,6 +216,20 @@
         "@types/node": "^22.10.0",
         "@web42-ai/typescript-config": "workspace:*",
         "typescript": "^5.8.0",
+      },
+    },
+    "packages/queue-consumer": {
+      "name": "@web42-ai/queue-consumer",
+      "version": "0.0.0",
+      "dependencies": {
+        "@anatine/zod-openapi": "^2.2.6",
+        "zod": "^3.23.8",
+      },
+      "devDependencies": {
+        "@web42-ai/eslint-config": "*",
+        "@web42-ai/typescript-config": "*",
+        "eslint": "^9.31.0",
+        "typescript": "5.8.3",
       },
     },
     "packages/types": {
@@ -809,6 +822,8 @@
 
     "@web42-ai/next-util": ["@web42-ai/next-util@workspace:packages/next-util"],
 
+    "@web42-ai/queue-consumer": ["@web42-ai/queue-consumer@workspace:packages/queue-consumer"],
+
     "@web42-ai/types": ["@web42-ai/types@workspace:packages/types"],
 
     "@web42-ai/typescript-config": ["@web42-ai/typescript-config@workspace:packages/typescript-config"],
@@ -945,9 +960,7 @@
 
     "content-type": ["content-type@1.0.5", "", {}, "sha512-nTjqfcBFEipKdXCv4YDQWCfmcLZKm81ldF0pAopTvyrFGVbcR6P/VAAd5G7N+0tTr8QqiU0tFadD6FK4NtJwOA=="],
 
-    "cookie": ["cookie@0.7.2", "", {}, "sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w=="],
-
-    "cookie-parser": ["cookie-parser@1.4.7", "", { "dependencies": { "cookie": "0.7.2", "cookie-signature": "1.0.6" } }, "sha512-nGUvgXnotP3BsjiLX2ypbQnWoGUPIIfHQNZkkC668ntrzGWEZVW70HDEB1qnNGMicPje6EttlIgzo51YSwNQGw=="],
+    "cookie": ["cookie@0.7.1", "", {}, "sha512-6DnInpx7SJ2AK3+CTUE/ZM0vWTUboZCegxhC2xiIydHR9jNuTAASBrfEpHhiGOZw/nX51bHt6YQl8jsGo4y/0w=="],
 
     "cookie-signature": ["cookie-signature@1.0.6", "", {}, "sha512-QADzlaHc8icV8I7vbaJXJwod9HWYp8uCqf1xa4OfNu1T7JVxQIrUgOWtHdNDtPiywmFbiS12VjotIXLrKM3orQ=="],
 
@@ -1894,8 +1907,6 @@
     "eslint-plugin-turbo/dotenv": ["dotenv@16.0.3", "", {}, "sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ=="],
 
     "eslint-plugin-unicorn/semver": ["semver@7.7.2", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-RF0Fw+rO5AMf9MAyaRXI4AV0Ulj5lMHqVxxdSgiVbixSCXoEmmX/jk0CuJw4+3SqroYO9VoUh+HcuJivvtJemA=="],
-
-    "express/cookie": ["cookie@0.7.1", "", {}, "sha512-6DnInpx7SJ2AK3+CTUE/ZM0vWTUboZCegxhC2xiIydHR9jNuTAASBrfEpHhiGOZw/nX51bHt6YQl8jsGo4y/0w=="],
 
     "express/debug": ["debug@2.6.9", "", { "dependencies": { "ms": "2.0.0" } }, "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA=="],
 
